@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2011 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -89,11 +89,15 @@ struct MANGOS_DLL_DECL boss_moorabiAI : public ScriptedAI
     {
         DoScriptText(SAY_AGGRO, m_creature);
         DoCastSpellIfCan(m_creature, SPELL_MOJO_FRENZY);
-
+        m_creature->SetInCombatWithZone();
         if (m_pInstance)
             m_pInstance->SetData(TYPE_MOORABI, IN_PROGRESS);
     }
-
+     void JustReachedHome()
+    {
+        if(m_pInstance)
+            m_pInstance->SetData(TYPE_MOORABI, NOT_STARTED);
+    }
     void KilledUnit(Unit* pVictim)
     {
         switch(urand(0, 2))
@@ -110,6 +114,12 @@ struct MANGOS_DLL_DECL boss_moorabiAI : public ScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_MOORABI, DONE);
+
+        if (!m_bIsRegularMode)
+        if (m_bMammothPhase)
+            return;
+        else
+            m_pInstance->DoCompleteAchievement(2040);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -178,10 +188,10 @@ CreatureAI* GetAI_boss_moorabi(Creature* pCreature)
 
 void AddSC_boss_moorabi()
 {
-    Script* pNewScript;
+    Script* newscript;
 
-    pNewScript = new Script;
-    pNewScript->Name = "boss_moorabi";
-    pNewScript->GetAI = &GetAI_boss_moorabi;
-    pNewScript->RegisterSelf();
+    newscript = new Script;
+    newscript->Name = "boss_moorabi";
+    newscript->GetAI = &GetAI_boss_moorabi;
+    newscript->RegisterSelf();
 }

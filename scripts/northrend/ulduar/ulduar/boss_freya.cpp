@@ -857,7 +857,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
                 return;
 
             // hacky way of stacking aura. Please remove when fixed in core!
-            if(SpellAuraHolderPtr natureAura = m_creature->GetSpellAuraHolder(SPELL_ATTUNED_TO_NATURE))
+/*            if(SpellAuraHolderPtr natureAura = m_creature->GetSpellAuraHolder(SPELL_ATTUNED_TO_NATURE))
             {
                 if(natureAura->GetStackAmount() < 150 && !m_bHasAura)
                 {
@@ -865,7 +865,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
                     natureAura->SetStackAmount(150);
                 }
             }
-
+*/
             if(!m_creature->HasAura(m_bIsRegularMode ? SPELL_TOUCH_OF_EONAR : SPELL_TOUCH_OF_EONAR_H))
                 DoCast(m_creature, m_bIsRegularMode ? SPELL_TOUCH_OF_EONAR : SPELL_TOUCH_OF_EONAR_H);
 

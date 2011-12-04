@@ -102,8 +102,13 @@ enum
 
 struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
 {
-    boss_lady_blaumeuxAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+    boss_lady_blaumeuxAI(Creature* pCreature) : ScriptedAI(pCreature) 
+	{
+		m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
+		Reset();
+	}
 
+	instance_naxxramas* m_pInstance;
     uint32 Mark_Timer;
     uint32 VoidZone_Timer;
     bool ShieldWall1;
@@ -125,11 +130,14 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
     void KilledUnit(Unit* Victim)
     {
         DoScriptText(SAY_BLAU_SLAY, m_creature);
+		if (Victim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+			m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
     }
 
     void JustDied(Unit* Killer)
     {
         DoScriptText(SAY_BLAU_DEATH, m_creature);
+		m_pInstance->SetData(TYPE_FOUR_HORSEMEN, DONE);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -180,7 +188,13 @@ CreatureAI* GetAI_boss_lady_blaumeux(Creature* pCreature)
 
 struct MANGOS_DLL_DECL boss_rivendare_naxxAI : public ScriptedAI
 {
-    boss_rivendare_naxxAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+    boss_rivendare_naxxAI(Creature* pCreature) : ScriptedAI(pCreature) 
+	{
+		m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
+		Reset();
+	}
+
+	instance_naxxramas* m_pInstance;
 
     void Reset()
     {
@@ -199,11 +213,14 @@ struct MANGOS_DLL_DECL boss_rivendare_naxxAI : public ScriptedAI
     void KilledUnit(Unit* Victim)
     {
         DoScriptText(urand(0, 1) ? SAY_RIVE_SLAY1 : SAY_RIVE_SLAY2, m_creature);
+		if (Victim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+			m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
     }
 
     void JustDied(Unit* Killer)
     {
         DoScriptText(SAY_RIVE_DEATH, m_creature);
+		m_pInstance->SetData(TYPE_FOUR_HORSEMEN, DONE);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -222,7 +239,13 @@ CreatureAI* GetAI_boss_rivendare_naxx(Creature* pCreature)
 
 struct MANGOS_DLL_DECL boss_thane_korthazzAI : public ScriptedAI
 {
-    boss_thane_korthazzAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+    boss_thane_korthazzAI(Creature* pCreature) : ScriptedAI(pCreature) 
+	{
+		m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
+		Reset();
+	}
+
+	instance_naxxramas* m_pInstance;
 
     uint32 Mark_Timer;
     uint32 Meteor_Timer;
@@ -245,11 +268,14 @@ struct MANGOS_DLL_DECL boss_thane_korthazzAI : public ScriptedAI
     void KilledUnit(Unit* Victim)
     {
         DoScriptText(SAY_KORT_SLAY, m_creature);
+		if (Victim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+			m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
     }
 
     void JustDied(Unit* Killer)
     {
         DoScriptText(SAY_KORT_DEATH, m_creature);
+		m_pInstance->SetData(TYPE_FOUR_HORSEMEN, DONE);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -300,7 +326,13 @@ CreatureAI* GetAI_boss_thane_korthazz(Creature* pCreature)
 
 struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
 {
-    boss_sir_zeliekAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+    boss_sir_zeliekAI(Creature* pCreature) : ScriptedAI(pCreature) 
+	{
+		m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
+		Reset();
+	}
+
+	instance_naxxramas* m_pInstance;
 
     uint32 Mark_Timer;
     uint32 HolyWrath_Timer;
@@ -323,11 +355,14 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
     void KilledUnit(Unit* Victim)
     {
         DoScriptText(SAY_ZELI_SLAY, m_creature);
+		if (Victim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+			m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
     }
 
     void JustDied(Unit* Killer)
     {
         DoScriptText(SAY_ZELI_DEATH, m_creature);
+		m_pInstance->SetData(TYPE_FOUR_HORSEMEN, DONE);
     }
 
     void UpdateAI(const uint32 uiDiff)

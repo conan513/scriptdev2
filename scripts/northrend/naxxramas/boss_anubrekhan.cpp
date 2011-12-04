@@ -88,6 +88,8 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
         if (urand(0, 4))
             return;
 
+		if (pVictim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+			m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
         DoScriptText(SAY_SLAY, m_creature);
     }
 

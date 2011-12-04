@@ -54,10 +54,17 @@ enum BossSpells
 
 static Locations SpawnLoc[]=
 {
-    {4471.821289f, 3162.986084f, 360.38501f},  // 0
-    {4471.821289f, 3110.452148f, 360.38501f},  // 1
-    {4418.825684f, 3110.452148f, 360.38501f},  // 2
-    {4418.825684f, 3162.986084f, 360.38501f},  // 3
+	{4428.15f, 3101.17f, 360.469f, 1.11701f},  //0
+	{4409.69f, 3119.34f, 360.469f, 0.471239f}, //1
+	{4411.08f, 3154.75f, 360.469f, 5.81195f},  //2	
+	{4419.42f, 3164.15f, 360.469f, 5.46288f},  //3	
+	{4428.96f, 3173.66f, 360.469f, 5.13127f},  //4
+	{4463.88f, 3172.66f, 360.469f, 4.24115f},  //5
+	{4471.93f, 3163.9f, 360.469f, 3.92699f},   //6
+	{4481.93f, 3153.87f, 360.469f, 3.57792f},  //7
+	{4480.85f, 3118.98f, 360.469f, 2.67035f},  //8
+	{4472.55f, 3110.77f, 360.469f, 2.35619f},  //9
+	{4463.86f, 3101.57f, 360.469f, 2.04204f},  //10
 };
 
 
@@ -149,17 +156,23 @@ struct MANGOS_DLL_DECL boss_rotfaceAI : public BSWScriptedAI
 
         if (nexttick)
               {
-                  doCast(SPELL_OOZE_FLOOD_1);
+                  doCast(SPELL_OOZE_FLOOD);
                   DoScriptText(-1631227,m_creature);
                   nexttick = false;
               };
 
         if (timedQuery(SPELL_OOZE_FLOOD_1, diff))
               {
-                   uint8 i = urand(0,3);
-                   if (Unit* pTemp = doSummon(NPC_OOZE_STALKER,SpawnLoc[i].x, SpawnLoc[i].y, SpawnLoc[i].z, TEMPSUMMON_TIMED_DESPAWN, 15000))
+                   uint8 i1 = urand(0, 10);
+				   uint8 i2;
+				   if (i1 >= 10)
+					   i2 = i1 - 1;
+				   else i2 = i1 + 1;
+                   if (Unit* pTemp = doSummon(NPC_OOZE_STALKER,SpawnLoc[i1].x, SpawnLoc[i1].y, SpawnLoc[i1].z, TEMPSUMMON_TIMED_DESPAWN, 15000))
+					   pTemp->CastSpell(pTemp, SPELL_OOZE_FLOOD_1, false); 
+				   if (Unit* pTemp = doSummon(NPC_OOZE_STALKER,SpawnLoc[i2].x, SpawnLoc[i2].y, SpawnLoc[i2].z, TEMPSUMMON_TIMED_DESPAWN, 14000))
                    {
-                       doCast(SPELL_OOZE_FLOOD, pTemp);
+					   pTemp->CastSpell(pTemp, SPELL_OOZE_FLOOD_1, false); 
                        nexttick = true;
                    }
               };
@@ -171,8 +184,10 @@ struct MANGOS_DLL_DECL boss_rotfaceAI : public BSWScriptedAI
         if (timedQuery(SPELL_MUTATED_INFECTION, diff))
         {
             for(uint8 i = 0; i < getSpellData(SPELL_MUTATED_INFECTION); ++i)
-                if (Unit* pTarget = doSelectRandomPlayer(SPELL_MUTATED_INFECTION_AURA, false, 60.0f))
+			{
+                if (Unit* pTarget = doSelectRandomPlayer(60.0f))
                      doCast(SPELL_MUTATED_INFECTION, pTarget);
+			}
             DoScriptText(-1631226,m_creature);
         }
 

@@ -16,8 +16,8 @@
 
 /* ScriptData
 SDName: boss_forgemaster_garfrost
-SD%Complete: 70
-SDComment: TODO movement to the forges currently workaround (need core support for Jump-MMGen)
+SD%Complete: 80%
+SDComment: TODO movement to the forges currently workaround (need core support for Jump-MMGen); fixed JustDie(..){}
 SDCategory: Pit of Saron
 EndScriptData */
 
@@ -106,6 +106,13 @@ struct MANGOS_DLL_DECL boss_forgemaster_garfrostAI : public ScriptedAI
 
     void JustDied(Unit* pKiller)
     {
+		if (m_pInstance)
+			m_pInstance->SetData(TYPE_GARFROST, DONE);
+
+		if (m_pInstance->GetData(DATA_TEAM_IN_INSTANCE) == HORDE)
+			pKiller->SummonCreature(37592, 686.11f, -101.38f, 513.73f, 5.56f, TEMPSUMMON_TIMED_DESPAWN, 90000);
+		else pKiller->SummonCreature(37591, 686.11f, -101.38f, 513.73f, 5.56f, TEMPSUMMON_TIMED_DESPAWN, 90000);
+
         DoScriptText(SAY_DEATH, m_creature, pKiller);
     }
 

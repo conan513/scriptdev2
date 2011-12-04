@@ -527,12 +527,14 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
 {
    npc_jaina_and_sylvana_HRextroAI(Creature *pCreature) : npc_escortAI(pCreature)
    {
+	   m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         m_pInstance = (BSWScriptedInstance*)pCreature->GetInstanceData();
         Reset();
    }
 
     BSWScriptedInstance* m_pInstance;
 
+	bool m_bIsRegularMode;
     uint32 CastTimer;
     uint32 HoldTimer;
     uint8 m_wallNum;
@@ -865,6 +867,11 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
               m_creature->SetLevitate(false);
               m_creature->CastSpell(m_creature, SPELL_SHIELD_DISRUPTION,false);
               m_creature->SetWalk(false);
+			  if (Creature* pLichKing = m_pInstance->GetSingleCreatureFromStorage(BOSS_LICH_KING))
+			  {
+				  pLichKing->SetRespawnDelay(DAY);
+				  pLichKing->DealDamage(pLichKing, pLichKing->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+			  }
               m_creature->GetMotionMaster()->MovePoint(0, 5258.911328f,1652.112f,784.295166f);
               DoScriptText(SAY_ESCAPE_01, m_creature);
               m_pInstance->SetNextEvent(612,m_creature->GetEntry(),10000);
@@ -883,13 +890,21 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
               m_creature->GetMotionMaster()->MovePoint(0, 5240.66f, 1646.93f, 784.302f);
               m_pInstance->SetNextEvent(615,m_creature->GetEntry(),5000);
               break;
-           case 615:
-              m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_STAND);
+           case 615: //EMOTE_STATE_STAND
+              m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, 0);
               m_creature->SetOrientation(0.68f);
+			  if (!m_bIsRegularMode)
+				  m_pInstance->DoCompleteAchievement(4521);
+			  else m_pInstance->DoCompleteAchievement(4518);
               m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
               m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
               m_pInstance->SetNextEvent(616,m_creature->GetEntry(),5000);
               break;
+		   case 901:
+			   DoDestructWall();
+			   m_creature->InterruptNonMeleeSpells(false);
+			   SetEscortPaused(false);
+			   break;
         }
    }
 
@@ -1213,9 +1228,9 @@ CreatureAI* GetAI_npc_spiritual_reflection(Creature* pCreature)
     return new npc_spiritual_reflectionAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL npc_queldelar_horAI : public ScriptedAI
+struct MANGOS_DLL_DECL npc_queldelar_horAI : public BSWScriptedAI
 {
-    npc_queldelar_horAI(Creature *pCreature) : ScriptedAI(pCreature)
+    npc_queldelar_horAI(Creature *pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (BSWScriptedInstance*)pCreature->GetInstanceData();
         Reset();
@@ -1223,13 +1238,31 @@ struct MANGOS_DLL_DECL npc_queldelar_horAI : public ScriptedAI
 
     BSWScriptedInstance* m_pInstance;
     bool intro;
+	bool SpeedCircle;
+	bool EventEnd;
+	bool EventStart;
     Team team;
     uint32 newLeader;
+	uint32 m_uiTimerFly;
+	uint8 _currentWaypoint;
 
     void Reset()
     {
         intro = false;
+		SpeedCircle = false;
+		EventEnd = false;
+		EventStart = false;
+		m_uiTimerFly = 0;
+		_currentWaypoint = 0;
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+    }
+
+	void JustDied(Unit* pKiller)
+    {
+      if(!m_pInstance) return;
+
+	  m_pInstance->SetData(TYPE_PHASE, 30);
+	  m_pInstance->SetNextEvent(29, NPC_UTHER, 2000);
     }
 
     void MoveInLineOfSight(Unit* pWho)
@@ -1239,10 +1272,18 @@ struct MANGOS_DLL_DECL npc_queldelar_horAI : public ScriptedAI
 
         if (!pWho || pWho->GetTypeId() != TYPEID_PLAYER || !pWho->IsWithinDistInMap(m_creature, 22.0f))
             return;
+		if (Player* pPlayer = (Player*)pWho)
+            if (pPlayer->isGameMaster()) return;
 
         debug_log("HOR event started");
 
         intro = true;
+
+		if (!EventStart && !EventEnd)
+		{
+			EventStart = true;
+			m_pInstance->SetNextEvent(1, m_creature->GetEntry(), 3000);
+		}
 
         if (m_pInstance->GetData(TYPE_LICH_KING) == DONE)
             return;
@@ -1270,7 +1311,6 @@ struct MANGOS_DLL_DECL npc_queldelar_horAI : public ScriptedAI
             return;
         }
 
-
         if (Group* pGroup = ((Player*)pWho)->GetGroup())
         {
             ObjectGuid LeaderGuid = pGroup->GetLeaderGuid();
@@ -1297,25 +1337,184 @@ struct MANGOS_DLL_DECL npc_queldelar_horAI : public ScriptedAI
              pNewLeader->GetMotionMaster()->MovePoint(0, WallLoc[5].x,WallLoc[5].y,WallLoc[5].z);
              pNewLeader->SetWalk(false);
              pNewLeader->SetSpeedRate(MOVE_RUN, 1.0f, true);
+			 pNewLeader->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);	
              pNewLeader->SetRespawnDelay(DAY);
         }
 //        m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID, 63135);
     }
 
-    void AttackStart(Unit* who)
-    {
-         return;
-    }
+	void Event() 
+	{
+		switch(m_pInstance->GetEvent(m_creature->GetEntry()))
+		{
+		case 1:
+			if (team == ALLIANCE)
+			{
+				if (Creature* pJaina = m_pInstance->GetSingleCreatureFromStorage(NPC_JAINA))
+					pJaina->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+			} else {
+				if (Creature* pSyl = m_pInstance->GetSingleCreatureFromStorage(NPC_SYLVANA))
+					pSyl->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+			}
+			m_pInstance->SetNextEvent(2, m_creature->GetEntry(), 2000);
+			break;
+		case 2:
+			m_creature->SummonCreature(NPC_UTHER, 5297.746582f, 1986.195068f, 707.694885f, 3.712134f, TEMPSUMMON_DEAD_DESPAWN, 0);
+			if (Creature* pUther = m_pInstance->GetSingleCreatureFromStorage(NPC_UTHER))
+				DoScriptText(-1999806, pUther);
+			m_pInstance->SetNextEvent(3, m_creature->GetEntry(), 1000);
+			break;
+		case 3:
+			DoScriptText(-1999812, m_creature);
+			m_pInstance->SetNextEvent(4, m_creature->GetEntry(), 3000);
+			break;
+		case 4:
+			m_creature->CastSpell(m_creature, 70300, true);
+			m_creature->SetSpeedRate(MOVE_RUN, 4.0f);
+			SpeedCircle = true;
+			m_pInstance->SetNextEvent(5, m_creature->GetEntry(), 6000);
+			break;
+		case 5:
+			if (Creature* pUther = m_pInstance->GetSingleCreatureFromStorage(NPC_UTHER))
+				DoScriptText(-1999807, pUther);
+			m_pInstance->SetNextEvent(7, m_creature->GetEntry(), 2000);
+			break;
+		case 7:
+			if (Creature* pUther = m_pInstance->GetSingleCreatureFromStorage(NPC_UTHER))
+			{
+				pUther->SetSpeedRate(MOVE_RUN, 1.0f);
+				pUther->GetMotionMaster()->MovePoint(0, 5335.938477f, 1981.502808f, 709.319214f);
+			}
+			m_pInstance->SetNextEvent(8, m_creature->GetEntry(), 5000);
+			break;
+		case 8:
+			if (Creature* pUther = m_pInstance->GetSingleCreatureFromStorage(NPC_UTHER))
+				pUther->GetMotionMaster()->MovePoint(1, 5331.580566f, 1981.800537f, 709.319519f);
+			m_pInstance->SetNextEvent(9, m_creature->GetEntry(), 15000);
+			break;
+		case 9:
+			SpeedCircle = false;
+			m_creature->RemoveAllAuras();
+			m_creature->GetMotionMaster()->Clear();
+			m_creature->GetMotionMaster()->MovePoint(0, 5297.554199f, 1994.751953f, 707.694763f);
+			m_pInstance->SetNextEvent(10, m_creature->GetEntry(), 6000);
+			break;
+		case 10:
+			DoScriptText(-1999813, m_creature);
+			m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+			if (Unit* pTarget = doSelectRandomPlayerAtRange(80.0f))
+				m_creature->AI()->AttackStart(pTarget);
+			EventStart = false;
+			break;
+		default:
+			break;
+		}
+	}
 
     void UpdateAI(const uint32 diff)
     {
-    }
+		if (!m_pInstance)
+			return;
+
+		if (m_pInstance->GetEventTimer(m_creature->GetEntry(), diff) && EventStart)
+			Event();
+
+		if (SpeedCircle)
+		{
+			if (m_uiTimerFly < diff)
+			{
+				if (_currentWaypoint >= 8 || _currentWaypoint == 0)
+					_currentWaypoint = 1;
+				m_creature->GetMotionMaster()->Clear();
+				m_creature->GetMotionMaster()->MovePoint(0, Q1Loc[_currentWaypoint].x, Q1Loc[_currentWaypoint].y, Q1Loc[_currentWaypoint].z);
+				++_currentWaypoint;
+				m_uiTimerFly = 1000;
+			}else m_uiTimerFly -=diff;
+		}
+		
+		DoMeleeAttackIfReady();
+
+		return;
+	}
 };
 CreatureAI* GetAI_npc_queldelar_hor(Creature* pCreature)
 {
     return new npc_queldelar_horAI(pCreature);
 }
 
+struct MANGOS_DLL_DECL npc_utherIntroAI : public BSWScriptedAI
+{
+    npc_utherIntroAI(Creature *pCreature) : BSWScriptedAI(pCreature)
+    {
+        m_pInstance = (BSWScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
+    }
+
+	BSWScriptedInstance* m_pInstance;
+
+    void Reset()
+    {
+    }
+
+	void Event()
+	{
+		switch(m_pInstance->GetEvent(m_creature->GetEntry()))
+		{
+		case 29:
+			m_creature->SetSpeedRate(MOVE_RUN, 0.5f);
+			m_creature->GetMotionMaster()->Clear();
+			m_creature->GetMotionMaster()->MovePoint(0, 5317.066895f, 1992.518921f, 707.695068f);
+			m_pInstance->SetNextEvent(35, m_creature->GetEntry(), 6000);
+			break;
+		case 30:
+			m_creature->GetMotionMaster()->MovePoint(1, 5313.814453f, 1991.860474f, 707.694946f);
+			DoScriptText(-1999808, m_creature);
+			m_pInstance->SetNextEvent(35, m_creature->GetEntry(), 7000);
+			break;
+		case 35:
+			DoScriptText(-1999809, m_creature);
+			m_pInstance->SetNextEvent(40, m_creature->GetEntry(), 7000);
+			break;
+		case 40:
+			DoScriptText(-1999810, m_creature);
+			m_pInstance->SetNextEvent(45, m_creature->GetEntry(), 7000);
+			break;
+		case 45:
+			DoScriptText(-1999811, m_creature);
+			m_pInstance->SetNextEvent(50, m_creature->GetEntry(), 7000);
+			break;
+		case 50:
+			if (Creature* pJaina = m_pInstance->GetSingleCreatureFromStorage(NPC_JAINA))
+				pJaina->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+			else
+			if (Creature* pSyl = m_pInstance->GetSingleCreatureFromStorage(NPC_SYLVANA))
+				pSyl->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+			m_pInstance->SetData(TYPE_PHASE, 0);
+			m_creature->ForcedDespawn(2000);
+			break;
+		default:
+			break;
+		}
+	}
+
+	void UpdateAI(const uint32 diff)
+    {
+		if (!m_pInstance)
+			return;
+
+		if (m_pInstance->GetEventTimer(m_creature->GetEntry(), diff) && m_pInstance->GetData(TYPE_PHASE) == 30)
+			Event();
+
+		DoMeleeAttackIfReady();
+
+		return;
+	}
+
+};
+CreatureAI* GetAI_npc_utherIntro(Creature* pCreature)
+{
+    return new npc_utherIntroAI(pCreature);
+}
 
 void AddSC_halls_of_reflection()
 {
@@ -1348,5 +1547,10 @@ void AddSC_halls_of_reflection()
     newscript = new Script;
     newscript->Name = "npc_queldelar_hor";
     newscript->GetAI = &GetAI_npc_queldelar_hor;
+    newscript->RegisterSelf();
+
+	newscript = new Script;
+    newscript->Name = "npc_uther_halls";
+    newscript->GetAI = &GetAI_npc_utherIntro;
     newscript->RegisterSelf();
 }

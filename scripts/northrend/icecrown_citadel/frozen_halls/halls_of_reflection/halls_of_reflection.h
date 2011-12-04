@@ -130,6 +130,18 @@ static _Locations WallLoc[]=
     {5547.27002f, 2256.949951f, 733.010986f, 0.9f},   // Spawn point for Jaina && Silvana outro
 };
 
+static _Locations Q1Loc[]=
+{
+    {5279.40f, 2004.69f, 726.45f, 0.00f},
+    {5294.04f, 2029.09f, 726.45f, 0.00f},
+    {5317.70f, 2029.89f, 726.45f, 0.00f},
+    {5332.95f, 2016.47f, 726.45f, 0.00f},
+    {5334.60f, 1999.77f, 726.45f, 0.00f},
+    {5325.57f, 1987.20f, 726.45f, 0.00f},
+    {5306.35f, 1980.33f, 726.45f, 0.00f},
+	{5282.53f, 1996.57f, 726.45f, 0.00f},
+};
+
 enum HallsOfReflectionWorldStates
 {
     WORLD_STATE_HOR                               = 4884,

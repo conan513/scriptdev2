@@ -32,7 +32,10 @@ enum
     NPC_KRYSTALLUS          = 27977,
     NPC_GRIEF               = 27975,
     NPC_BRANN               = 28070,
+	NPC_BRANN_EVENT         = 24575,
+    NPC_BRANN_OUTRO         = 24577,
     NPC_SJONNIR             = 27978,
+	NPC_MALFORMED_OOZE      = 28165,
 
     NPC_KADDRAK             = 30898, // left
     NPC_ABEDNEUM            = 30899, // middle
@@ -51,7 +54,9 @@ enum
     GO_TRIBUNAL_CHEST_H     = 193996,
     GO_TRIBUNAL_SKY_FLOOR   = 191527,
 
-    GO_SJONNIR_CONSOLE      = 193906
+    GO_SJONNIR_CONSOLE      = 193906,
+	
+	ACHIEV_SJONNIR_OOZE     = 7593,
 };
 
 #endif

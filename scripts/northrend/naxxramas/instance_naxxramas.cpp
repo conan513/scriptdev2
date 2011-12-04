@@ -42,6 +42,7 @@ instance_naxxramas::instance_naxxramas(Map* pMap) : ScriptedInstance(pMap),
     m_fChamberCenterZ(0.0f)
 {
     Initialize();
+	currentDifficulty = pMap->GetDifficulty();
 }
 
 void instance_naxxramas::Initialize()
@@ -128,6 +129,8 @@ void instance_naxxramas::OnObjectCreate(GameObject* pGo)
                 pGo->SetGoState(GO_STATE_ACTIVE);
             break;
         case GO_MILI_GOTH_COMBAT_GATE:
+			if (m_auiEncounter[TYPE_GOTHIK] == DONE)
+                pGo->SetGoState(GO_STATE_ACTIVE);
             break;
         case GO_MILI_HORSEMEN_DOOR:
             if (m_auiEncounter[TYPE_GOTHIK] == DONE)
@@ -288,9 +291,11 @@ void instance_naxxramas::SetData(uint32 uiType, uint32 uiData)
             break;
         case TYPE_HEIGAN:
             m_auiEncounter[uiType] = uiData;
-            DoUseDoorOrButton(GO_PLAG_HEIG_ENTRY_DOOR);
             if (uiData == IN_PROGRESS)
+			{
                 SetSpecialAchievementCriteria(TYPE_ACHIEV_SAFETY_DANCE, true);
+				DoUseDoorOrButton(GO_PLAG_HEIG_ENTRY_DOOR);
+			}
             if (uiData == DONE)
                 DoUseDoorOrButton(GO_PLAG_HEIG_EXIT_DOOR);
             break;
@@ -308,8 +313,9 @@ void instance_naxxramas::SetData(uint32 uiType, uint32 uiData)
             break;
         case TYPE_RAZUVIOUS:
             m_auiEncounter[uiType] = uiData;
-            break;
+			break;
         case TYPE_GOTHIK:
+			m_auiEncounter[uiType] = uiData;
             switch(uiData)
             {
                 case IN_PROGRESS:
@@ -329,9 +335,9 @@ void instance_naxxramas::SetData(uint32 uiType, uint32 uiData)
                     DoUseDoorOrButton(GO_MILI_GOTH_ENTRY_GATE);
                     DoUseDoorOrButton(GO_MILI_GOTH_EXIT_GATE);
                     DoUseDoorOrButton(GO_MILI_HORSEMEN_DOOR);
-                    break;
-            }
-            m_auiEncounter[uiType] = uiData;
+					DoUseDoorOrButton(GO_MILI_GOTH_COMBAT_GATE);
+					break;
+			}
             break;
         case TYPE_FOUR_HORSEMEN:
             m_auiEncounter[uiType] = uiData;
@@ -342,6 +348,13 @@ void instance_naxxramas::SetData(uint32 uiType, uint32 uiData)
                 DoRespawnGameObject(GO_MILI_PORTAL, 30*MINUTE);
                 DoRespawnGameObject(instance->IsRegularDifficulty() ? GO_CHEST_HORSEMEN_NORM : GO_CHEST_HORSEMEN_HERO, 30*MINUTE);
                 m_uiTauntTimer = 5000;
+				if (m_auiEncounter[TYPE_RAZUVIOUS] == DONE && m_auiEncounter[TYPE_GOTHIK] == DONE)
+				{
+					if (currentDifficulty == RAID_DIFFICULTY_10MAN_NORMAL)
+						DoCompleteAchievement(568);
+					if (currentDifficulty == RAID_DIFFICULTY_25MAN_NORMAL)
+						DoCompleteAchievement(569);
+				}
             }
             break;
         case TYPE_PATCHWERK:
@@ -396,10 +409,29 @@ void instance_naxxramas::SetData(uint32 uiType, uint32 uiData)
             DoUseDoorOrButton(GO_KELTHUZAD_EXIT_DOOR);
             if (uiData == IN_PROGRESS)
                 SetSpecialAchievementCriteria(TYPE_ACHIEV_GET_ENOUGH, false);
+			if (uiData == DONE)
+			{
+				if (m_auiEncounter[TYPE_LOATHEB] == DONE 
+					&& m_auiEncounter[TYPE_MAEXXNA] == DONE
+					&& m_auiEncounter[TYPE_THADDIUS] == DONE
+					&& m_auiEncounter[TYPE_FOUR_HORSEMEN] == DONE
+					&& m_auiEncounter[TYPE_ACHIEVE_CHECK] != FAIL
+					)
+				{
+					if (currentDifficulty == RAID_DIFFICULTY_10MAN_NORMAL)
+						DoCompleteAchievement(2187);
+					if (currentDifficulty == RAID_DIFFICULTY_25MAN_NORMAL)
+						DoCompleteAchievement(2186);
+				}
+
+			}
             break;
         case TYPE_UNDYING_FAILED:
             m_auiEncounter[uiType] = uiData;
             break;
+		case TYPE_ACHIEVE_CHECK:
+			m_auiEncounter[uiType] = uiData;
+			break;
     }
 
     if (uiData == DONE)

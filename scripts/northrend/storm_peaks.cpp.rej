@@ -1,0 +1,129 @@
+--- scripts/northrend/storm_peaks.cpp
++++ scripts/northrend/storm_peaks.cpp
+@@ -25,7 +25,126 @@
+ EndContentData */
+ 
+ #include "precompiled.h"
++#include "Vehicle.h"
++#include "TemporarySummon.h"
++
++/*######
++## npc_freed_protodrake
++######*/
++
++enum
++{
++//    NPC_A  = 29366,
++    NPC_PROTODRAKE = 29709,
++    NPC_LIBERATED_VRYKUL = 29734,
++    SPELL_PROTODRAKE_KILL_CREDIT = 55143,
++    SPELL_LIBERATED_VRYKUL_KILL_CREDIT = 55144
++};
++
++struct MANGOS_DLL_DECL npc_freed_protodrakeAI : public ScriptedAI
++{
++    npc_freed_protodrakeAI(Creature* pCreature) : ScriptedAI(pCreature) { }
++
++    void Reset() {}
++
++    void MoveInLineOfSight(Unit* pWho)
++    {
++            if (pWho->GetEntry() == NPC_PROTODRAKE && (m_creature->GetDistance(7005.622f, -1752.7811f, 836.239f) < 25.0f))
++            {
++                if (VehicleKit *vehicle = pWho->GetVehicleKit())
++                if (Unit* owner= vehicle->GetPassenger(0))
++                if (owner->GetTypeId() == TYPEID_PLAYER)
++                {
++                           if (Unit* passenger = vehicle->GetPassenger(1))
++                           {
++                              vehicle->RemovePassenger(passenger);
++                              passenger->CastSpell(passenger, 43014, false);
++                              ((Player*)owner)->KilledMonsterCredit(NPC_LIBERATED_VRYKUL);
++                           }
++                           if (Unit* passenger = vehicle->GetPassenger(2))
++                           {
++                              vehicle->RemovePassenger(passenger);
++                              passenger->CastSpell(passenger, 43014, false);
++                              ((Player*)owner)->KilledMonsterCredit(NPC_LIBERATED_VRYKUL);
++                           }
++                           if (Unit* passenger = vehicle->GetPassenger(3))
++                           {
++                              vehicle->RemovePassenger(passenger);
++                              passenger->CastSpell(passenger, 43014, false);
++                              ((Player*)owner)->KilledMonsterCredit(NPC_LIBERATED_VRYKUL);
++                           }
++                           vehicle->RemoveAllPassengers();
++                           ((Player*)owner)->KilledMonsterCredit(NPC_PROTODRAKE);
++                }
++
++				pWho->setFaction(35);
++				pWho->CastSpell(pWho, 43014, false);
++/*
++				((Creature*)pWho)->ForcedDespawn(4000);
++                float x, y, z;
++                pWho->GetClosePoint(x, y, z, m_creature->GetObjectBoundingRadius(), 30.0f, pWho->GetOrientation());
++                pWho->MonsterMoveWithSpeed(x, y, z+60.0f, 28);
++*/
++			}
++	}
++
++};
++
++CreatureAI* GetAI_npc_freed_protodrake(Creature* pCreature)
++{
++    return new npc_freed_protodrakeAI(pCreature);
++}
++
++/*######
++## npc_astrid
++######*/
++
++enum
++{
++//  NPC_A  = 29839,
++    NPC_INJURED_ICEMAW_MATRIARCH = 29563,
++    NPC_HARNESSED_ICEMAW_MATRIARCH = 30468,
++    QUEST_THE_LAST_OF_HER_KIND = 12983
++};
++
++struct MANGOS_DLL_DECL npc_astridAI : public ScriptedAI
++{
++    npc_astridAI(Creature* pCreature) : ScriptedAI(pCreature) { }
++
++    void Reset() {}
++
++    void MoveInLineOfSight(Unit* pWho)
++    {
++		if (pWho->GetEntry() == NPC_HARNESSED_ICEMAW_MATRIARCH && m_creature->IsWithinDistInMap(pWho, 10.0f))
++		{
++			if (VehicleKit *vehicle = pWho->GetVehicleKit())
++				if (Unit* owner= vehicle->GetPassenger(0))
++					if (owner->GetTypeId() == TYPEID_PLAYER && (((Player*)owner)->GetQuestStatus(QUEST_THE_LAST_OF_HER_KIND) == QUEST_STATUS_INCOMPLETE))
++					{
++						((Player*)owner)->KilledMonsterCredit(NPC_INJURED_ICEMAW_MATRIARCH);
++						vehicle->RemoveAllPassengers();
++						pWho->CastSpell(pWho, 43014, false);
++					}
++		}
++	}
++};
++
++CreatureAI* GetAI_npc_astrid(Creature* pCreature)
++{
++    return new npc_astridAI(pCreature);
++}
+ 
+ void AddSC_storm_peaks()
+ {
++	Script* pNewScript;
++
++	pNewScript = new Script;
++	pNewScript->Name = "npc_freed_protodrake";
++	pNewScript->GetAI = &GetAI_npc_freed_protodrake;
++	pNewScript->RegisterSelf();
++
++	pNewScript = new Script;
++	pNewScript->Name = "npc_astrid";
++	pNewScript->GetAI = &GetAI_npc_astrid;
++	pNewScript->RegisterSelf();
+ }

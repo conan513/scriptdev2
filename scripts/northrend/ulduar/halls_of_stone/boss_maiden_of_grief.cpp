@@ -41,6 +41,8 @@ enum
     SPELL_SHOCK_OF_SORROW_H     = 59726,
     SPELL_STORM_OF_GRIEF        = 50752,
     SPELL_STORM_OF_GRIEF_H      = 59772,
+
+	ACHIEV_GOOD_GRIEF           = 1866,
 };
 
 /*######
@@ -63,6 +65,7 @@ struct MANGOS_DLL_DECL boss_maiden_of_griefAI : public ScriptedAI
     uint32 m_uiPillarWoe_Timer;
     uint32 m_uiShockSorrow_Timer;
     uint32 m_uiStorm_Timer;
+	uint32 m_uiAchievTimer;
 
     void Reset()
     {
@@ -70,6 +73,7 @@ struct MANGOS_DLL_DECL boss_maiden_of_griefAI : public ScriptedAI
         m_uiPillarWoe_Timer = 3000 + rand()%4000;
         m_uiStorm_Timer = 10000 + rand()%5000;
         m_uiShockSorrow_Timer = 20000 + rand()%5000;
+		m_uiAchievTimer = 0;
 
         if(m_pInstance)
             m_pInstance->SetData(TYPE_GRIEF, NOT_STARTED);
@@ -100,12 +104,17 @@ struct MANGOS_DLL_DECL boss_maiden_of_griefAI : public ScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_GRIEF, DONE);
+
+		if (!m_bIsRegularMode && m_uiAchievTimer < 60000)
+			m_pInstance->DoCompleteAchievement(ACHIEV_GOOD_GRIEF);
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
+
+		m_uiAchievTimer += uiDiff;
 
         if (m_uiPartingSorrow_Timer < uiDiff)
         {

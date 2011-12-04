@@ -92,6 +92,21 @@ uint32 instance_nexus::GetData(uint32 uiType)
     return 0;
 }
 
+bool instance_nexus::CheckAchievementCriteriaMeet(uint32 uiCriteriaId, Player const* pSource, Unit const* pTarget, uint32 uiMiscValue1 /* = 0*/)
+{
+    switch (uiCriteriaId)
+    {
+        case ACHIEV_CHAOS_THEORY:
+            return !m_bCriteriaChaosTheoryFailed;
+        case ACHIEV_DOUBLE_PERSONALITY:
+            return !m_bCriteriaDoublePersonalityFailed;
+        case ACHIEV_INTENSE_COLD:
+            return !m_bCriteriaIntenseColdFailed;
+        default:
+            return 0;
+    }
+}
+
 void instance_nexus::SetData(uint32 uiType, uint32 uiData)
 {
     switch (uiType)
@@ -123,6 +138,15 @@ void instance_nexus::SetData(uint32 uiType, uint32 uiData)
         case TYPE_KERISTRASZA:
             m_auiEncounter[uiType] = uiData;
             break;
+        case TYPE_ACHIEV_ANOMALUS:
+            m_bCriteriaChaosTheoryFailed = (uiData == FAIL);
+            return;
+        case TYPE_ACHIEV_TELESTRA:
+            m_bCriteriaDoublePersonalityFailed = (uiData == FAIL);
+            return;
+        case TYPE_ACHIEV_KERISTRASZA:
+            m_bCriteriaIntenseColdFailed = (uiData == FAIL);
+            return;
         default:
             error_log("SD2: Instance Nexus: ERROR SetData = %u for type %u does not exist/not implemented.", uiType, uiData);
             return;

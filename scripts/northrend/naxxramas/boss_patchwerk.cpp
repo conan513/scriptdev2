@@ -41,9 +41,9 @@ enum
     SPELL_SLIMEBOLT       = 32309
 };
 
-struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_patchwerkAI : public BSWScriptedAI
 {
-    boss_patchwerkAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_patchwerkAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
@@ -56,16 +56,20 @@ struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
     uint32 m_uiHatefulStrikeTimer;
     uint32 m_uiBerserkTimer;
     uint32 m_uiSlimeboltTimer;
+	uint32 m_uiAchievTimer;
     bool   m_bEnraged;
     bool   m_bBerserk;
+	bool   m_bAchiev;
 
     void Reset()
     {
         m_uiHatefulStrikeTimer = 1000;                      //1 second
         m_uiBerserkTimer = MINUTE*6*IN_MILLISECONDS;         //6 minutes
         m_uiSlimeboltTimer = 10000;
+		m_uiAchievTimer = 180000;
         m_bEnraged = false;
         m_bBerserk = false;
+		m_bAchiev  = true;
     }
 
     void KilledUnit(Unit* pVictim)
@@ -74,6 +78,9 @@ struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
             return;
 
         DoScriptText(SAY_SLAY, m_creature);
+
+		if (pVictim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+			m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
     }
 
     void JustDied(Unit* pKiller)
@@ -82,6 +89,19 @@ struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_PATCHWERK, DONE);
+
+		if (m_bAchiev)
+		{
+			switch (currentDifficulty)
+			{
+			case RAID_DIFFICULTY_10MAN_NORMAL:
+				m_pInstance->DoCompleteAchievement(1856);
+				break;
+			case RAID_DIFFICULTY_25MAN_NORMAL:
+				m_pInstance->DoCompleteAchievement(1857);
+				break;
+			}
+		}
     }
 
     void Aggro(Unit* pWho)
@@ -140,6 +160,10 @@ struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
+
+		if (m_uiAchievTimer >= uiDiff)
+			m_uiAchievTimer -= uiDiff;
+		else m_bAchiev = false;
 
         // Hateful Strike
         if (m_uiHatefulStrikeTimer < uiDiff)

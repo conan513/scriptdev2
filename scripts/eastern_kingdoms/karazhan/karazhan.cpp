@@ -414,6 +414,20 @@ bool GossipSelect_npc_berthold(Player* pPlayer, Creature* pCreature, uint32 uiSe
     return true;
 }
 
+/*######
+## go_summon_npc_q9644
+######*/
+
+bool GOUse_go_summon_npc_q9644(Player* pPlayer, GameObject* pGo)
+{
+	if (pPlayer->GetQuestStatus(9644) == QUEST_STATUS_INCOMPLETE)
+	{
+		pGo->SummonCreature(17225, -11162.3f, -1905.31f, 91.4729f, 4.18932f, TEMPSUMMON_DEAD_DESPAWN, 90000);
+		pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_IN_USE);
+	}
+	return true;
+}
+
 void AddSC_karazhan()
 {
     Script* pNewScript;
@@ -429,5 +443,10 @@ void AddSC_karazhan()
     pNewScript->Name = "npc_berthold";
     pNewScript->pGossipHello = &GossipHello_npc_berthold;
     pNewScript->pGossipSelect = &GossipSelect_npc_berthold;
+    pNewScript->RegisterSelf();
+
+	pNewScript = new Script;
+	pNewScript->Name = "go_summon_npc_q9644";
+    pNewScript->pGOUse = &GOUse_go_summon_npc_q9644;
     pNewScript->RegisterSelf();
 }

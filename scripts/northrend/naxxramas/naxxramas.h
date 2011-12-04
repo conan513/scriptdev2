@@ -4,6 +4,8 @@
 
 #ifndef DEF_NAXXRAMAS_H
 #define DEF_NAXXRAMAS_H
+#include "BSW_instance.h"
+#include "BSW_ai.h"
 
 enum
 {
@@ -52,6 +54,7 @@ enum
     TYPE_MAX_HEIGAN_TRAPS_2     = 19,
     TYPE_MAX_HEIGAN_TRAPS_3     = 20,
     TYPE_MAX_HEIGAN_TRAPS_4     = 21,
+	TYPE_ACHIEVE_CHECK	        = 22,
 
     MAX_SPECIAL_ACHIEV_CRITS    = 6,
 
@@ -254,6 +257,7 @@ class MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
         float m_fChamberCenterZ;
 
         uint32 m_uiTauntTimer;
+		uint8 currentDifficulty;
 
         DialogueHelper m_dialogueHelper;
 };

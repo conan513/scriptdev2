@@ -87,6 +87,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public BSWScriptedAI
     uint8 stage;
     bool MovementStarted;
     bool intro;
+	bool questSupport;
 
     void Reset()
     {
@@ -95,6 +96,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public BSWScriptedAI
         stage = 0;
         MovementStarted = false;
         intro = false;
+		questSupport = false;
         resetTimers();
     }
 
@@ -175,6 +177,37 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public BSWScriptedAI
             pInstance->SetData(TYPE_DEATHWHISPER, DONE);
         DoScriptText(-1631032,m_creature,killer);
         doRemoveFromAll(SPELL_INSIGNIFICANCE);
+
+		if (Creature *pAdveen = GetClosestCreatureWithEntry(m_creature, 38485, 100.0f))
+		{
+			if (pAdveen->isAlive())
+			{
+				pAdveen->CombatStop();
+				pAdveen->DeleteThreatList();
+				pAdveen->setFaction(35);
+				Map* pMap = m_creature->GetMap();
+				Map::PlayerList const& pPlayers = pMap->GetPlayers();
+				for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)			
+					if (Player* pPlayer = itr->getSource())
+						if (pPlayer->GetQuestStatus(24875) == QUEST_STATUS_INCOMPLETE)
+							pPlayer->KilledMonsterCredit(39092);							
+			}
+		}
+		else if (Creature *pAdveen = GetClosestCreatureWithEntry(m_creature, 38472, 100.0f))
+		{
+			if (pAdveen->isAlive())
+			{
+				pAdveen->CombatStop();
+				pAdveen->DeleteThreatList();
+				pAdveen->setFaction(35);
+				Map* pMap = m_creature->GetMap();
+				Map::PlayerList const& pPlayers = pMap->GetPlayers();
+				for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)			
+					if (Player* pPlayer = itr->getSource())
+						if (pPlayer->GetQuestStatus(24869) == QUEST_STATUS_INCOMPLETE)
+							pPlayer->KilledMonsterCredit(39091);									
+			}			
+		}
     }
 
     void JustSummoned(Creature* summoned)
@@ -195,6 +228,20 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public BSWScriptedAI
             doSummon(urand(0,1) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+3].x, SpawnLoc[3*place+3].y, SpawnLoc[3*place+3].z);
         }
         doSummon(urand(0,1) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+2].x, SpawnLoc[3*place+2].y, SpawnLoc[3*place+2].z);
+		
+		if (currentDifficulty == RAID_DIFFICULTY_10MAN_NORMAL || currentDifficulty == RAID_DIFFICULTY_10MAN_HEROIC)
+		{
+			if (urand(0, 1) && !questSupport)
+			{
+				doSummon(38472, SpawnLoc[3*place+1].x, SpawnLoc[3*place+1].y, SpawnLoc[3*place+1].z, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 900000);
+				questSupport = true;
+			}
+		}
+		else if (urand(0, 1) && !questSupport)
+		{
+			doSummon(38485, SpawnLoc[3*place+1].x, SpawnLoc[3*place+1].y, SpawnLoc[3*place+1].z, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 900000); 
+			questSupport = true;
+		}
     }
 
     void UpdateAI(const uint32 diff)

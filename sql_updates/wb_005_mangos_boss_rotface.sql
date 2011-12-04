@@ -1,0 +1,1 @@
+UPDATE `creature_template` SET `minhealth` = 25200, `maxhealth` = 25200, `faction_A` = 2212, `faction_H` = 2212 WHERE `entry` = 37013;

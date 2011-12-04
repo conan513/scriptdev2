@@ -161,6 +161,8 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public BSWScriptedAI
         if(!pInstance)
             return;
 
+		pInstance->SetData(TYPE_SINDRAGOSA, IN_PROGRESS);
+
         DoScriptText(-1631420,m_creature,pWho);
         doCast(SPELL_FROST_AURA_1);
 

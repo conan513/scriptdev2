@@ -180,6 +180,9 @@ struct MANGOS_DLL_DECL boss_malganisAI : public ScriptedAI
             m_pInstance->SetData(TYPE_PHASE, 10);
             m_pInstance->SetData(TYPE_MALGANIS, DONE);
             DoCastSpellIfCan(m_creature, SPELL_ACHIEV_CHECK, CAST_TRIGGERED);
+			if (m_bIsHeroic)
+				m_pInstance->DoCompleteAchievement(500);
+			else m_pInstance->DoCompleteAchievement(479);
             EnterEvadeMode();
         }
         DoMeleeAttackIfReady();

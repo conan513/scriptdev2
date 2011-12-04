@@ -109,6 +109,7 @@ enum
     GO_SINDRAGOSA_DOOR_2        = 201379,
 
     GO_SINDRAGOSA_ENTRANCE      = 201373,
+	GO_SINDRAGOSA_ICE_WALL      = 202396,
 
     GO_FROZENTRONE_TR           = 202223, //72061
 
@@ -156,6 +157,26 @@ enum
     DESPAWN_TIME                = 300000,
     SPELL_SHADOWS_EDGE          = 71168,
 
+};
+
+struct MANGOS_DLL_DECL base_icc_bossAI : public ScriptedAI
+{
+    base_icc_bossAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_uiMapDifficulty = pCreature->GetMap()->GetDifficulty();
+        m_bIsHeroic = m_uiMapDifficulty > RAID_DIFFICULTY_25MAN_NORMAL;
+        m_bIs25Man = (m_uiMapDifficulty == RAID_DIFFICULTY_25MAN_NORMAL || m_uiMapDifficulty == RAID_DIFFICULTY_25MAN_HEROIC);
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    Difficulty m_uiMapDifficulty;
+    bool m_bIsHeroic;
+    bool m_bIs25Man;
+
+    void Reset(){}
+    void UpdateAI(const uint32 uiDiff){}
 };
 
 class MANGOS_DLL_DECL instance_icecrown_spire : public BSWScriptedInstance

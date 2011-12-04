@@ -302,7 +302,7 @@ struct MANGOS_DLL_DECL npc_brann_hosAI : public npc_escortAI
             m_bIsLowHP = false;
             m_bIsBattle = false;
 
-            m_uiStep = 0;
+            m_uiStep = 1;
             m_uiPhase_timer = 0;
 
             m_uiControllerGUID.Clear();
@@ -704,6 +704,10 @@ struct MANGOS_DLL_DECL npc_brann_hosAI : public npc_escortAI
                     //if (Player* pPlayer = GetPlayerForEscort())
                         //pPlayer->GroupEventHappens(QUEST_HALLS_OF_STONE, m_creature);
                     DoCastSpellIfCan(m_creature, SPELL_ACHIEVEMENT_CHECK, CAST_TRIGGERED);
+
+					if (!m_bIsRegularMode)
+						m_pInstance->DoCompleteAchievement(496);
+					else m_pInstance->DoCompleteAchievement(485);
 
                     m_creature->SetUInt32Value(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
                     m_creature->SetUInt32Value(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);

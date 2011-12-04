@@ -787,6 +787,65 @@ CreatureAI* GetAI_npc_olga(Creature* pCreature)
     return new npc_olgaAI(pCreature);
 }
 
+struct MANGOS_DLL_DECL npc_maiden_of_winterAI : public ScriptedAI
+{
+    npc_maiden_of_winterAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+
+	uint8 subevent;
+	uint32 m_uiEventTimer;
+	bool bEventInProgress;
+
+    void Reset()
+    {
+		m_uiEventTimer = 0;
+		subevent = 0;
+		bEventInProgress = false;
+	}
+
+	void SpellHit(Unit* caster, const SpellEntry *Spell)
+    {
+		if (Spell->Id == 62767)
+			bEventInProgress = true;
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+		if (bEventInProgress)
+        {
+            if (m_uiEventTimer <= uiDiff)
+            {
+                switch(subevent)
+                {
+                    case 0:
+						m_creature->RemoveAurasDueToSpell(45776);
+						m_uiEventTimer = 3000;
+                        break;
+					case 1:
+						DoScriptText(-1800009, m_creature);
+						m_uiEventTimer = 6000;
+						break;
+					case 2:
+						DoScriptText(-1800010, m_creature);
+						m_uiEventTimer = 6000;
+						break;
+                    case 3:
+						DoCast(m_creature, 45776);
+                        Reset();
+                        return;
+                    default: break;
+				}
+                ++subevent;
+            } else m_uiEventTimer -= uiDiff;
+        }
+    }
+};
+
+CreatureAI* GetAI_npc_maiden_of_winter(Creature* pCreature)
+{
+    return new npc_maiden_of_winterAI(pCreature);
+}
+
+
 void AddSC_howling_fjord()
 {
     Script* pNewScript;
@@ -837,6 +896,11 @@ void AddSC_howling_fjord()
     pNewScript->GetAI = &GetAI_npc_olga;
     pNewScript->pGossipHello = &GossipHello_npc_olga;
     pNewScript->pGossipSelect = &GossipSelect_npc_olga;
+    pNewScript->RegisterSelf();
+
+	pNewScript = new Script;
+    pNewScript->Name = "npc_maiden_of_winter";
+	pNewScript->GetAI = &GetAI_npc_maiden_of_winter;
     pNewScript->RegisterSelf();
 
     pNewScript = new Script;

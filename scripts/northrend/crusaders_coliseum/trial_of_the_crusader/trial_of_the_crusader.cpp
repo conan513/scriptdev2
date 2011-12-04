@@ -49,6 +49,14 @@ enum
     SPELL_JARAXXUS_CHAINS       = 67924,
 };
 
+enum Summons
+{
+    NPC_DARK_ESSENCE     = 34567,
+    NPC_LIGHT_ESSENCE    = 34568,
+
+    NPC_UNLEASHED_DARK   = 34628,
+    NPC_UNLEASHED_LIGHT  = 34630,
+};
 
 struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
 {
@@ -1146,24 +1154,47 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
 
         case 4015:
                pInstance->SetData(TYPE_STAGE,7);
-               pInstance->SetData(TYPE_VALKIRIES,IN_PROGRESS);
                       m_creature->SummonCreature(NPC_LIGHTBANE, SpawnLoc[3].x, SpawnLoc[3].y, SpawnLoc[3].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+					  pInstance->SetData(TYPE_VALKIRIES,IN_PROGRESS);
                       if (Creature* pTemp = pInstance->GetSingleCreatureFromStorage(NPC_LIGHTBANE)) {
-                                pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
+						   		pTemp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE + UNIT_FLAG_PASSIVE);
+							    pTemp->SummonCreature(NPC_LIGHT_ESSENCE, SpawnLoc[24].x, SpawnLoc[24].y, SpawnLoc[24].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
+								pTemp->SummonCreature(NPC_LIGHT_ESSENCE, SpawnLoc[25].x, SpawnLoc[25].y, SpawnLoc[25].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
+								pInstance->SetData(DATA_HEALTH_FJOLA, pTemp->GetMaxHealth());
+                                pTemp->GetMotionMaster()->MovePoint(0, 580.909607f, 165.782333f, 398.658936f);
+								pTemp->SetLevitate(true);
                                 pTemp->SetWalk(true);
-                                pTemp->SetInCombatWithZone();
                                 }
                       m_creature->SummonCreature(NPC_DARKBANE, SpawnLoc[4].x, SpawnLoc[4].y, SpawnLoc[4].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
                       if (Creature* pTemp = pInstance->GetSingleCreatureFromStorage(NPC_DARKBANE)) {
-                                pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
+								pTemp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE + UNIT_FLAG_PASSIVE);
+    							pTemp->SummonCreature(NPC_DARK_ESSENCE, SpawnLoc[22].x, SpawnLoc[22].y, SpawnLoc[22].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
+								pTemp->SummonCreature(NPC_DARK_ESSENCE, SpawnLoc[23].x, SpawnLoc[23].y, SpawnLoc[23].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
+						        pInstance->SetData(DATA_HEALTH_EYDIS, pTemp->GetMaxHealth());
+                                pTemp->GetMotionMaster()->MovePoint(0, 543.143066f, 168.851105f, 398.658936f);
+								pTemp->SetLevitate(true);
                                 pTemp->SetWalk(true);
-                                pTemp->SetInCombatWithZone();
                                 }
-               UpdateTimer = 10000;
+               UpdateTimer = 16000;
                pInstance->SetData(TYPE_EVENT,4016);
                pInstance->DoUseDoorOrButton(GO_MAIN_GATE_DOOR);
                break;
-
+		case 4016:
+			if (Creature* pTemp = pInstance->GetSingleCreatureFromStorage(NPC_LIGHTBANE))
+			{
+				pTemp->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE + UNIT_FLAG_PASSIVE);
+				pTemp->SetLevitate(false);
+				pTemp->SetInCombatWithZone();
+			}
+			if (Creature* pTemp = pInstance->GetSingleCreatureFromStorage(NPC_DARKBANE))
+			{
+				pTemp->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE + UNIT_FLAG_PASSIVE);
+				pTemp->SetLevitate(false);
+				pTemp->SetInCombatWithZone();
+			}
+			UpdateTimer = 10000;
+            pInstance->SetData(TYPE_EVENT,4017);
+			break;
         case 4040:
                UpdateTimer = 60000;
                pInstance->SetData(TYPE_EVENT,5000);

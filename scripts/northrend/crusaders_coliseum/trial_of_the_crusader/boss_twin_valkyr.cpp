@@ -82,12 +82,16 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public BSWScriptedAI
 
     ScriptedInstance* m_pInstance;
     uint8 stage;
+	uint32 m_uiFjola;
+	bool Fjola;
 
     void Reset() {
         if(!m_pInstance) return;
         SetEquipmentSlots(false, EQUIP_MAIN_1, EQUIP_OFFHAND_1, EQUIP_RANGED_1);
         m_creature->SetRespawnDelay(7*DAY);
         m_pInstance->SetData(DATA_CASTING_VALKYRS, SPELL_NONE);
+		Fjola = true;
+		m_uiFjola = 180000;
         stage = 0;
     }
 
@@ -106,7 +110,25 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public BSWScriptedAI
             DoScriptText(-1713547,m_creature);
             if (Creature* pSister = m_pInstance->GetSingleCreatureFromStorage(NPC_DARKBANE))
                if (!pSister->isAlive())
-                         m_pInstance->SetData(TYPE_VALKIRIES, DONE);
+			   {
+				   m_pInstance->SetData(TYPE_VALKIRIES, DONE);
+				   if (Fjola)
+				   {
+					   switch (currentDifficulty)
+					   {
+					   case RAID_DIFFICULTY_10MAN_NORMAL:
+					   case RAID_DIFFICULTY_10MAN_HEROIC:
+						   m_pInstance->DoCompleteAchievement(3799);
+						   break;
+					   case RAID_DIFFICULTY_25MAN_NORMAL:
+					   case RAID_DIFFICULTY_25MAN_HEROIC:
+						   m_pInstance->DoCompleteAchievement(3815);
+						   break;
+					   default:
+						   break;
+					   }
+				   }
+			   }
                 else m_pInstance->SetData(TYPE_VALKIRIES, SPECIAL);
         m_pInstance->SetData(DATA_HEALTH_FJOLA, 0);
     }
@@ -122,10 +144,6 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public BSWScriptedAI
         if (!m_pInstance) return;
         m_creature->SetInCombatWithZone();
         m_pInstance->SetData(TYPE_VALKIRIES, IN_PROGRESS);
-        if (m_creature->isAlive()) m_creature->SummonCreature(NPC_LIGHT_ESSENCE, SpawnLoc[24].x, SpawnLoc[24].y, SpawnLoc[24].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
-        if (m_creature->isAlive()) m_creature->SummonCreature(NPC_LIGHT_ESSENCE, SpawnLoc[25].x, SpawnLoc[25].y, SpawnLoc[25].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
-        DoScriptText(-1713541,m_creature);
-        m_pInstance->SetData(DATA_HEALTH_FJOLA, m_creature->GetMaxHealth());
         doCast(SPELL_LIGHT_SURGE);
     }
 
@@ -157,6 +175,10 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public BSWScriptedAI
         if (m_creature->GetHealth() > m_pInstance->GetData(DATA_HEALTH_EYDIS) &&
                                       m_pInstance->GetData(DATA_HEALTH_EYDIS) != 0)
                 m_creature->SetHealth(m_pInstance->GetData(DATA_HEALTH_EYDIS));
+
+		if (m_uiFjola >= uiDiff)
+			m_uiFjola -= uiDiff;
+		else Fjola = false;
 
     switch (stage)
         {
@@ -240,6 +262,8 @@ struct MANGOS_DLL_DECL boss_eydisAI : public BSWScriptedAI
 
     ScriptedInstance* m_pInstance;
     uint8 stage;
+	uint32 m_uiEydis;
+	bool Eydis;
 
     void Reset() 
     {
@@ -247,6 +271,8 @@ struct MANGOS_DLL_DECL boss_eydisAI : public BSWScriptedAI
         SetEquipmentSlots(false, EQUIP_MAIN_2, EQUIP_OFFHAND_2, EQUIP_RANGED_2);
         m_creature->SetRespawnDelay(7*DAY);
         m_pInstance->SetData(DATA_CASTING_VALKYRS, SPELL_NONE);
+		m_uiEydis = 180000;
+		Eydis = true;
         stage = 0;
     }
 
@@ -265,7 +291,25 @@ struct MANGOS_DLL_DECL boss_eydisAI : public BSWScriptedAI
             DoScriptText(-1713547,m_creature);
             if (Creature* pSister = m_pInstance->GetSingleCreatureFromStorage(NPC_LIGHTBANE))
                if (!pSister->isAlive())
-                         m_pInstance->SetData(TYPE_VALKIRIES, DONE);
+			   {
+				   m_pInstance->SetData(TYPE_VALKIRIES, DONE);
+				   if (Eydis)
+				   {
+					   switch (currentDifficulty)
+					   {
+					   case RAID_DIFFICULTY_10MAN_NORMAL:
+					   case RAID_DIFFICULTY_10MAN_HEROIC:
+						   m_pInstance->DoCompleteAchievement(3799);
+						   break;
+					   case RAID_DIFFICULTY_25MAN_NORMAL:
+					   case RAID_DIFFICULTY_25MAN_HEROIC:
+						   m_pInstance->DoCompleteAchievement(3815);
+						   break;
+					   default:
+						   break;
+					   }
+				   }
+			   }
                 else m_pInstance->SetData(TYPE_VALKIRIES, SPECIAL);
         m_pInstance->SetData(DATA_HEALTH_EYDIS, 0);
     }
@@ -281,9 +325,6 @@ struct MANGOS_DLL_DECL boss_eydisAI : public BSWScriptedAI
         m_creature->SetInCombatWithZone();
         m_pInstance->SetData(TYPE_VALKIRIES, IN_PROGRESS);
         DoScriptText(-1713741,m_creature);
-        if (m_creature->isAlive()) m_creature->SummonCreature(NPC_DARK_ESSENCE, SpawnLoc[22].x, SpawnLoc[22].y, SpawnLoc[22].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
-        if (m_creature->isAlive()) m_creature->SummonCreature(NPC_DARK_ESSENCE, SpawnLoc[23].x, SpawnLoc[23].y, SpawnLoc[23].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
-        m_pInstance->SetData(DATA_HEALTH_EYDIS, m_creature->GetMaxHealth());
         doCast(SPELL_DARK_SURGE);
     }
 
@@ -313,7 +354,12 @@ struct MANGOS_DLL_DECL boss_eydisAI : public BSWScriptedAI
 
         if (m_creature->GetHealth() > m_pInstance->GetData(DATA_HEALTH_FJOLA) &&
                                       m_pInstance->GetData(DATA_HEALTH_FJOLA) != 0)
+
                 m_creature->SetHealth(m_pInstance->GetData(DATA_HEALTH_FJOLA));
+
+		if (m_uiEydis >= uiDiff)
+			m_uiEydis -= uiDiff;
+		else Eydis = false;
 
     switch (stage)
         {

@@ -1,0 +1,2 @@
+REPLACE INTO `gameobject_template` VALUES (300007,8,0,'TEMP Black Knight\'s Gryphon','','','',0,0,1,0,0,0,0,0,0,1601,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,'');
+UPDATE `creature_template` SET `IconName` = 'vehichleCursor', `npcflag` = 1 WHERE `entry` = 33519;

@@ -250,7 +250,7 @@ struct MANGOS_DLL_DECL boss_kalecgosAI : public ScriptedAI
 
         if (m_bIsBanished)
             return;
-
+/*
         if (!m_bIsEnraged && m_creature->GetHealthPercent() < 10.0f)
         {
             if (Creature* pSathrovarr = m_pInstance->GetSingleCreatureFromStorage(NPC_SATHROVARR))
@@ -262,7 +262,7 @@ struct MANGOS_DLL_DECL boss_kalecgosAI : public ScriptedAI
             m_creature->CastSpell(m_creature, SPELL_CRAZED_RAGE, true);
             m_bIsEnraged = true;
         }
-
+*/
         if (!m_bChecked && m_creature->GetHealthPercent() < 1.0f)
         {
             m_bChecked = true;
@@ -433,7 +433,7 @@ struct MANGOS_DLL_DECL boss_sathrovarrAI : public ScriptedAI
 
         if (m_bIsBanished)
             return;
-
+/*
         if (!m_bIsEnraged && m_creature->GetHealthPercent() < 10.0f)
         {
             if (Creature* pKalecgos = m_pInstance->GetSingleCreatureFromStorage(NPC_KALECGOS_DRAGON))
@@ -445,7 +445,7 @@ struct MANGOS_DLL_DECL boss_sathrovarrAI : public ScriptedAI
             m_creature->CastSpell(m_creature, SPELL_CRAZED_RAGE, true);
             m_bIsEnraged = true;
         }
-
+*/
         if (m_uiCorruptingStrikeTimer < uiDiff)
         {
             if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CORRUPTING_STRIKE) == CAST_OK)

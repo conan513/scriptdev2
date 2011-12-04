@@ -190,13 +190,13 @@ struct MANGOS_DLL_DECL boss_najentusAI : public ScriptedAI
             m_uiTidalShieldTimer -= uiDiff;
 
         // Needle
-        if (m_uiNeedleSpineTimer < uiDiff)
+/*        if (m_uiNeedleSpineTimer < uiDiff)
         {
             if (DoCastSpellIfCan(m_creature, SPELL_NEEDLE_SPINE) == CAST_OK)
                 m_uiNeedleSpineTimer = 3000;
         }
         else
-            m_uiNeedleSpineTimer -= uiDiff;
+            m_uiNeedleSpineTimer -= uiDiff; */
 
         DoMeleeAttackIfReady();
     }

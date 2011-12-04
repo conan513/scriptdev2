@@ -61,8 +61,8 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public BSWScriptedAI
 
     ScriptedInstance *m_pInstance;
     bool m_bSaidIntro;
+	bool m_pBoneSlice;
 
-    uint32 m_uiSliceTimer;
     uint32 m_uiBoneStormChargeTimer;
     uint8 m_uiColdFlameCounter;
     bool m_bIsColdFlameXCast;
@@ -72,9 +72,10 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public BSWScriptedAI
     void Reset()
     {
         resetTimers();
-        m_uiSliceTimer = 10000;
+		setStage(0);
         m_uiBoneStormChargeTimer = 4000;
         m_bIsColdFlameXCast = false;
+		m_pBoneSlice = true;
         m_uiColdFlameCounter = 0;
 
         m_creature->SetSpeedRate(MOVE_RUN, 1.0f);
@@ -111,12 +112,20 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public BSWScriptedAI
             return;
 
         m_pInstance->SetData(TYPE_MARROWGAR, IN_PROGRESS);
-        DoScriptText(-1631001,m_creature);
+        DoScriptText(-1631002, m_creature);
     }
 
     void KilledUnit(Unit* pVictim)
     {
-        DoScriptText(-1631006 - urand(0, 1),m_creature,pVictim);
+		switch (urand(0,1))
+		{
+		case 0:
+			DoScriptText(-1631007, m_creature);
+			break;
+		case 1:
+			DoScriptText(-1631008, m_creature);
+			break;
+		}
     }
 
     void JustDied(Unit *killer)
@@ -124,7 +133,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public BSWScriptedAI
         if(m_pInstance)
             m_pInstance->SetData(TYPE_MARROWGAR, DONE);
 
-        DoScriptText(-1631009,m_creature);
+        DoScriptText(-1631009, m_creature);
     }
 
     void DoSummonSpike(Unit* pTarget)
@@ -159,8 +168,16 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public BSWScriptedAI
                     {
                         doCast(pTarget, SPELL_BONE_SPIKE);
                         DoSummonSpike(pTarget);
-                        DoScriptText(-1631003 - urand(0,2), m_creature, pTarget);
-                    }
+						switch (urand(0,1))
+						{
+						case 0:
+							DoScriptText(-1631004, m_creature);
+							break;
+						case 1:
+							DoScriptText(-1631006, m_creature);
+							break;
+						}
+					}
                 }
 
                 if (timedQuery(SPELL_BONE_STORM, diff))
@@ -168,28 +185,22 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public BSWScriptedAI
 
                 if (timedQuery(SPELL_CALL_COLD_FLAME, diff))
                     doCast(SPELL_CALL_COLD_FLAME);
-
-                if (m_uiSliceTimer <= 1000)
-                {
-                    if (m_uiSliceTimer <= diff)
-                    {
-                        doCast(SPELL_BONE_SLICE, m_creature->getVictim());
-                        m_uiSliceTimer = 1000;
-                    }
-                    else
-                        m_uiSliceTimer -= diff;
-                }
-                else
-                    m_uiSliceTimer -= diff;
+				
+				if (m_pBoneSlice)
+				{
+					if (timedQuery(SPELL_BONE_SLICE, diff))
+						doCast(SPELL_BONE_SLICE, m_creature->getVictim());
+				}
 
                 DoMeleeAttackIfReady();
                 break;
             }
             case 1: // Bone Storm initialization phase
             {
+				m_pBoneSlice = false;
                 m_creature->InterruptNonMeleeSpells(true);
                 doCast(SPELL_BONE_STORM);
-                DoScriptText(-1631002,m_creature);
+                DoScriptText(-1631003, m_creature);
                 SetCombatMovement(false);
                 m_creature->GetMotionMaster()->Clear();
                 m_creature->SetSpeedRate(MOVE_RUN, 3);
@@ -214,7 +225,15 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public BSWScriptedAI
                         {
                             doCast(pTarget, SPELL_BONE_SPIKE);
                             DoSummonSpike(pTarget);
-                            DoScriptText(-1631003 - urand(0,2), m_creature, pTarget);
+							switch (urand(0,1))
+							{
+							case 0:
+								DoScriptText(-1631004, m_creature);
+								break;
+							case 1:
+								DoScriptText(-1631006, m_creature);
+								break;
+							}
                         }
                     }
                 }
@@ -266,7 +285,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public BSWScriptedAI
                 m_uiColdFlameCounter = 0;
                 SetCombatMovement(true);
                 m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-                m_uiSliceTimer = 10000;
+				m_pBoneSlice = true;
                 setStage(0);
                 break;
             }
@@ -277,7 +296,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public BSWScriptedAI
         if (timedQuery(SPELL_BERSERK, diff))
         {
             doCast(SPELL_BERSERK);
-            DoScriptText(-1631008, m_creature);
+            DoScriptText(-1631010, m_creature);
         }
     }
 };

@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: boss_scourgelord_tyrannus
 SD%Complete: 50%
-SDComment: missing intro and outro; encounter need vehicle support
+SDComment: missing intro and outro; encounter need vehicle support; support event; correct texts
 SDCategory: Pit of Saron
 EndScriptData */
 
@@ -29,12 +29,12 @@ enum
     SAY_PREFIGHT_1                      = -1658050,
     SAY_GENERAL_TRASH                   = -1658051,
     SAY_PREFIGHT_2                      = -1658052,
-    SAY_AGGRO                           = -1658053,
-    SAY_SLAY_1                          = -1658054,
-    SAY_SLAY_2                          = -1658055,
-    SAY_DEATH                           = -1658056,
-    SAY_MARK                            = -1658057,
-    SAY_SMASH                           = -1658058,
+    SAY_AGGRO                           = -1658055,
+    SAY_SLAY_1                          = -1658056,
+    SAY_SLAY_2                          = -1658057,
+    SAY_DEATH                           = -1658058,
+    SAY_MARK                            = -1658059,
+    SAY_SMASH                           = -1658061,
 
     EMOTE_RIMEFANG_ICEBOLT              = -1658059,
     EMOTE_SMASH                         = -1658060,
@@ -56,22 +56,40 @@ enum
     SPELL_ICY_BLAST_AURA_H              = 69628,
 };
 
+static Locations rimefangPos[10] =
+{
+    {1017.299f, 168.9740f, 642.9259f},
+    {1047.868f, 126.4931f, 665.0453f},
+    {1069.828f, 138.3837f, 665.0453f},
+    {1063.042f, 164.5174f, 665.0453f},
+    {1031.158f, 195.1441f, 665.0453f},
+    {1019.087f, 197.8038f, 665.0453f},
+    {967.6233f, 168.9670f, 665.0453f},
+    {969.1198f, 140.4722f, 665.0453f},
+    {986.7153f, 141.6424f, 665.0453f},
+    {1012.601f, 142.4965f, 665.0453f},
+};
+
 struct MANGOS_DLL_DECL boss_rimefangAI : public ScriptedAI
 {
     boss_rimefangAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
-        m_pInstance = (instance_pit_of_saron*)pCreature->GetInstanceData();
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         SetCombatMovement(false);
         Reset();
     }
 
-    instance_pit_of_saron* m_pInstance;
+    ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
+	bool m_bExit;
+	bool m_bEventStart;
 
     uint32 m_uiHoarfrostTimer;
     uint32 m_uiIcyBlastTimer;
     uint32 m_uiIcyBlastSlowTimer;
+	uint32 m_uiTimerFly;
+	uint8 _currentWaypoint;
     ObjectGuid m_uiMainTargetGUID;
 
     void Reset()
@@ -79,7 +97,31 @@ struct MANGOS_DLL_DECL boss_rimefangAI : public ScriptedAI
         m_uiHoarfrostTimer      = 25000;
         m_uiIcyBlastTimer       = 35000;
         m_uiIcyBlastSlowTimer   = 30000;
+		m_uiTimerFly			= 0;
+		_currentWaypoint		= 0;
+		m_bExit					= false;
         m_uiMainTargetGUID.Clear();
+    }
+
+	void MoveInLineOfSight(Unit* pWho)
+    {
+		if (Player* pPlayer = (Player*)pWho)
+            if (pPlayer->isGameMaster()) return;
+
+		if (m_pInstance->GetData(TYPE_KRICK) == DONE)
+		{
+			if (!m_bEventStart && m_pInstance && pWho && pWho->GetTypeId() == TYPEID_PLAYER && m_creature->GetDistance2d(pWho) <= 85)
+			{	
+				m_pInstance->SetData(TYPE_TYRANNUS, 5);
+				m_pInstance->SetData(TYPE_EVENT, 101);
+				m_bEventStart = true;
+			}
+			if (m_pInstance && pWho && pWho->GetTypeId() == TYPEID_PLAYER && m_creature->GetDistance2d(pWho) <= 40)
+			{
+				if (!m_bExit && m_bEventStart && m_pInstance->GetData(TYPE_EVENT) == 0)
+					m_creature->AI()->AttackStart(pWho);
+			}
+		}
     }
 
     void SetMainTarget(ObjectGuid m_uiTargetGUID)
@@ -93,10 +135,41 @@ struct MANGOS_DLL_DECL boss_rimefangAI : public ScriptedAI
             pSummoned->CastSpell(pSummoned, SPELL_ICY_BLAST_AURA, false);
     }
 
+	void JustReachedHome()
+    {
+        if (m_pInstance)
+			m_pInstance->SetData(TYPE_TYRANNUS, FAIL);
+    }
+
+	void Aggro(Unit* pWho)
+    {
+    }
+
     void UpdateAI(const uint32 uiDiff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
+
+		if (!m_bExit)
+		{
+			if (Creature* pTyrannus = m_pInstance->GetSingleCreatureFromStorage(NPC_TYRANNUS))
+			{
+				pTyrannus->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+				pTyrannus->ExitVehicle();
+				m_bExit = true;
+			}
+		}
+		if (m_bExit)
+		{
+			if (m_uiTimerFly < uiDiff)
+			{
+				if (_currentWaypoint >= 10 || _currentWaypoint == 0)
+					_currentWaypoint = 1;
+				m_creature->GetMotionMaster()->MovePoint(0, rimefangPos[_currentWaypoint].x, rimefangPos[_currentWaypoint].y, rimefangPos[_currentWaypoint].z);
+				++_currentWaypoint;
+				m_uiTimerFly = 2000;
+			}else m_uiTimerFly -=uiDiff;
+		}
 
         if (m_uiHoarfrostTimer < uiDiff)
         {
@@ -137,12 +210,12 @@ struct MANGOS_DLL_DECL boss_tyrannusAI : public ScriptedAI
 {
     boss_tyrannusAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
-        m_pInstance = (instance_pit_of_saron*)pCreature->GetInstanceData();
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
-    instance_pit_of_saron* m_pInstance;
+    ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
 
     uint32 m_uiForcefulSmashTimer;
@@ -156,12 +229,14 @@ struct MANGOS_DLL_DECL boss_tyrannusAI : public ScriptedAI
         m_uiOverlordsBrandTimer = 35000;
         m_uiDarkMightTimer      = 40000;
         m_uiMarkOfRimefangTimer = 30000;
+		
+		m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
     void JustReachedHome()
     {
         if (m_pInstance)
-            m_pInstance->SetData(TYPE_TYRANNUS, FAIL);
+			m_pInstance->SetData(TYPE_TYRANNUS, FAIL);
     }
 
     void Aggro(Unit* pWho)
@@ -169,6 +244,7 @@ struct MANGOS_DLL_DECL boss_tyrannusAI : public ScriptedAI
         if (m_pInstance)
             m_pInstance->SetData(TYPE_TYRANNUS, IN_PROGRESS);
 
+		m_creature->SetRespawnDelay(DAY);
         DoScriptText(SAY_AGGRO, m_creature);
     }
 
@@ -185,15 +261,19 @@ struct MANGOS_DLL_DECL boss_tyrannusAI : public ScriptedAI
         if (Creature* pRimefang = m_pInstance->GetSingleCreatureFromStorage(NPC_RIMEFANG))
         {
             pRimefang->GetMotionMaster()->Clear();
-            pRimefang->GetMotionMaster()->MovePoint(0, 844.752f, 358.993f, 645.330f);
+			pRimefang->GetMotionMaster()->MovePoint(0, 735.664734f, 329.785889f, 629.761902f);
             pRimefang->setFaction(35);
             pRimefang->DeleteThreatList();
             pRimefang->RemoveAllAuras();
-            pRimefang->ForcedDespawn(10000);
+            pRimefang->ForcedDespawn(5000);
         }
 
         if (m_pInstance)
+		{
             m_pInstance->SetData(TYPE_TYRANNUS, DONE);
+			m_pInstance->SetData(TYPE_EVENT, 115);
+		}
+
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -229,7 +309,7 @@ struct MANGOS_DLL_DECL boss_tyrannusAI : public ScriptedAI
 
                 m_uiDarkMightTimer = 60000;
             }
-        }
+		}
         else
             m_uiDarkMightTimer -= uiDiff;
 

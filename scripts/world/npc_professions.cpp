@@ -1164,8 +1164,70 @@ bool GossipSelect_npc_prof_tailor(Player* pPlayer, Creature* pCreature, uint32 u
 }*/
 
 /*###
-#
+# unlearn Specializations Engineering
 ###*/
+
+#define Q_GOBLIN	3639
+#define Q_GNOMISH	3641
+#define Q_GNOMISH_A 3643
+
+#define GOSSIP_UNLEARN_GOBLIN         "I am absolutely sure that I want to learn a Goblin engineering."
+#define GOSSIP_UNLEARN_GNOMISH        "I am absolutely sure that I want to learn a Gnomish engineering."
+
+bool GOGossipHello_go_unlearn_engineering_spec(Player* pPlayer, GameObject* pGo)
+{
+	if (pPlayer->HasSpell(S_GOBLIN) && pPlayer->HasSkill(SKILL_ENGINEERING) && pPlayer->GetBaseSkillValue(SKILL_ENGINEERING) >= 225)
+		pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_UNLEARN_GOBLIN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+	
+	if (pPlayer->HasSpell(S_GNOMISH) && pPlayer->HasSkill(SKILL_ENGINEERING) && pPlayer->GetBaseSkillValue(SKILL_ENGINEERING) >= 225)
+		pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_UNLEARN_GNOMISH, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
+	
+	if (!pPlayer->HasSpell(S_GNOMISH) && !pPlayer->HasSpell(S_GOBLIN) && pPlayer->HasSkill(SKILL_ENGINEERING) && pPlayer->GetBaseSkillValue(SKILL_ENGINEERING) >= 225)
+	{
+		if (pPlayer->GetQuestStatus(Q_GOBLIN) == QUEST_STATUS_COMPLETE)
+			pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_LEARN_GOBLIN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3);
+		if (pPlayer->GetQuestStatus(Q_GNOMISH) == QUEST_STATUS_COMPLETE || pPlayer->GetQuestStatus(Q_GNOMISH_A) == QUEST_STATUS_COMPLETE)
+			pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_LEARN_GNOMISH, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
+	}
+
+	pPlayer->SEND_GOSSIP_MENU(5584, pGo->GetObjectGuid());
+	return true;
+}
+
+bool GOGossipSelect_go_unlearn_engineering_spec(Player *pPlayer, GameObject* pGo, uint32 sender, uint32 action)
+{
+    if(sender != GOSSIP_SENDER_MAIN) return false;
+
+    if(pPlayer->IsInCombat()) 
+        return false;
+
+	if (action == GOSSIP_ACTION_INFO_DEF + 1) //Goblin
+	{
+		if (pPlayer->GetMoney() >= 1500000)
+		{
+			pPlayer->CastSpell(pPlayer, 68334, true);
+			pPlayer->ModifyMoney(-1500000);
+		}
+	}
+	
+	if (action == GOSSIP_ACTION_INFO_DEF + 2) //Gnomish
+	{
+		if (pPlayer->GetMoney() >= 1500000)
+		{
+			pPlayer->CastSpell(pPlayer, 68333, true);
+			pPlayer->ModifyMoney(-1500000);
+		}
+	}
+
+	if (action == GOSSIP_ACTION_INFO_DEF + 3)
+		pPlayer->CastSpell(pPlayer, 20221, true); //Goblin
+	
+	if (action == GOSSIP_ACTION_INFO_DEF + 4)
+		pPlayer->CastSpell(pPlayer, 20220, true); //Gnomish
+
+    pPlayer->CLOSE_GOSSIP_MENU();
+    return true;
+}
 
 void AddSC_npc_professions()
 {
@@ -1200,4 +1262,10 @@ void AddSC_npc_professions()
     pNewScript->pGOUse =  &GOUse_go_soothsaying_for_dummies;
     //pNewScript->pGossipSelect = &GossipSelect_go_soothsaying_for_dummies;
     pNewScript->RegisterSelf();*/
+
+	pNewScript = new Script;
+    pNewScript->Name = "go_unlearn_spec_eng";
+	pNewScript->pGossipHelloGO = &GOGossipHello_go_unlearn_engineering_spec;
+    pNewScript->pGossipSelectGO = &GOGossipSelect_go_unlearn_engineering_spec;
+    pNewScript->RegisterSelf();
 }

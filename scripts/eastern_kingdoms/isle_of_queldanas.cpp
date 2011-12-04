@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: Isle_of_Queldanas
 SD%Complete: 100
-SDComment: Quest support: 11524, 11525
+SDComment: Quest support: 11524, 11525, 24535, 24563
 SDCategory: Isle Of Quel'Danas
 EndScriptData */
 
@@ -76,6 +76,29 @@ CreatureAI* GetAI_npc_converted_sentry(Creature* pCreature)
     return new npc_converted_sentryAI(pCreature);
 }
 
+/*######
+## npc_thalorien_dawnseeker
+######*/
+
+#define GOSSIP_ITEM_QUEST_24535_AND_24563  -3100800
+
+bool GossipHello_npc_thalorien_dawnseeker(Player* pPlayer, Creature *pCreature)
+{
+	if (pPlayer->GetQuestStatus(24535) == QUEST_STATUS_INCOMPLETE || pPlayer->GetQuestStatus(24563) == QUEST_STATUS_INCOMPLETE)
+		pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, GOSSIP_ITEM_QUEST_24535_AND_24563, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+	pPlayer->SEND_GOSSIP_MENU(15155, pCreature->GetObjectGuid());
+    return true;
+}
+
+bool GossipSelect_npc_thalorien_dawnseeker(Player *pPlayer, Creature *pCreature, uint32 sender, uint32 action)
+{
+    if (action == GOSSIP_ACTION_INFO_DEF + 1)
+		pPlayer->KilledMonsterCredit(37601);
+
+	pPlayer->CLOSE_GOSSIP_MENU();
+    return true;
+}
+
 void AddSC_isle_of_queldanas()
 {
     Script* pNewScript;
@@ -83,5 +106,11 @@ void AddSC_isle_of_queldanas()
     pNewScript = new Script;
     pNewScript->Name = "npc_converted_sentry";
     pNewScript->GetAI = &GetAI_npc_converted_sentry;
+    pNewScript->RegisterSelf();
+
+    pNewScript = new Script;
+    pNewScript->Name="npc_thalorien_dawnseeker";
+    pNewScript->pGossipHello =  &GossipHello_npc_thalorien_dawnseeker;
+    pNewScript->pGossipSelect = &GossipSelect_npc_thalorien_dawnseeker;
     pNewScript->RegisterSelf();
 }

@@ -256,11 +256,26 @@ enum
     SPELL_TELEPORT_TO_BWL    = 23460
 };
 
-bool GOUse_go_orb_of_command(Player* pPlayer, GameObject* pGo)
+bool GOHello_go_orb_of_command(Player* pPlayer, GameObject* pGo)
 {
-    if (pPlayer->GetQuestRewardStatus(QUEST_BLACKHANDS_COMMAND))
-        pPlayer->CastSpell(pPlayer, SPELL_TELEPORT_TO_BWL, true);
+	if (pPlayer->GetQuestStatus(QUEST_BLACKHANDS_COMMAND) == QUEST_STATUS_COMPLETE)
+		pPlayer->ADD_GOSSIP_ITEM(0, "Put your hand on the sphere.", GOSSIP_SENDER_MAIN, 2);
+	pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, pGo->GetGUID());
+	return true;
+}
 
+bool GOSelect_go_orb_of_command(Player *pPlayer, GameObject* pGo, uint32 sender, uint32 action)
+{
+	if(sender != GOSSIP_SENDER_MAIN) 
+		return false;
+	
+	if(pPlayer->IsInCombat()) 
+        return false;
+
+	if (action == 2)
+		pPlayer->CastSpell(pPlayer, SPELL_TELEPORT_TO_BWL, true);
+
+	pPlayer->CLOSE_GOSSIP_MENU();
     return true;
 }
 
@@ -592,7 +607,8 @@ void AddSC_go_scripts()
 
     pNewScript = new Script;
     pNewScript->Name = "go_orb_of_command";
-    pNewScript->pGOUse =          &GOUse_go_orb_of_command;
+	pNewScript->pGossipHelloGO = &GOHello_go_orb_of_command;
+	pNewScript->pGossipSelectGO = &GOSelect_go_orb_of_command;
     pNewScript->RegisterSelf();
 
     pNewScript = new Script;

@@ -24,9 +24,9 @@ EndScriptData */
 #include "precompiled.h"
 #include "ulduar.h"
 
-struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
+struct MANGOS_DLL_DECL instance_ulduar : public BSWScriptedInstance
 {
-    instance_ulduar(Map* pMap) : ScriptedInstance(pMap)
+    instance_ulduar(Map* pMap) : BSWScriptedInstance(pMap)
     {
         Regular = pMap->IsRegularDifficulty();
         Initialize();
@@ -568,7 +568,7 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
             // Kologarn
         case GO_CACHE_OF_LIVING_STONE:
             if(Regular)
-                m_uiKologarnLootGUID = pGo->GetGUID();
+				m_uiKologarnLootGUID = pGo->GetGUID();
             break;
         case GO_CACHE_OF_LIVING_STONE_H:
             if(!Regular)
@@ -746,12 +746,15 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
                 CheckIronCouncil();        // used for a hacky achiev, remove for revision!
             } else if (uiData == IN_PROGRESS)
                 CloseDoor(m_uiIronCouncilDoorGUID);
+			else OpenDoor(m_uiIronCouncilDoorGUID);
             break;
         case TYPE_KOLOGARN:
             m_auiEncounter[5] = uiData;
             if (uiData == DONE)
             {
-                DoRespawnGameObject(m_uiKologarnLootGUID, 30*MINUTE);
+				if (GameObject* pChest = instance->GetGameObject(m_uiKologarnLootGUID))
+					if (pChest && !pChest->isSpawned()) 
+						pChest->SetRespawnTime(7*DAY);
                 if(m_auiEncounter[5] == DONE)
                 if (GameObject* pGo = instance->GetGameObject(m_uiKologarnBridgeGUID))
                 {
@@ -782,7 +785,13 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
             if (uiData == DONE)
             {
                 if(m_auiHardBoss[3] != DONE)
-                    DoRespawnGameObject(m_uiMimironLootGUID, 30*MINUTE);
+				{
+					if (GameObject* pChest = instance->GetGameObject(m_uiMimironLootGUID))
+					{
+						if (pChest && !pChest->isSpawned()) 
+							pChest->SetRespawnTime(7*DAY);
+					}
+				}
                 // used to make the friendly keeper visible
                 if(Creature* pImage = instance->GetCreature(m_uiMimironImageGUID))
                     pImage->SetVisibility(VISIBILITY_ON);
@@ -797,7 +806,9 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
             {
                 DoUseDoorOrButton(m_uiHodirWallGUID);
                 DoUseDoorOrButton(m_uiHodirExitDoorGUID);
-                DoRespawnGameObject(m_uiHodirLootGUID, 30*MINUTE);
+				if (GameObject* pChest = instance->GetGameObject(m_uiHodirLootGUID))
+					if (pChest && !pChest->isSpawned()) 
+						pChest->SetRespawnTime(7*DAY);
                 // used to make the friendly keeper visible
                 if(Creature* pImage = instance->GetCreature(m_uiHodirImageGUID))
                     pImage->SetVisibility(VISIBILITY_ON);
@@ -809,14 +820,29 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
             m_auiEncounter[9] = uiData;
             DoUseDoorOrButton(m_uiArenaEnterDoorGUID);
             if (uiData == IN_PROGRESS)
-                DoUseDoorOrButton(m_uiArenaExitDoorGUID);
+			{
+				CloseDoor(m_uiArenaEnterDoorGUID);
+				OpenDoor(m_uiArenaExitDoorGUID);
+			}
+			if ((uiData != IN_PROGRESS && uiData != DONE) || (uiData == FAIL))
+			{
+				OpenDoor(m_uiArenaEnterDoorGUID);
+				CloseDoor(m_uiArenaExitDoorGUID);
+			}
             if (uiData == DONE)
             {
                 if(m_auiHardBoss[5] != DONE)
-                    DoRespawnGameObject(m_uiThorimLootGUID, 30*MINUTE);
+				{
+					if (GameObject* pChest = instance->GetGameObject(m_uiThorimLootGUID))
+					{
+						if (pChest && !pChest->isSpawned()) 
+							pChest->SetRespawnTime(7*DAY);
+					}
+				}
                 // used to make the friendly keeper visible
                 if(Creature* pImage = instance->GetCreature(m_uiThorimImageGUID))
                     pImage->SetVisibility(VISIBILITY_ON);
+				OpenDoor(m_uiArenaExitDoorGUID);
                 OpenMadnessDoor();
                 CheckKeepers();        // used for a hacky achiev, remove for revision!
             }
@@ -826,14 +852,30 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
             if (uiData == DONE)
             {
                 // do this in order to see how many elders were alive and spawn the correct chest
-                if(m_auiHardBoss[6] == 0)
-                    DoRespawnGameObject(m_uiFreyaLootGUID, 30*MINUTE);
-                else if(m_auiHardBoss[6] == 1)
-                    DoRespawnGameObject(m_uiFreyaLoot1GUID, 30*MINUTE);
-                else if(m_auiHardBoss[6] == 2)
-                    DoRespawnGameObject(m_uiFreyaLoot2GUID, 30*MINUTE);
-                else if(m_auiHardBoss[6] == 3)
-                    DoRespawnGameObject(m_uiFreyaLoot3GUID, 30*MINUTE);
+                if (m_auiHardBoss[6] == 0)
+					if (GameObject* pChest = instance->GetGameObject(m_uiFreyaLootGUID))
+					{
+						if (pChest && !pChest->isSpawned()) 
+							pChest->SetRespawnTime(7*DAY);
+					}
+                else if (m_auiHardBoss[6] == 1)
+					if (GameObject* pChest = instance->GetGameObject(m_uiFreyaLoot1GUID))
+					{
+						if (pChest && !pChest->isSpawned()) 
+							pChest->SetRespawnTime(7*DAY);
+					}
+                else if (m_auiHardBoss[6] == 2)
+					if (GameObject* pChest = instance->GetGameObject(m_uiFreyaLoot2GUID))
+					{
+						if (pChest && !pChest->isSpawned()) 
+							pChest->SetRespawnTime(7*DAY);
+					}
+                else if (m_auiHardBoss[6] == 3)
+					if (GameObject* pChest = instance->GetGameObject(m_uiFreyaLoot3GUID))
+					{
+						if (pChest && !pChest->isSpawned()) 
+							pChest->SetRespawnTime(7*DAY);
+					}
                 // used to make the friendly keeper visible
                 if(Creature* pImage = instance->GetCreature(m_uiFreyaImageGUID))
                     pImage->SetVisibility(VISIBILITY_ON);
@@ -859,7 +901,13 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
             DoUseDoorOrButton(m_uiCelestialDoorGUID);
             DoUseDoorOrButton(m_uiUniverseFloorCelestialGUID);
             if (uiData == DONE)
-                DoRespawnGameObject(m_uiAlagonLootGUID, 30*MINUTE);
+			{
+				if (GameObject* pChest = instance->GetGameObject(m_uiAlagonLootGUID))
+				{
+					if (pChest && !pChest->isSpawned()) 
+						pChest->SetRespawnTime(7*DAY);
+				}
+			}
             break;
 
             // Hard modes
@@ -872,7 +920,13 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
         case TYPE_HODIR_HARD:
             m_auiHardBoss[4] = uiData;
             if(uiData == DONE)
-                DoRespawnGameObject(m_uiHodirRareLootGUID, 30*MINUTE);
+			{
+				if (GameObject* pChest = instance->GetGameObject(m_uiHodirRareLootGUID))
+				{
+					if (pChest && !pChest->isSpawned()) 
+						pChest->SetRespawnTime(7*DAY);
+				}
+			}
             break;
         case TYPE_ASSEMBLY_HARD:
             m_auiHardBoss[2] = uiData;  // hard mode loot in sql
@@ -883,12 +937,24 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
         case TYPE_THORIM_HARD:
             m_auiHardBoss[5] = uiData;
             if(uiData == DONE)
-                DoRespawnGameObject(m_uiThorimRareLootGUID, 30*MINUTE);
+			{
+				if (GameObject* pChest = instance->GetGameObject(m_uiThorimRareLootGUID))
+				{
+					if (pChest && !pChest->isSpawned()) 
+						pChest->SetRespawnTime(7*DAY);
+				}
+			}
             break;
         case TYPE_MIMIRON_HARD:
             m_auiHardBoss[3] = uiData;
             if(uiData == DONE)
-                DoRespawnGameObject(m_uiMimironHardLootGUID, 30*MINUTE);
+			{
+				if (GameObject* pChest = instance->GetGameObject(m_uiMimironHardLootGUID))
+				{
+					if (pChest && !pChest->isSpawned()) 
+						pChest->SetRespawnTime(7*DAY);
+				}
+			}
             break;
         case TYPE_VEZAX_HARD:
             m_auiHardBoss[7] = uiData;  // hard mode loot in sql -> hacky way

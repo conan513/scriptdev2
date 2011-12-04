@@ -93,7 +93,6 @@ bool StartEvent;
                {
                 case 0:
                     m_pInstance->SetData(TYPE_INTRO, DONE);
-                    m_creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
                     m_creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
                     if(m_creature->GetEntry() == NPC_JAINA_BEGIN )
                       {
@@ -250,7 +249,7 @@ uint32 uiSummon_counter;
                    m_creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
                   } else Step = 10;
             StepTimer = 100;
-            m_creature->SetVisibility(VISIBILITY_OFF);
+//            m_creature->SetVisibility(VISIBILITY_OFF);
     }
 
    void UpdateAI(const uint32 diff)

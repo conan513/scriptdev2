@@ -61,6 +61,8 @@ SPELL_FEL_STREAK        = 66494,
 SPELL_BERSERK           = 26662,
 };
 
+uint8 MistressAchiev;
+
 /*######
 ## boss_jaraxxus
 ######*/
@@ -92,6 +94,7 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public BSWScriptedAI
             m_portalsCount = 1;
             m_volcanoCount = 4;
         }
+		MistressAchiev = 0;
         DoScriptText(-1713517,m_creature);
         m_creature->SetRespawnDelay(DAY);
     }
@@ -110,6 +113,22 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public BSWScriptedAI
             m_pInstance->SetData(TYPE_JARAXXUS, DONE);
             m_pInstance->SetData(TYPE_EVENT,2000);
             m_pInstance->SetData(TYPE_STAGE,0);
+
+		switch (currentDifficulty)
+		{
+		case RAID_DIFFICULTY_10MAN_NORMAL:
+		case RAID_DIFFICULTY_10MAN_HEROIC:
+			if (MistressAchiev >= 2)
+				m_pInstance->DoCompleteAchievement(3996);
+			break;
+		case RAID_DIFFICULTY_25MAN_NORMAL:
+		case RAID_DIFFICULTY_25MAN_HEROIC:
+			if (MistressAchiev >= 2)
+				m_pInstance->DoCompleteAchievement(3997);
+			break;
+		default:
+			break;
+		}
     }
 
     void Aggro(Unit* pWho)
@@ -153,6 +172,7 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public BSWScriptedAI
                              && m_portalsCount > 0
                              &&  m_creature->GetHealthPercent() <= 90.0f)
                              {
+				++MistressAchiev; 
                 DoScriptText(-1713519,m_creature);
                 if (doCast(NPC_NETHER_PORTAL) == CAST_OK) --m_portalsCount;
                 };
@@ -450,6 +470,8 @@ struct MANGOS_DLL_DECL mob_mistress_of_painAI : public BSWScriptedAI
 
     void JustDied(Unit* Killer)
     {
+		if (m_pInstance)
+			--MistressAchiev;
     }
 
     void Aggro(Unit *who)

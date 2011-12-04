@@ -129,7 +129,16 @@ struct MANGOS_DLL_DECL boss_tharonjaAI : public ScriptedAI
     void JustDied(Unit* pKiller)
     {
         DoScriptText(SAY_DEATH, m_creature);
-        DoCastSpellIfCan(pKiller, SPELL_ACHIEV_CHECK, CAST_TRIGGERED);
+
+		Map* pMap = m_creature->GetMap();
+		Map::PlayerList const &PlayerList = pMap->GetPlayers();
+		if (PlayerList.isEmpty())
+			return;
+		for (Map::PlayerList::const_iterator i = PlayerList.begin();i != PlayerList.end(); ++i)
+		{
+			if (i->getSource()->isAlive())
+				DoCastSpellIfCan(i->getSource(), SPELL_ACHIEV_CHECK, CAST_TRIGGERED);  
+		}
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_THARONJA, DONE);

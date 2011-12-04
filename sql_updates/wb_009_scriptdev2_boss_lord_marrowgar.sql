@@ -1,0 +1,3 @@
+UPDATE `boss_spell_table` SET `spellID_N10`='69055', `spellID_N25`='70814' WHERE (`entry`='36612') AND (`spellID_N10`='71021') AND (`CastType`='3');
+
+UPDATE `boss_spell_table` SET `timerMin_N10`='10000', `timerMin_N25`='10000', `timerMin_H10`='10000', `timerMin_H25`='10000', `timerMax_N10`='10000', `timerMax_N25`='10000', `timerMax_H10`='10000', `timerMax_H25`='10000' WHERE (`entry`='36612') AND (`spellID_N10`='69055') AND (`CastType`='3');

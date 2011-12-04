@@ -68,18 +68,22 @@ struct MANGOS_DLL_DECL boss_anubarakAI : public ScriptedAI
     boss_anubarakAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+		m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance *pInstance;
 
+	bool m_bIsRegularMode;
     bool bChanneling;
     bool bGuardianSummoned;
     bool bVenomancerSummoned;
     bool bDatterSummoned;
+	bool AchievTimer;
     uint8 uiPhase;
     uint32 uiPhaseTimer;
     uint32 uiEmergeTimer;
+	uint32 m_uiAchievTimer;
 
     uint32 uiCarrionBeetlesTimer;
     uint32 uiLeechingSwarmTimer;
@@ -99,10 +103,12 @@ struct MANGOS_DLL_DECL boss_anubarakAI : public ScriptedAI
         uiLeechingSwarmTimer = 20000;
         uiImpaleTimer = 9000;
         uiPoundTimer = 15000;
+		m_uiAchievTimer = 240000;
 
         uiPhase = 0;
         uiPhaseTimer = 0;
         bChanneling = false;
+		AchievTimer = true;
 
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE|UNIT_FLAG_NOT_SELECTABLE);
         m_creature->RemoveAurasDueToSpell(SPELL_SUBMERGE);
@@ -193,6 +199,10 @@ struct MANGOS_DLL_DECL boss_anubarakAI : public ScriptedAI
                 DoCast(m_creature->getVictim(), SPELL_SUMMON_CARRION_BEETLES, true);
             bChanneling = false;
         }
+
+		if (m_uiAchievTimer && m_uiAchievTimer >= diff)
+			m_uiAchievTimer -= diff;
+		else m_uiAchievTimer = false;
 
         if (uiPhase == 1)
         {
@@ -322,6 +332,9 @@ struct MANGOS_DLL_DECL boss_anubarakAI : public ScriptedAI
 
         if (pInstance)
             pInstance->SetData(TYPE_ANUBARAK, DONE);
+		
+		if (pInstance && !m_bIsRegularMode && AchievTimer)
+			pInstance->DoCompleteAchievement(1860);
     }
 
     void KilledUnit(Unit *pVictim)

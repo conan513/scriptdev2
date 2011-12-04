@@ -4,14 +4,21 @@
 
 #ifndef DEF_ICECROWN_PIT_H
 #define DEF_ICECROWN_PIT_H
+#include "BSW_ai.h"
+#include "BSW_instance.h"
 
 enum
 {
-    MAX_ENCOUNTER                   = 3,
+    MAX_ENCOUNTER                   = 4,
+	
+	TYPE_EVENT						= 0,
+    TYPE_GARFROST                   = 1,
+    TYPE_KRICK                      = 2,
+    TYPE_TYRANNUS                   = 3,
 
-    TYPE_GARFROST                   = 0,
-    TYPE_KRICK                      = 1,
-    TYPE_TYRANNUS                   = 2,
+	TYPE_EVENT_TIMER               = 50,
+    TYPE_EVENT_NPC                 = 51,
+	DATA_TEAM_IN_INSTANCE		   = 52,
 
     NPC_TYRANNUS_INTRO              = 36794,
     NPC_GARFROST                    = 36494,
@@ -47,11 +54,14 @@ enum
     NPC_GORKUN_IRONSKULL_SLAVE      = 37592,
     NPC_GORKUN_IRONSKULL_END        = 37581,
 
+	NPC_MARITN_VICTUS				= 37580,
+	NPC_GORKUN_IRONSKULL			= 37581,
+
     GO_ICEWALL                      = 201885,               // open after gafrost/krick
     GO_HALLS_OF_REFLECT_PORT        = 201848,               // unlocked by jaina/sylvanas at last outro
 };
 
-class MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
+class MANGOS_DLL_DECL instance_pit_of_saron : public BSWScriptedInstance
 {
     public:
         instance_pit_of_saron(Map* pMap);
@@ -61,16 +71,18 @@ class MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
 
         void OnCreatureCreate(Creature* pCreature);
         void OnObjectCreate(GameObject* pGo);
-
+		void OnPlayerEnter(Player* pPlayer);
         void SetData(uint32 uiType, uint32 uiData);
         uint32 GetData(uint32 uiType);
 
+		uint32 m_auiEventTimer;
         const char* Save() { return m_strInstData.c_str(); }
         void Load(const char* chrIn);
 
     protected:
         uint32 m_auiEncounter[MAX_ENCOUNTER];
         std::string m_strInstData;
+		uint32 _teamInInstance;
 };
 
 #endif

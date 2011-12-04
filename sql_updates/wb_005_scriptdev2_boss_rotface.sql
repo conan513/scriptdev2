@@ -1,0 +1,1 @@
+UPDATE `boss_spell_table` SET `timerMin_N10`='15000', `timerMax_N10`='15000' WHERE (`entry`='36627') AND (`spellID_N10`='69783') AND (`CastType`='3');

@@ -68,9 +68,9 @@ enum eSpellDummy
     SPELL_C_TO_SKULL        = 27937
 };
 
-struct MANGOS_DLL_DECL boss_gothikAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_gothikAI : public BSWScriptedAI
 {
-    boss_gothikAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_gothikAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
@@ -181,6 +181,9 @@ struct MANGOS_DLL_DECL boss_gothikAI : public ScriptedAI
     {
         if (pVictim->GetTypeId() == TYPEID_PLAYER)
             DoScriptText(SAY_KILL, m_creature);
+
+		if (pVictim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+			m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
     }
 
     void JustDied(Unit* pKiller)
@@ -189,6 +192,14 @@ struct MANGOS_DLL_DECL boss_gothikAI : public ScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_GOTHIK, DONE);
+
+		if (m_pInstance->GetData(TYPE_FOUR_HORSEMEN) == DONE && m_pInstance->GetData(TYPE_RAZUVIOUS) == DONE)
+		{
+			if (currentDifficulty == RAID_DIFFICULTY_10MAN_NORMAL)
+				m_pInstance->DoCompleteAchievement(568);
+			if (currentDifficulty == RAID_DIFFICULTY_25MAN_NORMAL)
+				m_pInstance->DoCompleteAchievement(569);
+		}
     }
 
     void JustReachedHome()

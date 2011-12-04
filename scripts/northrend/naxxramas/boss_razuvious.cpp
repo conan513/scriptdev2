@@ -44,9 +44,9 @@ enum
     SPELL_HOPELESS           = 29125
 };
 
-struct MANGOS_DLL_DECL boss_razuviousAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_razuviousAI : public BSWScriptedAI
 {
-    boss_razuviousAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_razuviousAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
@@ -71,6 +71,9 @@ struct MANGOS_DLL_DECL boss_razuviousAI : public ScriptedAI
 
     void KilledUnit(Unit* Victim)
     {
+		if (Victim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+			m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
+
         if (urand(0, 3))
             return;
 
@@ -89,6 +92,14 @@ struct MANGOS_DLL_DECL boss_razuviousAI : public ScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_RAZUVIOUS, DONE);
+
+		if (m_pInstance->GetData(TYPE_FOUR_HORSEMEN) == DONE && m_pInstance->GetData(TYPE_GOTHIK) == DONE)
+		{
+			if (currentDifficulty == RAID_DIFFICULTY_10MAN_NORMAL)
+				m_pInstance->DoCompleteAchievement(568);
+			if (currentDifficulty == RAID_DIFFICULTY_25MAN_NORMAL)
+				m_pInstance->DoCompleteAchievement(569);
+		}
     }
 
     void Aggro(Unit* pWho)

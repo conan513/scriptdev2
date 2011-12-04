@@ -1882,6 +1882,7 @@ struct MANGOS_DLL_DECL npc_death_knight_gargoyle : public ScriptedAI
     {
         Reset();
     }
+	uint32 m_uiDespawnGargoyle;
     uint32 m_uiGargoyleStrikeTimer;
     bool inCombat;
     Unit *owner;
@@ -1903,6 +1904,8 @@ struct MANGOS_DLL_DECL npc_death_knight_gargoyle : public ScriptedAI
 
      inCombat = false;
      m_uiGargoyleStrikeTimer = urand(3000, 5000);
+
+	 m_uiDespawnGargoyle = 50000;
 
      float fPosX, fPosY, fPosZ;
      owner->GetPosition(fPosX, fPosY, fPosZ);
@@ -1956,12 +1959,9 @@ struct MANGOS_DLL_DECL npc_death_knight_gargoyle : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-
-        if (!owner || !owner->IsInWorld())
-        {
-            m_creature->ForcedDespawn();
-            return;
-        }
+		if (m_uiDespawnGargoyle <= uiDiff)
+			m_creature->ForcedDespawn();
+		else m_uiGargoyleStrikeTimer -= uiDiff;
 
         if (!m_creature->getVictim())
             if (owner && owner->getVictim())
@@ -2392,6 +2392,714 @@ CreatureAI* GetAI_npc_shade_of_horseman(Creature* pCreature)
 };
 
 
+/*####
+ ## npc_exchange_icc
+ ####*/
+
+#define RING_0_1   -3001770
+//1
+#define RING_1_1   -3001771
+#define	RING_1_2   -3001772	
+#define RING_1_3   -3001773
+#define RING_1_4   -3001774
+#define RING_1_5   -3001775
+//2
+#define RING_2_1   -3001776
+#define RING_2_2   -3001777
+#define RING_2_3   -3001778
+#define RING_2_4   -3001779
+#define RING_2_5   -3001780
+//3
+#define RING_3_1   -3001781
+#define RING_3_2   -3001782
+#define RING_3_3   -3001783
+#define RING_3_4   -3001784
+#define RING_3_5   -3001785
+
+#define RING_EXC   -3001786
+
+bool GossipHello_npc_exchange_rings_icc(Player *player, Creature *_Creature)
+{
+	if (player->getLevel() < 80)
+		return false;
+
+	if (_Creature->isQuestGiver())
+		player->PrepareQuestMenu(_Creature->GetObjectGuid());
+
+	if (player->HasItemCount(50377, 1) || player->HasItemCount(50376, 1) || player->HasItemCount(50375, 1) || player->HasItemCount(50378, 1) || player->HasItemCount(52569, 1))
+	{
+		if (player->GetReputationRank(1156) >= REP_HONORED)
+			player->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, RING_0_1, GOSSIP_SENDER_MAIN, 10);
+	}
+
+	if (player->HasItemCount(50388, 1) || player->HasItemCount(50386, 1) || player->HasItemCount(52570, 1) || player->HasItemCount(50384, 1) || player->HasItemCount(50387, 1))
+	{
+		if (player->GetReputationRank(1156) >= REP_REVERED)
+			player->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, RING_0_1, GOSSIP_SENDER_MAIN, 20);	
+	}
+
+	if (player->HasItemCount(50403, 1) || player->HasItemCount(50399, 1) || player->HasItemCount(52571, 1) || player->HasItemCount(50397, 1) || player->HasItemCount(50401, 1))
+	{
+		if (player->GetReputationRank(1156) == REP_EXALTED)
+			player->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, RING_0_1, GOSSIP_SENDER_MAIN, 30);
+	}
+	
+	if (player->GetItemCount(50377, true) < 1 
+		&& player->GetItemCount(50376, true) < 1 
+		&& player->GetItemCount(50375, true) < 1
+		&& player->GetItemCount(50378, true) < 1
+		&& player->GetItemCount(52569, true) < 1
+		&& player->GetItemCount(50388, true) < 1
+		&& player->GetItemCount(50386, true) < 1
+		&& player->GetItemCount(52570, true) < 1
+		&& player->GetItemCount(50384, true) < 1
+		&& player->GetItemCount(50387, true) < 1
+		&& player->GetItemCount(50403, true) < 1
+		&& player->GetItemCount(50399, true) < 1
+		&& player->GetItemCount(52571, true) < 1
+		&& player->GetItemCount(50397, true) < 1
+		&& player->GetItemCount(50401, true) < 1
+		&& player->GetItemCount(50398, true) < 1
+		&& player->GetItemCount(50402, true) < 1
+		&& player->GetItemCount(50404, true) < 1
+		&& player->GetItemCount(50400, true) < 1
+		&& player->GetItemCount(52572, true) < 1
+		)
+	{
+		if (player->GetReputationRank(1156) == REP_EXALTED && player->GetQuestStatus(24815) == QUEST_STATUS_COMPLETE)
+			player->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, RING_EXC, GOSSIP_SENDER_MAIN, 40);
+	}
+
+	player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, _Creature->GetObjectGuid());
+    return true;
+}
+
+void SendDefaultMenu_npc_exchange_rings_icc(Player *player, Creature *_Creature, uint32 action )
+{
+	if (player->IsInCombat())
+    {
+        player->CLOSE_GOSSIP_MENU();
+        _Creature->MonsterSay("You are in combat!", LANG_UNIVERSAL);
+        return;
+    }
+
+	switch(action)
+    {
+	case 10://ring REP_HONORED >
+		if (player->HasItemCount(50377, 1) || player->HasItemCount(50376, 1) || player->HasItemCount(50375, 1) || player->HasItemCount(50378, 1) || player->HasItemCount(52569, 1))
+		{
+			player->ADD_GOSSIP_ITEM_ID(5, RING_1_1             , GOSSIP_SENDER_MAIN, 11);
+			player->ADD_GOSSIP_ITEM_ID(5, RING_1_2             , GOSSIP_SENDER_MAIN, 12);
+			player->ADD_GOSSIP_ITEM_ID(5, RING_1_3             , GOSSIP_SENDER_MAIN, 13);
+			player->ADD_GOSSIP_ITEM_ID(5, RING_1_4             , GOSSIP_SENDER_MAIN, 14);
+			player->ADD_GOSSIP_ITEM_ID(5, RING_1_5             , GOSSIP_SENDER_MAIN, 15);
+			player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,_Creature->GetObjectGuid());
+		}
+		break;
+	case 20: //ring REP_REVERED >
+		if (player->HasItemCount(50388, 1) || player->HasItemCount(50386, 1) || player->HasItemCount(52570, 1) || player->HasItemCount(50384, 1) || player->HasItemCount(50387, 1))
+		{
+			player->ADD_GOSSIP_ITEM_ID(5, RING_2_1             , GOSSIP_SENDER_MAIN, 21);
+			player->ADD_GOSSIP_ITEM_ID(5, RING_2_2             , GOSSIP_SENDER_MAIN, 22);
+			player->ADD_GOSSIP_ITEM_ID(5, RING_2_3             , GOSSIP_SENDER_MAIN, 23);
+			player->ADD_GOSSIP_ITEM_ID(5, RING_2_4             , GOSSIP_SENDER_MAIN, 24);
+			player->ADD_GOSSIP_ITEM_ID(5, RING_2_5             , GOSSIP_SENDER_MAIN, 25);
+			player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,_Creature->GetObjectGuid());
+		}
+		break;
+	case 30://ring REP_EXALTED 
+		if (player->HasItemCount(50403, 1) || player->HasItemCount(50399, 1) || player->HasItemCount(52571, 1) || player->HasItemCount(50397, 1) || player->HasItemCount(50401, 1))
+		{
+			player->ADD_GOSSIP_ITEM_ID(5, RING_3_1             , GOSSIP_SENDER_MAIN, 31);
+			player->ADD_GOSSIP_ITEM_ID(5, RING_3_2             , GOSSIP_SENDER_MAIN, 32);
+			player->ADD_GOSSIP_ITEM_ID(5, RING_3_3             , GOSSIP_SENDER_MAIN, 33);
+			player->ADD_GOSSIP_ITEM_ID(5, RING_3_4             , GOSSIP_SENDER_MAIN, 34);
+			player->ADD_GOSSIP_ITEM_ID(5, RING_3_5             , GOSSIP_SENDER_MAIN, 35);
+			player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,_Creature->GetObjectGuid());
+		}
+		break;
+	case 40:
+		player->ADD_GOSSIP_ITEM_ID(5, RING_3_1				   , GOSSIP_SENDER_MAIN, 41);
+		player->ADD_GOSSIP_ITEM_ID(5, RING_3_2				   , GOSSIP_SENDER_MAIN, 42);
+		player->ADD_GOSSIP_ITEM_ID(5, RING_3_3				   , GOSSIP_SENDER_MAIN, 43);
+		player->ADD_GOSSIP_ITEM_ID(5, RING_3_4				   , GOSSIP_SENDER_MAIN, 44);
+		player->ADD_GOSSIP_ITEM_ID(5, RING_3_5				   , GOSSIP_SENDER_MAIN, 45);
+		player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,_Creature->GetObjectGuid());
+		break;
+	case 11:
+		if (player->HasItemCount(50377, 1))
+		{
+			player->DestroyItemCount(50377, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50388, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50376, 1))
+		{
+			player->DestroyItemCount(50376, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50388, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50375, 1))
+		{
+			player->DestroyItemCount(50375, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50388, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50378, 1))
+		{
+			player->DestroyItemCount(50378, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50388, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(52569, 1))
+		{
+			player->DestroyItemCount(52569, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50388, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	case 12:
+		if (player->HasItemCount(50377, 1))
+		{
+			player->DestroyItemCount(50377, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50386, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50376, 1))
+		{
+			player->DestroyItemCount(50376, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50386, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50375, 1))
+		{
+			player->DestroyItemCount(50375, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50386, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50378, 1))
+		{
+			player->DestroyItemCount(50378, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50386, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(52569, 1))
+		{
+			player->DestroyItemCount(52569, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50386, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	case 13:
+		if (player->HasItemCount(50377, 1))
+		{
+			player->DestroyItemCount(50377, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(52570, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50376, 1))
+		{
+			player->DestroyItemCount(50376, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(52570, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50375, 1))
+		{
+			player->DestroyItemCount(50375, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(52570, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50378, 1))
+		{
+			player->DestroyItemCount(50378, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(52570, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(52569, 1))
+		{
+			player->DestroyItemCount(52569, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(52570, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	case 14:
+		if (player->HasItemCount(50377, 1))
+		{
+			player->DestroyItemCount(50377, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50384, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50376, 1))
+		{
+			player->DestroyItemCount(50376, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50384, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50375, 1))
+		{
+			player->DestroyItemCount(50375, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50384, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50378, 1))
+		{
+			player->DestroyItemCount(50378, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50384, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(52569, 1))
+		{
+			player->DestroyItemCount(52569, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50384, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	case 15:
+		if (player->HasItemCount(50377, 1))
+		{
+			player->DestroyItemCount(50377, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50387, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50376, 1))
+		{
+			player->DestroyItemCount(50376, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50387, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50375, 1))
+		{
+			player->DestroyItemCount(50375, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50387, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50378, 1))
+		{
+			player->DestroyItemCount(50378, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50387, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(52569, 1))
+		{
+			player->DestroyItemCount(52569, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50387, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	case 21:
+		if (player->HasItemCount(50388, 1))
+		{
+			player->DestroyItemCount(50388, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50403, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50386, 1))
+		{
+			player->DestroyItemCount(50386, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50403, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(52570, 1))
+		{
+			player->DestroyItemCount(52570, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50403, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50384, 1))
+		{
+			player->DestroyItemCount(50384, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50403, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50387, 1))
+		{
+			player->DestroyItemCount(50387, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50403, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	case 22:
+		if (player->HasItemCount(50388, 1))
+		{
+			player->DestroyItemCount(50388, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50399, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50386, 1))
+		{
+			player->DestroyItemCount(50386, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50399, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(52570, 1))
+		{
+			player->DestroyItemCount(52570, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50399, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50384, 1))
+		{
+			player->DestroyItemCount(50384, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50399, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50387, 1))
+		{
+			player->DestroyItemCount(50387, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50399, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	case 23:
+		if (player->HasItemCount(50388, 1))
+		{
+			player->DestroyItemCount(50388, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(52571, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50386, 1))
+		{
+			player->DestroyItemCount(50386, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(52571, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(52570, 1))
+		{
+			player->DestroyItemCount(52570, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(52571, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50384, 1))
+		{
+			player->DestroyItemCount(50384, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(52571, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50387, 1))
+		{
+			player->DestroyItemCount(50387, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(52571, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	case 24:
+		if (player->HasItemCount(50388, 1))
+		{
+			player->DestroyItemCount(50388, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50397, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50386, 1))
+		{
+			player->DestroyItemCount(50386, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50397, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(52570, 1))
+		{
+			player->DestroyItemCount(52570, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50397, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50384, 1))
+		{
+			player->DestroyItemCount(50384, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50397, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50387, 1))
+		{
+			player->DestroyItemCount(50387, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50397, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	case 25:
+		if (player->HasItemCount(50388, 1))
+		{
+			player->DestroyItemCount(50388, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50401, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50386, 1))
+		{
+			player->DestroyItemCount(50386, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50401, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(52570, 1))
+		{
+			player->DestroyItemCount(52570, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50401, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50384, 1))
+		{
+			player->DestroyItemCount(50384, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50401, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50387, 1))
+		{
+			player->DestroyItemCount(50387, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50401, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	case 31:
+		if (player->HasItemCount(50403, 1))
+		{
+			player->DestroyItemCount(50403, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50398, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50399, 1))
+		{
+			player->DestroyItemCount(50399, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50398, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(52571, 1))
+		{
+			player->DestroyItemCount(52571, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50398, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50397, 1))
+		{
+			player->DestroyItemCount(50397, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50398, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50401, 1))
+		{
+			player->DestroyItemCount(50401, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50398, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	case 32:
+		if (player->HasItemCount(50403, 1))
+		{
+			player->DestroyItemCount(50403, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50402, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50399, 1))
+		{
+			player->DestroyItemCount(50399, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50402, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(52571, 1))
+		{
+			player->DestroyItemCount(52571, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50402, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50397, 1))
+		{
+			player->DestroyItemCount(50397, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50402, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50401, 1))
+		{
+			player->DestroyItemCount(50401, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50402, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	case 33:
+		if (player->HasItemCount(50403, 1))
+		{
+			player->DestroyItemCount(50403, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50404, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50399, 1))
+		{
+			player->DestroyItemCount(50399, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50404, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(52571, 1))
+		{
+			player->DestroyItemCount(52571, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50404, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50397, 1))
+		{
+			player->DestroyItemCount(50397, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50404, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50401, 1))
+		{
+			player->DestroyItemCount(50401, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50404, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	case 34:
+		if (player->HasItemCount(50403, 1))
+		{
+			player->DestroyItemCount(50403, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50400, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50399, 1))
+		{
+			player->DestroyItemCount(50399, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50400, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(52571, 1))
+		{
+			player->DestroyItemCount(52571, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50400, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50397, 1))
+		{
+			player->DestroyItemCount(50397, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50400, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50401, 1))
+		{
+			player->DestroyItemCount(50401, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(50400, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	case 35:
+		if (player->HasItemCount(50403, 1))
+		{
+			player->DestroyItemCount(50403, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(52572, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50399, 1))
+		{
+			player->DestroyItemCount(50399, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(52572, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(52571, 1))
+		{
+			player->DestroyItemCount(52571, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(52572, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50397, 1))
+		{
+			player->DestroyItemCount(50397, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(52572, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		else if (player->HasItemCount(50401, 1))
+		{
+			player->DestroyItemCount(50401, 1, true);
+			if (Item* pItem = player->StoreNewItemInInventorySlot(52572, 1))
+				player->SendNewItem(pItem, 1, true, false);
+		}
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	case 41:
+		if (player->GetMoney() < 5000000)
+		{
+			player->CLOSE_GOSSIP_MENU();
+			_Creature->MonsterWhisper("You haven't enough money", player, false);
+			return;
+		}
+		if (Item* pItem = player->StoreNewItemInInventorySlot(50398, 1))
+			player->SendNewItem(pItem, 1, true, false);
+		player->ModifyMoney(-1*5000000);
+
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	case 42:
+		if (player->GetMoney() < 5000000)
+		{
+			player->CLOSE_GOSSIP_MENU();
+			_Creature->MonsterWhisper("You haven't enough money", player, false);
+			return;
+		}
+		if (Item* pItem = player->StoreNewItemInInventorySlot(50402, 1))
+			player->SendNewItem(pItem, 1, true, false);
+		player->ModifyMoney(-1*5000000);
+
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	case 43:
+		if (player->GetMoney() < 5000000)
+		{
+			player->CLOSE_GOSSIP_MENU();
+			_Creature->MonsterWhisper("You haven't enough money", player, false);
+			return;
+		}
+		if (Item* pItem = player->StoreNewItemInInventorySlot(50404, 1))
+			player->SendNewItem(pItem, 1, true, false);
+		player->ModifyMoney(-1*2000000);
+
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	case 44:
+		if (player->GetMoney() < 5000000)
+		{
+			player->CLOSE_GOSSIP_MENU();
+			_Creature->MonsterWhisper("You haven't enough money", player, false);
+			return;
+		}
+		if (Item* pItem = player->StoreNewItemInInventorySlot(50400, 1))
+			player->SendNewItem(pItem, 1, true, false);
+		player->ModifyMoney(-1*5000000);
+
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	case 45:
+		if (player->GetMoney() < 5000000)
+		{
+			player->CLOSE_GOSSIP_MENU();
+			_Creature->MonsterWhisper("You haven't enough money", player, false);
+			return;
+		}
+		if (Item* pItem = player->StoreNewItemInInventorySlot(52572, 1))
+			player->SendNewItem(pItem, 1, true, false);
+		player->ModifyMoney(-1*5000000);
+
+		player->CLOSE_GOSSIP_MENU();
+		break;
+	}
+}
+
+bool GossipSelect_npc_exchange_rings_icc(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+{
+    // Main menu
+    if (sender == GOSSIP_SENDER_MAIN)
+    {
+        player->PlayerTalkClass->ClearMenus();
+        SendDefaultMenu_npc_exchange_rings_icc(player, _Creature, action);
+    }
+    return true;
+}
+
 void AddSC_npcs_special()
 {
     Script* pNewScript;
@@ -2498,6 +3206,12 @@ void AddSC_npcs_special()
     pNewScript = new Script;
     pNewScript->Name = "npc_explosive_decoy";
     pNewScript->GetAI = &GetAI_npc_explosive_decoy;
+    pNewScript->RegisterSelf();
+
+	pNewScript = new Script;
+    pNewScript->Name = "npc_exchange_rings_icc";
+    pNewScript->pGossipHello = &GossipHello_npc_exchange_rings_icc;
+    pNewScript->pGossipSelect = &GossipSelect_npc_exchange_rings_icc;
     pNewScript->RegisterSelf();
 
     pNewScript = new Script;

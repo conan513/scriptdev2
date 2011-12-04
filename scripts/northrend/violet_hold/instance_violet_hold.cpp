@@ -44,6 +44,8 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
     std::string m_strInstData;
 
     bool bIsInBoss;
+	bool m_bCriteriaDanceWithVoidFailed;
+    bool m_bCriteriaDeshidratationFailed;
 
     uint8 m_uiLastBossID;
     uint8 m_uiLastBossIDConst;
@@ -111,6 +113,19 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
     void OnObjectCreate(GameObject* pGo)
     {
         m_mGoEntryGuidStore[pGo->GetEntry()] = pGo->GetObjectGuid();
+    }
+
+	bool CheckAchievementCriteriaMeet(uint32 uiCriteriaId, Player const* pSource, Unit const* pTarget, uint32 uiMiscValue1 /* = 0*/)
+    {
+        switch (uiCriteriaId)
+        {
+            case ACHIEV_DANCE_WITH_VOID:
+                return !m_bCriteriaDanceWithVoidFailed;
+            case ACHIEV_DESHIDRATATION:
+                return !m_bCriteriaDeshidratationFailed;
+            default:
+                return 0;
+        }
     }
 
     void SetData(uint32 uiType, uint32 uiData)
@@ -191,6 +206,12 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
             case TYPE_LASTBOSS_ID:
             m_uiLastBossIDConst = uiData;
             break;
+			case TYPE_ACHIEV_ZURAMAT:
+            m_bCriteriaDanceWithVoidFailed = (uiData == FAIL);
+            return;
+            case TYPE_ACHIEV_ICHORON:
+            m_bCriteriaDeshidratationFailed = (uiData == FAIL);
+            return;
 
         }
         if (uiData == DONE)

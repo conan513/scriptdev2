@@ -27,6 +27,8 @@ enum
     TYPE_EREGOS,
     TYPE_ROBOTS,
     TYPE_UROM_PHASE,
+    TYPE_ACHIEV_EREGOS_KILL,
+    TYPE_ACHIEV_EREGOS_KILL_H,
     MAX_ENCOUNTERS,
 
     DATA_DRAKOS,
@@ -34,17 +36,22 @@ enum
     DATA_UROM,
     DATA_EREGOS,
 
+    NPC_TRIGGER            = 11364,
+
+    NPC_ETERNOS            = 27659,
+    NPC_BELGAR             = 27658,
+    NPC_VERDISA            = 27657,
+
     NPC_ROBOT              = 27641,
     NPC_BALGAR_IMAGE       = 28012,
-    NPC_VERDISA            = 27657,
-    NPC_BELGARISTRASZ      = 27658,
-    NPC_ETERNOS            = 27659,
     NPC_DRAKOS             = 27654,
     NPC_VAROS              = 27447,
     NPC_UROM               = 27655,
     NPC_EREGOS             = 27656,
 
-    GO_DRAGON_CAGE_DOOR    = 193995,
+    GO_DRAGON_CAGE_DOOR_1  = 193992,
+    GO_DRAGON_CAGE_DOOR_2  = 193993,
+    GO_DRAGON_CAGE_DOOR_3  = 193995,
     GO_EREGOS_CACHE        = 191349,
     GO_EREGOS_CACHE_H      = 193603,
     GO_SPOTLIGHT           = 191351,
@@ -54,6 +61,8 @@ enum
     BELGAR_TEXT_1          = 13268,
     BELGAR_TEXT_2          = 13269,
 
+    ACHIEV_EREGOS_KILL     = 206,
+    ACHIEV_EREGOS_KILL_H   = 6862,
 };
 
 #endif

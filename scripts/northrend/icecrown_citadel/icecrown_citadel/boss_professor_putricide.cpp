@@ -185,7 +185,8 @@ struct MANGOS_DLL_DECL boss_professor_putricideAI : public BSWScriptedAI
               if (Unit* pTarget = doSelectRandomPlayer())
                  {
                      summoned->SetInCombatWith(pTarget);
-                     summoned->AddThreat(pTarget, 100.0f);
+					 summoned->AI()->AttackStart(pTarget);
+                     summoned->AddThreat(pTarget, 999999.0f);
                  }
 
     }
@@ -535,15 +536,15 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public BSWScriptedAI
     {
         if (!m_pInstance || !who || who->GetTypeId() != TYPEID_PLAYER) return;
 
-        if (!pTarget || pTarget != who ) pTarget = who;
-           else return;
+        if (!pTarget || pTarget != who ) 
+			pTarget = who;
+		else return;
 
         delay = 10000;
 
         if (pTarget)
-        {
             doAura(SPELL_OOZE_ADHESIVE, pTarget);
-        }
+
         DoStartMovement(pTarget);
     }
 

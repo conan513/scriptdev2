@@ -573,17 +573,17 @@ CreatureAI* GetAI_mob_dark_rune_honor_guard(Creature* pCreature)
 }
 
 // thorim
-struct MANGOS_DLL_DECL boss_thorimAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_thorimAI : public BSWScriptedAI
 {
-    boss_thorimAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_thorimAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
-        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_pInstance = (BSWScriptedInstance*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     bool m_bIsRegularMode;
-    ScriptedInstance* m_pInstance;
+    BSWScriptedInstance* m_pInstance;
 
     uint32 m_uiPhase;
 

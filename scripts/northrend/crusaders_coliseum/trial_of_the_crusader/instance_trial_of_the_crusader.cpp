@@ -162,8 +162,22 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public BSWScriptedInstan
                                 if ( m_auiEncounter[7] >= 25) m_uiTributeChest1 = GO_TRIBUTE_CHEST_25H_25;
                                 if ( m_auiEncounter[7] >= 45) m_uiTributeChest2 = GO_TRIBUTE_CHEST_25H_45;
                                 if ( m_auiEncounter[7] >= 49) m_uiTributeChest3 = GO_TRIBUTE_CHEST_25H_50;
+								if ( m_auiEncounter[7] == 50) DoCompleteAchievement(4078);
                                 m_uiTributeChest4 = GO_TRIBUTE_CHEST_25H_99;
-                            }
+							}
+							switch (Difficulty)
+							{
+							case RAID_DIFFICULTY_10MAN_HEROIC:
+								if (m_auiEncounter[7] >= 25 && m_auiEncounter[7] < 45) DoCompleteAchievement(3808);
+                                if (m_auiEncounter[7] >= 45 && m_auiEncounter[7] < 50) DoCompleteAchievement(3809);
+                                if (m_auiEncounter[7] == 50) DoCompleteAchievement(3810);
+								break;
+							case RAID_DIFFICULTY_25MAN_HEROIC:
+								if (m_auiEncounter[7] >= 25 && m_auiEncounter[7] < 45) DoCompleteAchievement(3817);
+                                if (m_auiEncounter[7] >= 45 && m_auiEncounter[7] < 50) DoCompleteAchievement(3818);
+                                if (m_auiEncounter[7] == 50) DoCompleteAchievement(3819);
+								break;
+							}
                             // Attention! It is (may be) not off-like, but  spawning all Tribute Chests is real
                             // reward for clearing TOC instance
                             if (m_uiTributeChest1)
@@ -178,7 +192,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public BSWScriptedInstan
                             if (m_uiTributeChest4)
                               if (GameObject* pChest4 = GetSingleGameObjectFromStorage(m_uiTributeChest4))
                                 if (pChest4 && !pChest4->isSpawned()) pChest4->SetRespawnTime(7*DAY);
-                            };
+							};
         break;
         case TYPE_COUNTER:   m_auiEncounter[7] = uiData; uiData = DONE; break;
         case TYPE_EVENT:     m_auiEncounter[8] = uiData; uiData = NOT_STARTED; break;

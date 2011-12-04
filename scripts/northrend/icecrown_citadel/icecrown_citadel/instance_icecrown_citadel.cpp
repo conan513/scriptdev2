@@ -65,7 +65,13 @@ static Locations SpawnLoc[]=
         if (m_auiEncounter[6] == DONE)
             DoOpenDoor(GO_SCIENTIST_DOOR_GREEN);
         if (m_auiEncounter[6] == DONE && m_auiEncounter[5] == DONE)
+		{
             DoOpenDoor(GO_SCIENTIST_DOOR_COLLISION);
+			if (GameObject* pDoorGreen = GetSingleGameObjectFromStorage(GO_SCIENTIST_DOOR_GREEN))
+				pDoorGreen->SetPhaseMask(0, true);
+			if (GameObject* pDoorOrange = GetSingleGameObjectFromStorage(GO_SCIENTIST_DOOR_ORANGE))
+				pDoorOrange->SetPhaseMask(0, true);
+		}
         if (m_auiEncounter[8] == DONE)
         {
             DoOpenDoor(GO_COUNCIL_DOOR_1);
@@ -254,6 +260,7 @@ static Locations SpawnLoc[]=
             case GO_BLOODPRINCE_DOOR:
             case GO_ICECROWN_GRATE:
             case GO_SINDRAGOSA_ENTRANCE:
+			case GO_SINDRAGOSA_ICE_WALL:
                 m_mGoEntryGuidStore[pGo->GetEntry()] = pGo->GetObjectGuid();
                 break;
             }
@@ -338,10 +345,9 @@ static Locations SpawnLoc[]=
                 {
                     DoOpenDoor(GO_ORANGE_PLAGUE);
                     if (m_auiEncounter[TYPE_ROTFACE] == DONE)
-                    {
                         DoOpenDoor(GO_SCIENTIST_DOOR_COLLISION);
-                        DoOpenDoor(GO_SCIENTIST_DOOR_GREEN);
-                    }
+					if (GameObject* pDoorGreen = GetSingleGameObjectFromStorage(GO_SCIENTIST_DOOR_ORANGE))
+						pDoorGreen->SetPhaseMask(0, true);
                 }
                 break;
              case TYPE_ROTFACE:
@@ -352,12 +358,10 @@ static Locations SpawnLoc[]=
                     DoOpenDoor(GO_GREEN_PLAGUE);
                 if (uiData == DONE)
                 {
-                    DoOpenDoor(GO_SCIENTIST_DOOR_GREEN);
                     if (m_auiEncounter[TYPE_FESTERGUT] == DONE)
-                    {
-                        DoOpenDoor(GO_SCIENTIST_DOOR_ORANGE);
                         DoOpenDoor(GO_SCIENTIST_DOOR_COLLISION);
-                    }
+					if (GameObject* pDoorOrange = GetSingleGameObjectFromStorage(GO_SCIENTIST_DOOR_GREEN))
+						pDoorOrange->SetPhaseMask(0, true);
                 }
                 break;
              case TYPE_PUTRICIDE:
@@ -427,9 +431,15 @@ static Locations SpawnLoc[]=
                 m_auiEncounter[TYPE_SINDRAGOSA] = uiData;
 
                 if (uiData == IN_PROGRESS)
+				{
                     DoCloseDoor(GO_SINDRAGOSA_ENTRANCE);
+					DoCloseDoor(GO_SINDRAGOSA_ICE_WALL);
+				}
                 else
+				{
                     DoOpenDoor(GO_SINDRAGOSA_ENTRANCE);
+					DoOpenDoor(GO_SINDRAGOSA_ICE_WALL);
+				}
 
                 if (uiData == DONE)
                 {

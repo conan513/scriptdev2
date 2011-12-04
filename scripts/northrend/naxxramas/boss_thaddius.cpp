@@ -159,6 +159,9 @@ struct MANGOS_DLL_DECL boss_thaddiusAI : public Scripted_NoMovementAI
         if (pVictim->GetTypeId() != TYPEID_PLAYER)
             return;
 
+		if (pVictim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+			m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
+
         DoScriptText(SAY_SLAY, m_creature);
     }
 
@@ -491,6 +494,13 @@ struct MANGOS_DLL_DECL boss_thaddiusAddsAI : public ScriptedAI
         }
     }
 
+	void KilledUnit(Unit* Victim)
+    {
+		if (m_pInstance)
+			if (Victim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+				m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
+	}
+
     void JustReachedHome()
     {
         if (!m_pInstance)
@@ -669,6 +679,9 @@ struct MANGOS_DLL_DECL boss_stalaggAI : public boss_thaddiusAddsAI
     {
         if (pVictim->GetTypeId() == TYPEID_PLAYER)
             DoScriptText(SAY_STAL_SLAY, m_creature);
+
+		if (pVictim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+			m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
     }
 
     void UpdateAddAI(const uint32 uiDiff)
@@ -721,6 +734,9 @@ struct MANGOS_DLL_DECL boss_feugenAI : public boss_thaddiusAddsAI
     {
         if (pVictim->GetTypeId() == TYPEID_PLAYER)
             DoScriptText(SAY_FEUG_SLAY, m_creature);
+
+		if (pVictim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+				m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
     }
 
     void UpdateAddAI(const uint32 uiDiff)

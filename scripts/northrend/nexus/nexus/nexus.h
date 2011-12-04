@@ -13,6 +13,9 @@ enum
     TYPE_ANOMALUS                  = 1,
     TYPE_ORMOROK                   = 2,
     TYPE_KERISTRASZA               = 3,
+    TYPE_ACHIEV_ANOMALUS           = 4,
+    TYPE_ACHIEV_TELESTRA           = 5,
+    TYPE_ACHIEV_KERISTRASZA        = 6,
 
     NPC_TELESTRA                   = 26731,
     NPC_ANOMALUS                   = 26763,
@@ -29,6 +32,10 @@ enum
     GO_CONTAINMENT_SPHERE_ORMOROK  = 188528,
 
     SPELL_FROZEN_PRISON             = 47854,
+
+    ACHIEV_CHAOS_THEORY             = 7316,
+    ACHIEV_DOUBLE_PERSONALITY       = 7577,
+    ACHIEV_INTENSE_COLD             = 7315,
 };
 
 class MANGOS_DLL_DECL instance_nexus : public ScriptedInstance
@@ -43,6 +50,7 @@ class MANGOS_DLL_DECL instance_nexus : public ScriptedInstance
 
         uint32 GetData(uint32 uiType);
         void SetData(uint32 uiType, uint32 uiData);
+        bool CheckAchievementCriteriaMeet(uint32 uiCriteriaId, Player const* pSource, Unit const* pTarget, uint32 uiMiscValue1 /* = 0*/);
 
         const char* Save() { return m_strInstData.c_str(); }
 
@@ -51,6 +59,10 @@ class MANGOS_DLL_DECL instance_nexus : public ScriptedInstance
     private:
         uint32 m_auiEncounter[MAX_ENCOUNTER];
         std::string m_strInstData;
+
+        bool m_bCriteriaChaosTheoryFailed;
+        bool m_bCriteriaIntenseColdFailed;
+        bool m_bCriteriaDoublePersonalityFailed;
 };
 
 #endif

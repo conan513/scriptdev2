@@ -16,8 +16,8 @@
 
 /* ScriptData
 SDName: boss_krick_and_ick
-SD%Complete: 0%
-SDComment: encounter need vehicle support; outro is missing; explosive barrage doesn't work fine; pursue doesn't work fine
+SD%Complete: 50%
+SDComment: encounter need vehicle support; outro is missing; explosive barrage doesn't work fine; pursue doesn't work fine; support event
 SDCategory: Pit of Saron
 EndScriptData */
 
@@ -73,12 +73,12 @@ struct MANGOS_DLL_DECL boss_ickAI : public ScriptedAI
 {
     boss_ickAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
-        m_pInstance = (instance_pit_of_saron*)pCreature->GetInstanceData();
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
-    instance_pit_of_saron* m_pInstance;
+    ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
 
     uint32 m_uiPoisonNovaTimer;
@@ -106,13 +106,16 @@ struct MANGOS_DLL_DECL boss_ickAI : public ScriptedAI
 
     void JustDied(Unit* pKiller)
     {
-        if (m_pInstance)
-            m_pInstance->SetData(TYPE_KRICK, DONE);
-
-        // ToDo - remove this when outro implemented
+		   // ToDo - remove this when outro implemented
         if(Creature* pKrick = m_pInstance->GetSingleCreatureFromStorage(NPC_KRICK))
-            pKrick->DealDamage(pKrick, pKrick->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-    }
+			pKrick->ForcedDespawn();
+
+		m_creature->SummonCreature(NPC_KRICK, 836.725769f, 119.852165f, 509.626923f, 3.229536f, TEMPSUMMON_TIMED_DESPAWN, 600000);
+		if (m_pInstance)
+            m_pInstance->SetData(TYPE_KRICK, SPECIAL);
+
+		m_pInstance->SetData(TYPE_EVENT, 5);
+	}
 
     void JustReachedHome()
     {
@@ -184,12 +187,12 @@ struct MANGOS_DLL_DECL boss_krickAI : public ScriptedAI
 {
     boss_krickAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
-        m_pInstance = (instance_pit_of_saron*)pCreature->GetInstanceData();
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
-    instance_pit_of_saron* m_pInstance;
+    ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
 
     uint32 m_uiToxicWasteTimer;

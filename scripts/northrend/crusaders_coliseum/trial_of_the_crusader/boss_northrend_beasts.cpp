@@ -84,6 +84,8 @@ SPELL_SLIME_POOL_2     = 66882,
 SPELL_SLIME_POOL_VISUAL  = 63084,
 };
 
+uint8 SnoboldAchiev;
+
 struct MANGOS_DLL_DECL boss_gormokAI : public BSWScriptedAI
 {
     boss_gormokAI(Creature* pCreature) : BSWScriptedAI(pCreature)
@@ -102,6 +104,7 @@ struct MANGOS_DLL_DECL boss_gormokAI : public BSWScriptedAI
         m_creature->SetRespawnDelay(7*DAY);
         m_creature->SetInCombatWithZone();
         SnoboldsCount = 4;
+		SnoboldAchiev = 0;
     }
 
     void JustDied(Unit* pKiller)
@@ -135,6 +138,7 @@ struct MANGOS_DLL_DECL boss_gormokAI : public BSWScriptedAI
                         doCast(SUMMON_SNOBOLD);
                         DoScriptText(-1713601,m_creature);
                         --SnoboldsCount;
+						++SnoboldAchiev;
                         };
 
         DoMeleeAttackIfReady();
@@ -186,6 +190,8 @@ struct MANGOS_DLL_DECL mob_snobold_vassalAI : public BSWScriptedAI
     if (defaultTarget && defaultTarget->isAlive()) doRemove(SPELL_SNOBOLLED, defaultTarget);
 //      if (pBoss && pBoss->isAlive()) doRemove(SPELL_RISING_ANGER,pBoss);
 //      This string - not offlike, in off this buff not removed! especially for small servers.
+	if (m_pInstance)
+		--SnoboldAchiev;
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -238,8 +244,8 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public BSWScriptedAI
         if (!m_pInstance) return;
             if (Creature* pSister = m_pInstance->GetSingleCreatureFromStorage(NPC_DREADSCALE))
                if (!pSister->isAlive())
-                         m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_DONE);
-                else m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_SPECIAL);
+				   m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_DONE);
+			   else m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_SPECIAL);
     }
 
     void JustReachedHome()
@@ -339,7 +345,7 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public BSWScriptedAI
     void Reset()
     {
         stage = 0;
-        enraged = false;
+		enraged = false;
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(7*DAY);
     }
@@ -349,8 +355,9 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public BSWScriptedAI
         if (!m_pInstance) return;
             if (Creature* pSister = m_pInstance->GetSingleCreatureFromStorage(NPC_ACIDMAW))
                if (!pSister->isAlive())
-                         m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_DONE);
-                else m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_SPECIAL);
+				   m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_DONE);
+			   else
+				   m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_SPECIAL);
     }
 
     void JustReachedHome()
@@ -513,6 +520,22 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public BSWScriptedAI
     {
         if (!m_pInstance) return;
             m_pInstance->SetData(TYPE_NORTHREND_BEASTS, ICEHOWL_DONE);
+
+		switch (currentDifficulty)
+		{
+		case RAID_DIFFICULTY_10MAN_NORMAL:
+		case RAID_DIFFICULTY_10MAN_HEROIC:
+			if (SnoboldAchiev >= 2)
+				m_pInstance->DoCompleteAchievement(3797);
+			break;
+		case RAID_DIFFICULTY_25MAN_NORMAL:
+		case RAID_DIFFICULTY_25MAN_HEROIC:
+			if (SnoboldAchiev >= 4)
+				m_pInstance->DoCompleteAchievement(3813);
+			break;
+		default:
+			break;
+		}
     }
 
     void MovementInform(uint32 type, uint32 id)
