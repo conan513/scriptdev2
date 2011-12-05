@@ -274,26 +274,17 @@ bool npc_escortAI::MoveToNextWaypoint()
     {
         debug_log("SD2: EscortAI reached end of waypoints");
 
-        if (m_bCanReturnToStart)
-        {
-            float fRetX, fRetY, fRetZ;
-            m_creature->GetRespawnCoord(fRetX, fRetY, fRetZ);
+		float fRetX, fRetY, fRetZ;
+		m_creature->GetRespawnCoord(fRetX, fRetY, fRetZ);
 
-            m_creature->GetMotionMaster()->MovePoint(POINT_HOME, fRetX, fRetY, fRetZ);
+		if (m_bCanReturnToStart)
+		{
+		    m_creature->GetMotionMaster()->MovePoint(POINT_HOME, fRetX, fRetY, fRetZ);
+   		    m_uiWPWaitTimer = 1000;
 
-            m_uiWPWaitTimer = 0;
-
-            debug_log("SD2: EscortAI are returning home to spawn location: %u, %f, %f, %f", POINT_HOME, fRetX, fRetY, fRetZ);
-            return true;
-        }
-
-        if (m_bCanInstantRespawn)
-        {
-            m_creature->SetDeathState(JUST_DIED);
-            m_creature->Respawn();
-        }
-        else
-            m_creature->ForcedDespawn();
+			debug_log("SD2: EscortAI are returning home to spawn location: %u, %f, %f, %f", POINT_HOME, fRetX, fRetY, fRetZ);
+			return true;
+		}
 
         return false;
     }
@@ -331,18 +322,24 @@ void npc_escortAI::UpdateAI(const uint32 uiDiff)
             {
                 debug_log("SD2: EscortAI failed because player/group was to far away or not found");
 
-                if (m_bCanInstantRespawn)
-                {
-                    m_creature->SetDeathState(JUST_DIED);
-                    m_creature->Respawn();
-                }
-                else
-                    m_creature->ForcedDespawn();
+				float fRetX, fRetY, fRetZ;
+				m_creature->GetRespawnCoord(fRetX, fRetY, fRetZ);
+
+				if (m_bCanReturnToStart)
+		       {
+		            m_creature->GetMotionMaster()->MovePoint(POINT_HOME, fRetX, fRetY, fRetZ);
+				    m_uiWPWaitTimer = 1000;
+					CurrentWP = WaypointList.end();
+
+					debug_log("SD2: EscortAI are returning home to spawn location: %u, %f, %f, %f", POINT_HOME, fRetX, fRetY, fRetZ);
+					
+					return;
+				}
 
                 return;
             }
 
-            m_uiPlayerCheckTimer = 1000;
+            m_uiPlayerCheckTimer = 0;
         }
         else
             m_uiPlayerCheckTimer -= uiDiff;
@@ -377,6 +374,19 @@ void npc_escortAI::MovementInform(uint32 uiMoveType, uint32 uiPointId)
     {
         debug_log("SD2: EscortAI has returned to original home location and will continue from beginning of waypoint list.");
 
+		if (m_bCanInstantRespawn)
+		{
+            m_creature->SetDeathState(JUST_DIED);
+			m_creature->Respawn();
+        }
+        else
+		{
+			m_creature->ForcedDespawn();
+			m_creature->RemoveCorpse();
+		}
+		m_creature->SetVisibility(VISIBILITY_ON);
+		
+		m_uiEscortState=STATE_ESCORT_NONE;
         CurrentWP = WaypointList.begin();
         m_uiWPWaitTimer = 0;
     }
