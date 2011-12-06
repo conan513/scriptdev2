@@ -64,8 +64,8 @@ struct SpawnLocation
 
 static const SpawnLocation aNefarianLocs[5] =
 {
-    {-7599.32f, -1191.72f, 475.545f},                       // opening where red/blue/black darknid spawner appear (ori 3.05433)
-    {-7526.27f, -1135.04f, 473.445f},                       // same as above, closest to door (ori 5.75959)
+    {-7585.59f, -1211.45f, 476.8f},                       // opening where red/blue/black darknid spawner appear (ori 3.05433)
+    {-7512.36f, -1158.47f, 476.79f},                       // same as above, closest to door (ori 5.75959)
     {-7498.177f, -1273.277f, 481.649f},                     // nefarian spawn location (ori 1.798)
     {-7592.0f, -1264.0f, 481.0f},                           // hide pos (useless; remove this)
     {-7502.002f, -1256.503f, 476.758f},                     // nefarian fly to this position
@@ -229,7 +229,7 @@ struct MANGOS_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
 
                 // 1 in 3 chance it will be a chromatic
                 uiCreatureId = urand(0, 2) ? m_uiDrakeTypeTwo : NPC_CHROMATIC_DRAKANOID;
-                m_creature->SummonCreature(uiCreatureId, aNefarianLocs[1].m_fX, aNefarianLocs[1].m_fY, aNefarianLocs[1].m_fZ, 5.000, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30*MINUTE*IN_MILLISECONDS);
+                m_creature->SummonCreature(uiCreatureId, aNefarianLocs[1].m_fX, aNefarianLocs[1].m_fY, aNefarianLocs[1].m_fZ, 5.000f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30*MINUTE*IN_MILLISECONDS);
 
                 //Begin phase 2 by spawning Nefarian
                 if (m_uiSpawnedAdds >= MAX_DRAKE_SUMMONS)
