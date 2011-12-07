@@ -175,6 +175,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfang_eventAI : public BSWScriptedAI
         m_uiEventStep = 0;
         m_uiNextEventTimer = 0;
         n = 8;
+		m_uiMarkCastCount = 0;		
 
         m_bIsAlliance = true;
 
@@ -195,6 +196,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfang_eventAI : public BSWScriptedAI
     uint32 m_uiNextEventTimer;
     uint32 m_uiEventStep;
     int8 n;
+	uint32 m_uiMarkCastCount; // For achievement I've Gone and Made a Mess (4613 and 4537)
 
     bool m_bIsAlliance;
     bool m_bIs25Man;
@@ -252,6 +254,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfang_eventAI : public BSWScriptedAI
 
         m_uiEventStep = 0;
         m_uiNextEventTimer = 0;
+		m_uiMarkCastCount = 0;
         n = 8;
         m_guidNpc.Clear();
         m_guidVarian.Clear();
@@ -381,6 +384,8 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfang_eventAI : public BSWScriptedAI
         DoCastSpellIfCan(m_creature, SPELL_REMOVE_MARKS, CAST_TRIGGERED);
         DoRemoveFromAll(SPELL_MARK_OF_FALLEN_CHAMPION_DEBUFF);
         DoRemoveFromAll(SPELL_MARK_OF_FALLEN_CHAMPION);
+
+
     }
 
     void NextStep(uint32 uiTime = 1000)
@@ -1415,22 +1420,31 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public boss_deathbringer_s
             DoScriptText(SAY_SLAY_1 - urand(0,1), m_creature, pVictim);
         }
     }
-
+/* using DamageDeal also increase Blood Power from basic attack
     void DamageDeal(Unit* pDoneTo, uint32& uiDamage)
     {
         if (pDoneTo == m_creature->getVictim())
         {
             if (pDoneTo->HasAura(SPELL_RUNE_OF_BLOOD_DEBUFF))
-                m_creature->SetPower(m_powerBloodPower, m_creature->GetPower(m_powerBloodPower) + 1);
-        }
+                m_creature->SetPower(m_powerBloodPower, m_creature->GetPower(m_powerBloodPower) - 1);
+
+		}
     }
+*/
 
     void SpellHitTarget(Unit* pTarget, const SpellEntry* pSpell)
     {
-        if (pSpell->Id == SPELL_MARK_OF_FALLEN_CHAMPION_DEBUFF)
-                m_creature->SetPower(m_powerBloodPower, m_creature->GetPower(m_powerBloodPower) + 1);
+        //if (pSpell->Id == SPELL_MARK_OF_FALLEN_CHAMPION_DEBUFF)
+        //        m_creature->SetPower(m_powerBloodPower, m_creature->GetPower(m_powerBloodPower) + 1);
         if (pSpell->Id == SPELL_MARK_OF_FALLEN_CHAMPION)
                 m_creature->SetPower(m_powerBloodPower, m_creature->GetPower(m_powerBloodPower) + 1);
+		if (pSpell->Id == SPELL_BLOOD_NOVA_10 || pSpell->Id == SPELL_BLOOD_NOVA_25)
+                m_creature->SetPower(m_powerBloodPower, m_creature->GetPower(m_powerBloodPower) + 1);
+		if (pSpell->Id == SPELL_BOILING_BLOOD_10 || pSpell->Id == SPELL_BOILING_BLOOD_25)
+                m_creature->SetPower(m_powerBloodPower, m_creature->GetPower(m_powerBloodPower) + 1);
+		// Rune of Blood do not need check.
+		//if (pTarget->HasAura(SPELL_RUNE_OF_BLOOD_DEBUFF))
+        //        m_creature->SetPower(m_powerBloodPower, m_creature->GetPower(m_powerBloodPower) + 1);
     }
 
     void JustSummoned(Creature *pSummoned)
@@ -1506,6 +1520,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public boss_deathbringer_s
                     int32 power = m_creature->GetPower(m_powerBloodPower);
                     m_creature->CastCustomSpell(m_creature, 72371, &power, &power, NULL, true);
                     DoScriptText(SAY_FALLENCHAMPION, m_creature);
+					m_uiMarkCastCount++;
                 }
             }
         }
@@ -1545,16 +1560,16 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public boss_deathbringer_s
         // Boiling Blood
         if (m_uiBoilingBloodTimer <= uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature, m_bIs25Man ? SPELL_BLOOD_NOVA_25 : SPELL_BLOOD_NOVA_10) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature, m_bIs25Man ? SPELL_BOILING_BLOOD_25 : SPELL_BOILING_BLOOD_10) == CAST_OK)
                 m_uiBoilingBloodTimer = urand(10000, 35000);
         }
         else
             m_uiBoilingBloodTimer -= uiDiff;
 
-        // Boiling Blood
+        // Blood Nova
         if (m_uiBloodNovaTimer <= uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature, m_bIs25Man ? SPELL_BOILING_BLOOD_25 : SPELL_BOILING_BLOOD_10) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature, m_bIs25Man ? SPELL_BLOOD_NOVA_25 : SPELL_BLOOD_NOVA_10) == CAST_OK)
                 m_uiBloodNovaTimer = urand(16000, 35000);
         }
         else
@@ -1563,14 +1578,14 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public boss_deathbringer_s
 		// Call Blood Beasts
         if (m_uiBloodBeastsTimer <= uiDiff)
         {
-			for (uint8 i = 0; i <= 2; ++i)
+			for (uint8 i = 0; i < 2; ++i)
 				if (Creature* pTemp = m_creature->SummonCreature(38508, m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ(), m_creature->GetOrientation(), TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 90000))
 					if (Unit* pTarget = pTemp->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))					
 						pTemp->AI()->AttackStart(pTarget);
 
             if (m_bIs25Man)
             {
-				for (uint8 i = 0; i <= 3; ++i)
+				for (uint8 i = 0; i < 3; ++i)
 					if (Creature* pTemp = m_creature->SummonCreature(38508, m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ(), m_creature->GetOrientation(), TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 90000))
 						if (Unit* pTarget = pTemp->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))					
 							pTemp->AI()->AttackStart(pTarget);
