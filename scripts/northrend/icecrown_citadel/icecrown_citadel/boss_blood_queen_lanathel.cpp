@@ -96,6 +96,8 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public base_icc_bossAI
         Reset();
     }
 
+    ObjectGuid HasPlayerItem;
+
     uint32 m_uiPhase;
 
     uint32 m_uiBloodMirrorTimer;
@@ -117,6 +119,7 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public base_icc_bossAI
     void Reset()
     {
         m_uiPhase               = PHASE_GROUND;
+        HasPlayerItem.Clear();
 
         m_bHasBitten            = false; // for Vampiric Bite
         m_bQuestCheck           = true;
@@ -201,9 +204,9 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public base_icc_bossAI
 
              for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                  if (Player* pPlayer = i->getSource())
-                     if (pPlayer->isAlive() && pPlayer->GetQuestStatus(24874) == QUEST_STATUS_INCOMPLETE && (currentDifficulty == RAID_DIFFICULTY_10MAN_NORMAL || currentDifficulty == RAID_DIFFICULTY_10MAN_HEROIC))
+                     if (pPlayer->isAlive() && pPlayer->GetQuestStatus(24874) == QUEST_STATUS_INCOMPLETE && (m_uiMapDifficulty == RAID_DIFFICULTY_10MAN_NORMAL || m_uiMapDifficulty == RAID_DIFFICULTY_10MAN_HEROIC))
                          pPlayer->KilledMonsterCredit(38558);
-                     else if (pPlayer->isAlive() && pPlayer->GetQuestStatus(24879) == QUEST_STATUS_INCOMPLETE && (currentDifficulty == RAID_DIFFICULTY_25MAN_NORMAL || currentDifficulty == RAID_DIFFICULTY_25MAN_HEROIC))
+                     else if (pPlayer->isAlive() && pPlayer->GetQuestStatus(24879) == QUEST_STATUS_INCOMPLETE && (m_uiMapDifficulty == RAID_DIFFICULTY_25MAN_NORMAL || m_uiMapDifficulty == RAID_DIFFICULTY_25MAN_HEROIC))
                          pPlayer->KilledMonsterCredit(39123);
         } else {
             if (Creature* pCreature = GetClosestCreatureWithEntry(m_creature, 38558, 60.0f))
@@ -231,7 +234,7 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public base_icc_bossAI
                     m_creature->SetLevitate(true);
                     m_creature->SetByteFlag(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_UNK_2);
 
-                    m_creature->GetMotionMaster()->MovePoint(POINT_CENTER_AIR, QueenLocs[1].x, QueenLocs[1].y, QueenLocs[1].z, false);
+                    m_creature->GetMotionMaster()->MovePoint(POINT_CENTER_AIR, QueenLocs[1].x, QueenLocs[1].y, QueenLocs[1].z);
                 }
             }
             else
