@@ -88,7 +88,7 @@ enum BossSpells
 
     // Blistering Zombie
     SPELL_CORROSION                 = 70749,
-    SPELL_ACID_BURST                = 70744, // 750ms cast time. seems like it is cast always before dying
+    SPELL_ACID_BURST                = 70744, //also persists in event_ai
 
     // Gluttonous Abomination
     SPELL_GUT_SPRAY                 = 71283,
@@ -345,9 +345,10 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
             }
 
             // check if encounter is completed
-            if (fHP > 95.0f)
+            if (fHP >= 95.0f)
             {
                 if (DoCastSpellIfCan(m_creature, SPELL_DREAMWALKER_RAGE) == CAST_OK)
+				//m_creature->CastSpell(m_creature,SPELL_DREAMWALKER_RAGE,false);
                 {
                     DoScriptText(SAY_VICTORY, m_creature);
                     m_creature->RemoveAllAuras();
@@ -562,11 +563,33 @@ struct MANGOS_DLL_DECL mob_gluttonous_abominationAI : public ScriptedAI
 
     uint32 m_uiGutSprayTimer;
     bool m_bIsRotWormsCast;
+    bool m_bIsDead;
+    uint32 m_uiTimeBeforeRotWormsSpawn;
 
     void Reset()
     {
         m_uiGutSprayTimer = urand(3000, 5000);
         m_bIsRotWormsCast = false;
+		m_bIsDead = false;
+		m_uiTimeBeforeRotWormsSpawn = 3000;
+    }
+
+	void DamageTaken(Unit *pDealer, uint32 &uiDamage)
+    {
+        if (uiDamage > m_creature->GetHealth())
+        {
+            uiDamage = 0;
+            m_creature->GetMotionMaster()->MovementExpired(false);
+            m_creature->GetMotionMaster()->MoveIdle();
+            SetCombatMovement(false);
+            m_creature->RemoveAllAuras();
+            m_creature->CombatStop(true);
+            m_creature->SetStandState(UNIT_STAND_STATE_DEAD);
+            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
+            m_bIsRotWormsCast=true;
+            m_bIsDead=true;
+        }
     }
 
     void JustSummoned(Creature *pCreature)
@@ -579,17 +602,6 @@ struct MANGOS_DLL_DECL mob_gluttonous_abominationAI : public ScriptedAI
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
-
-        // Rot Worms
-        if (!m_bIsRotWormsCast)
-        {
-            if (m_creature->GetHealthPercent() <= 30.0f)
-            {
-                if (DoCastSpellIfCan(m_creature, SPELL_ROT_WORM_SPAWNER, CAST_TRIGGERED) == CAST_OK)
-                    m_bIsRotWormsCast = true;
-            }
-        }
-
         // Gut Spray
         if (m_uiGutSprayTimer <= uiDiff)
         {
@@ -598,8 +610,20 @@ struct MANGOS_DLL_DECL mob_gluttonous_abominationAI : public ScriptedAI
         }
         else
             m_uiGutSprayTimer -= uiDiff;
-
-        DoMeleeAttackIfReady();
+        if (m_bIsRotWormsCast == true)
+        {
+            if (m_uiTimeBeforeRotWormsSpawn<= uiDiff)
+            {
+                //if (DoCastSpellIfCan(m_creature, SPELL_ROT_WORM_SPAWNER, CAST_TRIGGERED) == CAST_OK)  //Doesn't work
+                m_creature->CastSpell(m_creature,SPELL_ROT_WORM_SPAWNER,true);
+                m_creature->ForcedDespawn(6000);
+                m_bIsRotWormsCast=false;
+            }
+            else
+                m_uiTimeBeforeRotWormsSpawn-=uiDiff;
+        }
+        if (!m_bIsDead)
+            DoMeleeAttackIfReady();
     }
 };
 
@@ -625,8 +649,13 @@ struct MANGOS_DLL_DECL mob_blistering_zombieAI : public ScriptedAI
         {
             uiDamage = 0;
             SetCombatMovement(false);
+            m_creature->RemoveAllAuras();
+            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
+            m_creature->SetStandState(UNIT_STAND_STATE_DEAD);
+            m_creature->SetHealth(m_creature->GetMaxHealth());
             if (DoCastSpellIfCan(m_creature, SPELL_ACID_BURST) == CAST_OK)
-                m_creature->ForcedDespawn(2000);
+                m_creature->ForcedDespawn(1200);
         }
     }
 
