@@ -139,6 +139,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
     boss_valithria_dreamwalkerAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        pInstance = (instance_icecrown_spire*)pCreature->GetInstanceData();
         m_uiMapDifficulty = pCreature->GetMap()->GetDifficulty();
         m_bIsHeroic = m_uiMapDifficulty > RAID_DIFFICULTY_25MAN_NORMAL;
         m_bIs25Man = (m_uiMapDifficulty == RAID_DIFFICULTY_25MAN_NORMAL || m_uiMapDifficulty == RAID_DIFFICULTY_25MAN_HEROIC);
@@ -150,6 +151,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
     }
 
     ScriptedInstance *m_pInstance;
+    instance_icecrown_spire * pInstance;
     Difficulty m_uiMapDifficulty;
     bool m_bIsHeroic;
     bool m_bIs25Man;
@@ -199,6 +201,26 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
         m_creature->SetHealth(m_creature->GetMaxHealth() / 2.0f);
         DoCastSpellIfCan(m_creature, SPELL_CORRUPTION, CAST_TRIGGERED);
     }
+    uint32 GetDoor(uint8 doornum)
+    {
+        switch (doornum) {
+            case 1:
+               return GO_VALITHRIA_DOOR_1;
+               break;
+            case 2:
+               return GO_VALITHRIA_DOOR_2;
+               break;
+            case 3:
+               return GO_VALITHRIA_DOOR_3;
+               break;
+            case 4:
+               return GO_VALITHRIA_DOOR_4;
+               break;
+            default:
+               return 0;
+               break;
+        };
+    }
 
     void JustReachedHome()
     {
@@ -230,6 +252,15 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
                     pTmp->SetInCombatWithZone();
                     m_bCombatStarted = true;
                 }
+                //Doors Openning
+                pInstance->DoOpenDoor(GO_VALITHRIA_DOOR_2);
+                pInstance->DoOpenDoor(GO_VALITHRIA_DOOR_4);
+                if(m_bIs25Man)
+                {
+                    pInstance->DoOpenDoor(GO_VALITHRIA_DOOR_3);
+                    pInstance->DoOpenDoor(GO_VALITHRIA_DOOR_1);
+                }
+
             }
         }
     }
@@ -237,6 +268,10 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
     void EnterEvadeMode()
     {
         m_bCombatStarted = false;
+        pInstance->DoCloseDoor(GO_VALITHRIA_DOOR_1);
+        pInstance->DoCloseDoor(GO_VALITHRIA_DOOR_2);
+        pInstance->DoCloseDoor(GO_VALITHRIA_DOOR_3);
+        pInstance->DoCloseDoor(GO_VALITHRIA_DOOR_4);
         ScriptedAI::EnterEvadeMode();
     }
 
@@ -312,6 +347,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
 
                 m_uiOutroTimer = 30000;
                 m_creature->ForcedDespawn(1000);
+
             }
             else
                 m_uiOutroTimer -= uiDiff;
