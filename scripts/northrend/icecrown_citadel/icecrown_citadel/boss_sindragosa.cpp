@@ -658,7 +658,7 @@ struct MANGOS_DLL_DECL mob_rimefangAI : public BSWScriptedAI
     void JustDied(Unit *killer)
     {
         if(!pInstance) return;
-        if (pInstance->GetData(TYPE_SINDRAGOSA) == DONE)
+        if (pInstance->GetData(TYPE_SINDRAGOSA) == DONE || pInstance->GetData(TYPE_SINDRAGOSA) == IN_PROGRESS)
             return;
         if (pBrother && !pBrother->isAlive())
         if (pBrother && !pBrother->isAlive())
@@ -750,7 +750,7 @@ struct MANGOS_DLL_DECL mob_spinestalkerAI : public BSWScriptedAI
     {
         if (!pInstance)
             return;
-        if (pInstance->GetData(TYPE_SINDRAGOSA) == DONE)
+        if (pInstance->GetData(TYPE_SINDRAGOSA) == DONE || pInstance->GetData(TYPE_SINDRAGOSA) == IN_PROGRESS)
             return;
         if (pBrother && !pBrother->isAlive())
         {
