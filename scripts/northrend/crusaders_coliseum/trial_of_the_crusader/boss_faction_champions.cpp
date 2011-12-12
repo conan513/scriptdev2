@@ -2271,7 +2271,7 @@ CreatureAI* GetAI_mob_toc_pet_hunter(Creature *pCreature) {
 
 void AddSC_boss_faction_champions()
 {
-    Script *newscript;
+    Script *pNewScript;
 
     pNewScript = new Script;
     pNewScript->Name = "mob_toc_druid";
