@@ -919,6 +919,9 @@ struct MANGOS_DLL_DECL mob_kinetic_bombAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
+        if (m_pInstance->GetData(TYPE_BLOOD_COUNCIL) == FAIL || m_pInstance->GetData(TYPE_BLOOD_COUNCIL) == NOT_STARTED)
+            m_creature->ForcedDespawn();
+
         if (!m_bIsStarted)
         {
             if (m_uiStartTimer <= uiDiff)
