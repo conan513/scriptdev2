@@ -125,6 +125,7 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathel_introAI : public ScriptedAI
         m_bEventEnded = false;
         m_uiEventPhase = 0;
         m_uiEventTimer = 0;
+        m_creature->SetVisibility(VISIBILITY_ON);
     }
 
     void AttackStart(Unit *who){}
@@ -338,6 +339,10 @@ struct MANGOS_DLL_DECL base_blood_prince_council_bossAI : public base_icc_bossAI
         m_uiSphereTimer = urand(5000, 15000);
         m_uiBerserkTimer = 10 * MINUTE * IN_MILLISECONDS;
         m_creature->SetHealth(1);
+        m_pInstance->SetData(TYPE_BLOOD_COUNCIL, NOT_STARTED);
+
+        if (Creature* Lanathel = m_pInstance->GetSingleCreatureFromStorage(NPC_LANATHEL_INTRO))
+            Lanathel->AI()->EnterEvadeMode();
     }
 
     void Aggro(Unit *pWho)
