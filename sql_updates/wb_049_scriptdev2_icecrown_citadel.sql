@@ -10,4 +10,6 @@ REPLACE INTO script_texts (entry, content_default, content_loc8, sound, type, la
 (-1631144,'Forgive me for what I do! I... cannot... stop... ONLY NIGHTMARES REMAIN!','Простите меня, я не могу остано... ВСЕ ВО ВЛАСТИ КОШМАРА!',17072,1,0,0,'dreamwalker SAY_0_HEALTH'),
 (-1631145,'A tragic loss...','Прискобная потеря.',17066,1,0,0,'dreamwalker SAY_PLAYER_DIES'),
 (-1631146,'FAILURES!','Неудачники!',17067,1,0,0,'dreamwalker SAY_BERSERK'),
-(-1631147,'I am renewed! Ysera grants me the favor to lay these foul creatures to rest!','Я излечилась! Изера, даруй мне силу покончить с этими нечестивыми тварями!',17071,1,0,0,'dreamwalker SAY_VICTORY');
+(-1631147,'I am renewed! Ysera grants me the favor to lay these foul creatures to rest!','Я излечилась! Изера, даруй мне силу покончить с этими нечестивыми тварями!',17071,1,0,0,'dreamwalker SAY_VICTORY'),
+(-1631115,'Naxxanar was merely a setback! With the power of the orb, Valanar will have his vengeance!','Наксанар был досадным недоразумением! Сила Сферы позволит Валанару свершить отмщение!',16685,1,0,0,'valanar SAY_VALANAR_INVOCATION'),
+(-1631116,'My cup runneth over.','Моя чаша полна.',16686,1,0,0,'valanar SAY_VALANAR_SPECIAL');
