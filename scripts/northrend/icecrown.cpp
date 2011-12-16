@@ -211,7 +211,7 @@ enum
 
 enum
 {
-	SAY_AGGRO =				-1800000,
+        SAY_AGGRO =		-1800000,
 	SAY_QUEST_COMPLETE =	-1800001,
 };
 
@@ -219,74 +219,50 @@ struct MANGOS_DLL_DECL npc_argent_championAI : public ScriptedAI
 {
     npc_argent_championAI(Creature* pCreature) : ScriptedAI(pCreature) { Reset(); }
 
-	ObjectGuid pTargetGuid;
-	ObjectGuid m_playerGuid;
+    void Reset() {}
 
-	void Reset() 
-	{
-		pTargetGuid.Clear();
-		m_playerGuid.Clear();
-	}
+    void JustDied(Unit* pKiller) {}
 
-	void JustDied(Unit* pKiller)
+    void KilledUnit(Unit* pVictim)
     {
-		if (Player* pPlayer = m_creature->GetMap()->GetPlayer(m_playerGuid))
-		{
-			pPlayer->KilledMonsterCredit(38595);
-			pPlayer->KilledMonsterCredit(33708);
-			pPlayer->CompleteQuest(13680);
-			pPlayer->CompleteQuest(13679);
-			m_creature->ForcedDespawn(7000);
-			DoScriptText(SAY_QUEST_COMPLETE, m_creature);
-		}
+        m_creature->ForcedDespawn();
     }
 
-	void KilledUnit(Unit* pVictim)
+    void Aggro(Unit* pWho)
     {
-		if (pVictim->GetObjectGuid() == m_playerGuid)
-			m_creature->ForcedDespawn();
+        DoScriptText(SAY_AGGRO, m_creature);
     }
 
-	void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
+    void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
         if (uiDamage > m_creature->GetHealth())
         {
             uiDamage = 1;
 
-			if (Player* pPlayer = m_creature->GetMap()->GetPlayer(m_playerGuid))
-			{
-				m_creature->CombatStop();
-				pPlayer->CombatStop();
-				m_creature->DeleteThreatList();
-				m_creature->setFaction(35);
-				m_creature->SetHealth(m_creature->GetMaxHealth());
-				pPlayer->KilledMonsterCredit(38595);
-				pPlayer->KilledMonsterCredit(33708);
-				pPlayer->CompleteQuest(13680);
-				pPlayer->CompleteQuest(13679);
-				DoScriptText(SAY_QUEST_COMPLETE, m_creature);
-				m_creature->ForcedDespawn(7000);
-			}
+            if (Unit* pPlayer = pDoneBy->GetCharmerOrOwnerPlayerOrPlayerItself())
+            {
+                if (pPlayer->GetTypeId() != TYPEID_PLAYER)
+                     return;
+                ((Player*)pPlayer)->KilledMonsterCredit(38595);
+                ((Player*)pPlayer)->KilledMonsterCredit(33708);
+                ((Player*)pPlayer)->CompleteQuest(13680);
+                ((Player*)pPlayer)->CompleteQuest(13679);
+                m_creature->setFaction(35);
+                m_creature->SetHealth(m_creature->GetMaxHealth());
+                DoScriptText(SAY_QUEST_COMPLETE, m_creature);
+                EnterEvadeMode();
+                m_creature->ForcedDespawn(4000);
+            }
         }
     }
 
-	void Aggro(Unit* pWho)
+    void UpdateAI(const uint32 uiDiff)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
-		if (pWho->GetTypeId() == TYPEID_PLAYER)
-		{
-			m_playerGuid = pWho->GetObjectGuid();
-			m_creature->AddThreat(pWho, 9000000);
-		}
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        DoMeleeAttackIfReady();
     }
-
-	void UpdateAI(const uint32 uiDiff)
-    {
-		if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
-			return;
-
-		DoMeleeAttackIfReady();
-	}
 };
 
 CreatureAI* GetAI_npc_argent_champion(Creature* pCreature)
@@ -327,14 +303,14 @@ bool GossipHello_npc_squire_danny(Player* pPlayer, Creature* pCreature)
 bool GossipSelect_npc_squire_danny(Player *pPlayer, Creature *pCreature, uint32 sender, uint32 action)
 {
 	if (action == GOSSIP_ACTION_INFO_DEF + 1)
-	{
-		if (Creature* pChampion = pCreature->SummonCreature(33707, 8533.11f, 1069.66f, 551.884f, 1.55575f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000))
         {
-			pChampion->GetMotionMaster()->Clear();
-			pChampion->GetMotionMaster()->MovePoint(0, 8544.034180f, 1091.534180f, 556.787598f);
-			pChampion->setFaction(22);
-		}
-	}
+            if (Creature* pChampion = pCreature->SummonCreature(33707, 8533.11f, 1069.66f, 551.884f, 1.55575f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 120000))
+            {
+                pChampion->GetMotionMaster()->Clear();
+                pChampion->GetMotionMaster()->MovePoint(0, 8544.034180f, 1091.534180f, 556.787598f);
+                pChampion->setFaction(22);
+            }
+        }
 	pPlayer->CLOSE_GOSSIP_MENU();
 	return true;
 }
@@ -347,51 +323,48 @@ struct MANGOS_DLL_DECL quest_the_grand_meleeAI : public ScriptedAI
 {
     quest_the_grand_meleeAI(Creature* pCreature) : ScriptedAI(pCreature) { Reset(); }
 
-	ObjectGuid m_playerGuid;
-
-	void Reset() 
-	{
-		m_playerGuid.Clear();
-		m_creature->setFaction(35);
-		m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-		m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-	}
-
-	void BeginSpeech(Player* pTarget)
+    void Reset()
     {
-		m_playerGuid = pTarget->GetObjectGuid();
-		m_creature->AI()->AttackStart(pTarget);
-		m_creature->AddThreat(pTarget, 10000);
+        m_creature->setFaction(35);
+        m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
-	void JustDied(Unit* pKiller)
+    void BeginSpeech(Player* pTarget)
     {
-		DoScriptText(-1800004, m_creature);
-		if (Player* pPlayer = m_creature->GetMap()->GetPlayer(m_playerGuid))
-			pPlayer->CastSpell(pPlayer, 62724, true);
+        m_creature->AI()->AttackStart(pTarget);
+        m_creature->AddThreat(pTarget, 999999);
     }
 
-	void UpdateAI(const uint32 uiDiff)
+    void Aggro(Unit* pWho)
     {
-		if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
-			return;
+        DoScriptText(SAY_AGGRO, m_creature);
+    }
 
-		if (m_creature->GetHealthPercent() <= 30.0f)
-		{
-			if (Player* pPlayer = m_creature->GetMap()->GetPlayer(m_playerGuid))
-			{
-				m_creature->setFaction(35);	
-				m_creature->CombatStop();
-				m_creature->AttackStop();
-				m_creature->DeleteThreatList();		
-				pPlayer->CastSpell(pPlayer, 62724, true);
-				DoScriptText(-1800004, m_creature);
-				m_creature->ForcedDespawn(7000);
-			}
-		}		
+    void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
+    {
+        if (uiDamage > m_creature->GetHealth())
+        {
+            uiDamage = 1;
 
-		DoMeleeAttackIfReady();
-	}
+            if (Unit* pPlayer = pDoneBy->GetCharmerOrOwnerPlayerOrPlayerItself())
+            {
+                m_creature->setFaction(35);
+                pPlayer->CastSpell(pPlayer, 62724, true);
+                DoScriptText(-1800004, m_creature);
+                m_creature->ForcedDespawn(7000);
+                EnterEvadeMode();
+            }
+        }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        DoMeleeAttackIfReady();
+    }
 };
 
 CreatureAI* GetAI_quest_the_grand_melee(Creature* pCreature)
@@ -401,8 +374,8 @@ CreatureAI* GetAI_quest_the_grand_melee(Creature* pCreature)
 
 bool GossipHello_quest_the_grand_melee(Player* pPlayer, Creature* pCreature)
 {
-	if (pPlayer->GetQuestStatus(13665) == QUEST_STATUS_INCOMPLETE ||
-		pPlayer->GetQuestStatus(13745) == QUEST_STATUS_INCOMPLETE ||
+        if (pPlayer->GetQuestStatus(13665) == QUEST_STATUS_INCOMPLETE ||
+                pPlayer->GetQuestStatus(13745) == QUEST_STATUS_INCOMPLETE ||
 		pPlayer->GetQuestStatus(13750) == QUEST_STATUS_INCOMPLETE ||
 		pPlayer->GetQuestStatus(13756) == QUEST_STATUS_INCOMPLETE ||
 		pPlayer->GetQuestStatus(13761) == QUEST_STATUS_INCOMPLETE ||
@@ -420,27 +393,26 @@ bool GossipHello_quest_the_grand_melee(Player* pPlayer, Creature* pCreature)
 bool GossipSelect_quest_the_grand_melee(Player *pPlayer, Creature *pCreature, uint32 sender, uint32 action)
 {
 	if (action == GOSSIP_ACTION_INFO_DEF + 1)
-	{
-		switch (urand(0,1))
-		{
-		case 0:
-			DoScriptText(-1800002, pCreature);
-			break;
-		case 1:
-			DoScriptText(-1800003, pCreature);
-			break;
-		default:
-			break;
-		}
-		if (quest_the_grand_meleeAI* pMeleeAI = dynamic_cast<quest_the_grand_meleeAI*>(pCreature->AI()))
-		{
-			pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-			pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-			pCreature->setFaction(22);
-			pMeleeAI->BeginSpeech(pPlayer);
-		}
+        {
+            switch (urand(0,1))
+            {
+            case 0:
+                DoScriptText(-1800002, pCreature);
+                break;
+            case 1:
+                DoScriptText(-1800003, pCreature);
+                break;
+            default:
+                break;
+            }
+            if (quest_the_grand_meleeAI* pMeleeAI = dynamic_cast<quest_the_grand_meleeAI*>(pCreature->AI()))
+            {
+                pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+                pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                pCreature->setFaction(22);
+                pMeleeAI->BeginSpeech(pPlayer);
+            }
 	}
-
 	pPlayer->CLOSE_GOSSIP_MENU();
 	return true;
 }
@@ -453,51 +425,49 @@ struct MANGOS_DLL_DECL quest_among_the_championsAI : public ScriptedAI
 {
     quest_among_the_championsAI(Creature* pCreature) : ScriptedAI(pCreature) { Reset(); }
 
-	ObjectGuid m_playerGuid;
-
-	void Reset() 
-	{
-		m_playerGuid.Clear();
-		m_creature->setFaction(35);
-		m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-		m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-	}
-
-	void BeginSpeech(Player* pTarget)
+    void Reset()
     {
-		m_playerGuid = pTarget->GetObjectGuid();
-		m_creature->AI()->AttackStart(pTarget);
-		m_creature->AddThreat(pTarget, 10000);
+        m_creature->setFaction(35);
+        m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
-	void JustDied(Unit* pKiller)
+    void BeginSpeech(Player* pTarget)
     {
-		DoScriptText(-1800004, m_creature);
-		if (Player* pPlayer = m_creature->GetMap()->GetPlayer(m_playerGuid))
-			pPlayer->CastSpell(pPlayer, 63596, true);
+        m_creature->AI()->AttackStart(pTarget);
+        m_creature->AddThreat(pTarget, 9999999);
     }
 
-	void UpdateAI(const uint32 uiDiff)
+    void Aggro(Unit* pWho)
     {
-		if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
-			return;
+        DoScriptText(SAY_AGGRO, m_creature);
+    }
 
-		if (m_creature->GetHealthPercent() <= 30.0f)
-		{
-			if (Player* pPlayer = m_creature->GetMap()->GetPlayer(m_playerGuid))
-			{
-				m_creature->setFaction(35);	
-				m_creature->CombatStop();
-				m_creature->AttackStop();
-				m_creature->DeleteThreatList();		
-				pPlayer->CastSpell(pPlayer, 63596, true);
-				DoScriptText(-1800004, m_creature);
-				m_creature->ForcedDespawn(7000);
-			}
-		}		
+    void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
+    {
+        if (uiDamage > m_creature->GetHealth())
+        {
+            uiDamage = 1;
 
-		DoMeleeAttackIfReady();
-	}
+            if (Unit* pPlayer = pDoneBy->GetCharmerOrOwnerPlayerOrPlayerItself())
+            {
+                m_creature->setFaction(35);
+                m_creature->AttackStop();
+                pPlayer->CastSpell(pPlayer, 63596, true);
+                DoScriptText(-1800004, m_creature);
+                EnterEvadeMode();
+                m_creature->ForcedDespawn(4000);
+            }
+        }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        DoMeleeAttackIfReady();
+    }
 };
 
 CreatureAI* GetAI_quest_among_the_champions(Creature* pCreature)
@@ -507,11 +477,11 @@ CreatureAI* GetAI_quest_among_the_champions(Creature* pCreature)
 
 bool GossipHello_quest_among_the_champions(Player* pPlayer, Creature* pCreature)
 {
-	if (pPlayer->GetQuestStatus(13790) == QUEST_STATUS_INCOMPLETE ||
-		pPlayer->GetQuestStatus(13793) == QUEST_STATUS_INCOMPLETE ||
-		pPlayer->GetQuestStatus(13811) == QUEST_STATUS_INCOMPLETE ||
-		pPlayer->GetQuestStatus(13814) == QUEST_STATUS_INCOMPLETE)
-		pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, -3700000, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    if (pPlayer->GetQuestStatus(13790) == QUEST_STATUS_INCOMPLETE ||
+            pPlayer->GetQuestStatus(13793) == QUEST_STATUS_INCOMPLETE ||
+            pPlayer->GetQuestStatus(13811) == QUEST_STATUS_INCOMPLETE ||
+            pPlayer->GetQuestStatus(13814) == QUEST_STATUS_INCOMPLETE)
+            pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, -3700000, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 		
 	pPlayer->SEND_GOSSIP_MENU(14384, pCreature->GetObjectGuid());	
 	return true;
@@ -519,30 +489,30 @@ bool GossipHello_quest_among_the_champions(Player* pPlayer, Creature* pCreature)
 
 bool GossipSelect_quest_among_the_champions(Player *pPlayer, Creature *pCreature, uint32 sender, uint32 action)
 {
-	if (action == GOSSIP_ACTION_INFO_DEF + 1)
-	{
-		switch (urand(0,1))
-		{
-		case 0:
-			DoScriptText(-1800002, pCreature);
-			break;
-		case 1:
-			DoScriptText(-1800003, pCreature);
-			break;
-		default:
-			break;
-		}
-		if (quest_among_the_championsAI* pAmongAI = dynamic_cast<quest_among_the_championsAI*>(pCreature->AI()))
-		{
-			pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-			pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-			pCreature->setFaction(22);
-			pAmongAI->BeginSpeech(pPlayer);
-		}
-	}
+    if (action == GOSSIP_ACTION_INFO_DEF + 1)
+    {
+        switch (urand(0,1))
+        {
+        case 0:
+            DoScriptText(-1800002, pCreature);
+            break;
+        case 1:
+            DoScriptText(-1800003, pCreature);
+            break;
+        default:
+            break;
+        }
+        if (quest_among_the_championsAI* pAmongAI = dynamic_cast<quest_among_the_championsAI*>(pCreature->AI()))
+        {
+            pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+            pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            pCreature->setFaction(22);
+            pAmongAI->BeginSpeech(pPlayer);
+        }
+    }
 
-	pPlayer->CLOSE_GOSSIP_MENU();
-	return true;
+    pPlayer->CLOSE_GOSSIP_MENU();
+    return true;
 }
 
 /*######
@@ -551,53 +521,47 @@ bool GossipSelect_quest_among_the_champions(Player *pPlayer, Creature *pCreature
 
 struct MANGOS_DLL_DECL quest_mastery_of_meleeAI : public ScriptedAI
 {
-	quest_mastery_of_meleeAI(Creature* pCreature) : ScriptedAI(pCreature) { Reset(); }
+    quest_mastery_of_meleeAI(Creature* pCreature) : ScriptedAI(pCreature) { Reset(); }
 
-	ObjectGuid m_playerGuid;
-	bool castspell;
+    ObjectGuid m_playerGuid;
+    bool castspell;
 
-	void Reset() 
-	{
-		castspell = false;
-		m_playerGuid.Clear();
-	}
-
-	void Aggro(Unit* pWho)
-	{
-		if (pWho->GetEntry() == 33845)
-		{
-			m_playerGuid = pWho->GetVehicleKit()->GetPassenger(0)->GetObjectGuid();
-			castspell = true;
-		}
-	}
-
-	void JustDied(Unit* pKiller)
+    void Reset()
     {
+        castspell = false;
+        m_playerGuid.Clear();
     }
 
-	void UpdateAI(const uint32 uiDiff)
+    void Aggro(Unit* pWho)
     {
-		if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
-			return;
+        DoScriptText(SAY_AGGRO, m_creature);
+    }
 
-		if (castspell)
-		{
-			if (Player* pPlayer = m_creature->GetMap()->GetPlayer(m_playerGuid))
-			{
-				if (pPlayer->GetQuestStatus(13828) == QUEST_STATUS_INCOMPLETE && m_creature->GetHealthPercent() <= 20.0f)
-				{
-					pPlayer->CastSpell(pPlayer, 62672, true);
-					m_creature->DeleteThreatList();
-					m_creature->CombatStop();
-					pPlayer->CombatStop();
-					castspell = false;
-					m_creature->SetHealth(m_creature->GetMaxHealth());
-					m_playerGuid.Clear();
-				}
-			}
-		}
-		DoMeleeAttackIfReady();
-	}
+    void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
+    {
+        if (uiDamage > m_creature->GetHealth())
+        {
+            uiDamage = 1;
+
+            if (Unit* pPlayer = pDoneBy->GetCharmerOrOwnerPlayerOrPlayerItself())
+            {
+                m_creature->SetHealth(m_creature->GetMaxHealth());
+                pPlayer->CastSpell(pPlayer, 62672, true);
+                pPlayer->CombatStop();
+                EnterEvadeMode();
+            }
+        }
+    }
+
+    void JustDied(Unit* pKiller) {}
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        DoMeleeAttackIfReady();
+    }
 };
 
 CreatureAI* GetAI_quest_mastery_of_melee(Creature* pCreature)
@@ -791,34 +755,34 @@ void AddSC_icecrown()
     pNewScript->GetAI = &GetAI_npc_scourge_conventor;
     pNewScript->RegisterSelf();
 	
-	pNewScript = new Script;
+    pNewScript = new Script;
     pNewScript->Name = "npc_argent_champion";
     pNewScript->GetAI = &GetAI_npc_argent_champion;
     pNewScript->RegisterSelf();
 
-	pNewScript = new Script;
+    pNewScript = new Script;
     pNewScript->Name="npc_squire_danny";
     pNewScript->pGossipHello =  &GossipHello_npc_squire_danny;
     pNewScript->pGossipSelect = &GossipSelect_npc_squire_danny;
     pNewScript->RegisterSelf();
 
-	pNewScript = new Script;
+    pNewScript = new Script;
     pNewScript->Name="quest_the_grand_melee";
-	pNewScript->GetAI = &GetAI_quest_the_grand_melee;
+    pNewScript->GetAI = &GetAI_quest_the_grand_melee;
     pNewScript->pGossipHello =  &GossipHello_quest_the_grand_melee;
     pNewScript->pGossipSelect = &GossipSelect_quest_the_grand_melee;
     pNewScript->RegisterSelf();
 
-	pNewScript = new Script;
+    pNewScript = new Script;
     pNewScript->Name="quest_among_the_champions";
-	pNewScript->GetAI = &GetAI_quest_among_the_champions;
+    pNewScript->GetAI = &GetAI_quest_among_the_champions;
     pNewScript->pGossipHello =  &GossipHello_quest_among_the_champions;
     pNewScript->pGossipSelect = &GossipSelect_quest_among_the_champions;
     pNewScript->RegisterSelf();
 
-	pNewScript = new Script;
+    pNewScript = new Script;
     pNewScript->Name="quest_mastery_of_melee";
-	pNewScript->GetAI = &GetAI_quest_mastery_of_melee;
+    pNewScript->GetAI = &GetAI_quest_mastery_of_melee;
     pNewScript->RegisterSelf();
 
     pNewScript = new Script;
