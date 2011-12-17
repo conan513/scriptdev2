@@ -1155,39 +1155,41 @@ void SendDefaultMenu_guildhouse(Player *pPlayer, Creature *_Creature, uint32 act
     uint32 map;
 
     resultSql = SD2Database.PQuery("SELECT `x`, `y`, `z`, `map` FROM `guildhouse` WHERE `id` = '1'");
-	if (resultSql)
-	{
-		Field *fields = resultSql->Fetch();
-		x = fields[0].GetFloat();
-		y = fields[1].GetFloat();
-		z = fields[2].GetFloat();
-		map = fields[3].GetUInt32();
-		delete resultSql;
-	}
-
-	switch(action)
+    if (resultSql)
     {
-	case 1:
-		//teleport player in guildhouse
-		pPlayer->CLOSE_GOSSIP_MENU();
-		pPlayer->TeleportTo(map, x, y, z, 0.0f);
-		break;
-	case 2:
-		if (pPlayer->GetMoney() >= 100000)
-		{
-			pPlayer->CLOSE_GOSSIP_MENU();
-			if (Item* pItem = pPlayer->StoreNewItemInInventorySlot(22520, 1))
-				pPlayer->SendNewItem(pItem, 1, true, false);
-			pPlayer->ModifyMoney(-100000);
-		} else {
-			pPlayer->CLOSE_GOSSIP_MENU();
-			_Creature->MonsterWhisper(WHISPER_NO_GOLD, pPlayer, false);
-		}
-		break;
-	case 3:
-		pPlayer->CLOSE_GOSSIP_MENU();
-		break;
-	}
+        Field *fields = resultSql->Fetch();
+        x = fields[0].GetFloat();
+        y = fields[1].GetFloat();
+        z = fields[2].GetFloat();
+        map = fields[3].GetUInt32();
+        delete resultSql;
+    }
+
+    switch(action)
+    {
+    case 1:
+        //teleport player in guildhouse
+        pPlayer->CLOSE_GOSSIP_MENU();
+        pPlayer->TeleportTo(map, x, y, z, 0.0f);
+        break;
+    case 2:
+        if (pPlayer->GetMoney() >= 100000)
+        {
+            pPlayer->CLOSE_GOSSIP_MENU();
+            if (Item* pItem = pPlayer->StoreNewItemInInventorySlot(22520, 1))
+            {
+                pPlayer->SendNewItem(pItem, 1, true, false);
+                pPlayer->ModifyMoney(-100000);
+            }
+        } else {
+            pPlayer->CLOSE_GOSSIP_MENU();
+            _Creature->MonsterWhisper(WHISPER_NO_GOLD, pPlayer, false);
+        }
+        break;
+        case 3:
+        pPlayer->CLOSE_GOSSIP_MENU();
+        break;
+    }
 }
 
 bool GossipSelect_guildhouse(Player *pPlayer, Creature *_Creature, uint32 sender, uint32 action)
@@ -1200,6 +1202,7 @@ bool GossipSelect_guildhouse(Player *pPlayer, Creature *_Creature, uint32 sender
     }
     return true;
 }
+
 bool ItemUse_item_guildhouse(Player *pPlayer, Item* pItem, const SpellCastTargets &pTargets)
 {
     if (!sWorld.getConfig(CONFIG_BOOL_GUIDHOUSE_ENABLE))
@@ -1261,23 +1264,23 @@ bool GossipHello_teleport_gh(Player *pPlayer, Creature *_Creature)
     }
 		
     if (pPlayer->GetTeam() == ALLIANCE ) {
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Darnassus. 1 Gold"		    , GOSSIP_SENDER_MAIN, 1);
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Exodar. 1 Gold"			    , GOSSIP_SENDER_MAIN, 2);
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Stormwind. 1 Gold"		    , GOSSIP_SENDER_MAIN, 3);
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Ironforge. 1 Gold"		    , GOSSIP_SENDER_MAIN, 4);
+        pPlayer->ADD_GOSSIP_ITEM( 5, "Darnassus. 1 Gold"            , GOSSIP_SENDER_MAIN, 1);
+        pPlayer->ADD_GOSSIP_ITEM( 5, "Exodar. 1 Gold"		    , GOSSIP_SENDER_MAIN, 2);
+        pPlayer->ADD_GOSSIP_ITEM( 5, "Stormwind. 1 Gold"	    , GOSSIP_SENDER_MAIN, 3);
+        pPlayer->ADD_GOSSIP_ITEM( 5, "Ironforge. 1 Gold"	    , GOSSIP_SENDER_MAIN, 4);
         pPlayer->ADD_GOSSIP_ITEM( 5, "Shattrath City. 1 Gold"       , GOSSIP_SENDER_MAIN, 5);
         pPlayer->ADD_GOSSIP_ITEM( 5, "Dalaran. 1 Gold"              , GOSSIP_SENDER_MAIN, 6);
         pPlayer->ADD_GOSSIP_ITEM( 5, "Isle Of Quel'Danas. 1 Gold"   , GOSSIP_SENDER_MAIN, 7);
-        pPlayer->ADD_GOSSIP_ITEM( 7, "[Instances] ->"			    , GOSSIP_SENDER_MAIN, 20);
+        pPlayer->ADD_GOSSIP_ITEM( 7, "[Instances] ->"		    , GOSSIP_SENDER_MAIN, 20);
         }  else {
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Orgrimmar. 1 Gold"		    , GOSSIP_SENDER_MAIN, 8);
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Silvermoon. 1 Gold"		    , GOSSIP_SENDER_MAIN, 9);
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Undercity. 1 Gold"	    	, GOSSIP_SENDER_MAIN, 10);
+        pPlayer->ADD_GOSSIP_ITEM( 5, "Orgrimmar. 1 Gold"	    , GOSSIP_SENDER_MAIN, 8);
+        pPlayer->ADD_GOSSIP_ITEM( 5, "Silvermoon. 1 Gold"	    , GOSSIP_SENDER_MAIN, 9);
+        pPlayer->ADD_GOSSIP_ITEM( 5, "Undercity. 1 Gold"       	    , GOSSIP_SENDER_MAIN, 10);
         pPlayer->ADD_GOSSIP_ITEM( 5, "Thunder Bluff. 1 Gold"	    , GOSSIP_SENDER_MAIN, 11);
         pPlayer->ADD_GOSSIP_ITEM( 5, "Shattrath City. 1 Gold"       , GOSSIP_SENDER_MAIN, 5);
         pPlayer->ADD_GOSSIP_ITEM( 5, "Dalaran. 1 Gold"              , GOSSIP_SENDER_MAIN, 6);
         pPlayer->ADD_GOSSIP_ITEM( 5, "Isle Of Quel'Danas. 1 Gold"   , GOSSIP_SENDER_MAIN, 7);
-        pPlayer->ADD_GOSSIP_ITEM( 7, "[Instances] ->"			    , GOSSIP_SENDER_MAIN, 20);
+        pPlayer->ADD_GOSSIP_ITEM( 7, "[Instances] ->"               , GOSSIP_SENDER_MAIN, 20);
         }
     pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,_Creature->GetGUID());
     return true;
@@ -1299,13 +1302,13 @@ void SendDefaultMenu_teleport_gh(Player *pPlayer, Creature *_Creature, uint32 ac
         return;
     }
 
-	long long int money;
+    long long int money;
     int costo;
 
     money = pPlayer->GetMoney();
     costo = 10000;
 
-	if (money < costo ) 
+    if (money < costo )
     {
         pPlayer->CLOSE_GOSSIP_MENU();
         _Creature->MonsterWhisper("You haven't enough money", pPlayer, false);
@@ -1398,19 +1401,19 @@ void SendDefaultMenu_teleport_gh(Player *pPlayer, Creature *_Creature, uint32 ac
 		pPlayer->ModifyMoney(-1*costo);
 		break;
 	case 20:
-		pPlayer->ADD_GOSSIP_ITEM( 5, "Ulduar. 20 Gold"                              , GOSSIP_SENDER_MAIN, 21);
-		pPlayer->ADD_GOSSIP_ITEM( 5, "The Obsidian Sanctum. 20 Gold"                , GOSSIP_SENDER_MAIN, 22);
-		pPlayer->ADD_GOSSIP_ITEM( 5, "Naxxramas. 20 Gold"                           , GOSSIP_SENDER_MAIN, 23);
-		pPlayer->ADD_GOSSIP_ITEM( 5, "Icecrown Citadel. 20 Gold"                    , GOSSIP_SENDER_MAIN, 24);
-		pPlayer->ADD_GOSSIP_ITEM( 5, "Karazhan. 1 Gold"                             , GOSSIP_SENDER_MAIN, 26);
-		pPlayer->ADD_GOSSIP_ITEM( 5, "Tempest Keep. 1 Gold"                         , GOSSIP_SENDER_MAIN, 27);
-		pPlayer->ADD_GOSSIP_ITEM( 5, "Black Temple. 1 Gold"                         , GOSSIP_SENDER_MAIN, 28);
-		pPlayer->ADD_GOSSIP_ITEM( 5, "Vault of Archavon. 20 Gold"                   , GOSSIP_SENDER_MAIN, 29);
-		pPlayer->ADD_GOSSIP_ITEM( 5, "Onyxia's Lair. 20 Gold"						, GOSSIP_SENDER_MAIN, 30);
-		pPlayer->ADD_GOSSIP_ITEM( 5, "Coliseum Vanguard. 20 Gold"                   , GOSSIP_SENDER_MAIN, 31);
-		pPlayer->ADD_GOSSIP_ITEM( 5, "The Nexus. 20 Gold"                           , GOSSIP_SENDER_MAIN, 32);
-		pPlayer->ADD_GOSSIP_ITEM( 5, "Ragefire Chasm. 10 Silver"					, GOSSIP_SENDER_MAIN, 33);
-		pPlayer->ADD_GOSSIP_ITEM( 7, "<- [Main Menu]"					            , GOSSIP_SENDER_MAIN, 25);	
+                pPlayer->ADD_GOSSIP_ITEM( 5, "Ulduar. 10 Gold"                              , GOSSIP_SENDER_MAIN, 21);
+                pPlayer->ADD_GOSSIP_ITEM( 5, "The Obsidian Sanctum. 10 Gold"                , GOSSIP_SENDER_MAIN, 22);
+                pPlayer->ADD_GOSSIP_ITEM( 5, "Naxxramas. 10 Gold"                           , GOSSIP_SENDER_MAIN, 23);
+                pPlayer->ADD_GOSSIP_ITEM( 5, "Icecrown Citadel. 10 Gold"                    , GOSSIP_SENDER_MAIN, 24);
+                pPlayer->ADD_GOSSIP_ITEM( 5, "Karazhan. 10 Gold"                            , GOSSIP_SENDER_MAIN, 26);
+                pPlayer->ADD_GOSSIP_ITEM( 5, "Tempest Keep. 10 Gold"                        , GOSSIP_SENDER_MAIN, 27);
+                pPlayer->ADD_GOSSIP_ITEM( 5, "Black Temple. 10 Gold"                        , GOSSIP_SENDER_MAIN, 28);
+                pPlayer->ADD_GOSSIP_ITEM( 5, "Vault of Archavon. 10 Gold"                   , GOSSIP_SENDER_MAIN, 29);
+                pPlayer->ADD_GOSSIP_ITEM( 5, "Onyxia's Lair. 10 Gold"                       , GOSSIP_SENDER_MAIN, 30);
+                pPlayer->ADD_GOSSIP_ITEM( 5, "Coliseum Vanguard. 10 Gold"                   , GOSSIP_SENDER_MAIN, 31);
+                pPlayer->ADD_GOSSIP_ITEM( 5, "The Nexus. 10 Gold"                           , GOSSIP_SENDER_MAIN, 32);
+                pPlayer->ADD_GOSSIP_ITEM( 5, "Ragefire Chasm. 10 Gold"                      , GOSSIP_SENDER_MAIN, 33);
+                pPlayer->ADD_GOSSIP_ITEM( 7, "<- [Main Menu]"                               , GOSSIP_SENDER_MAIN, 25);
 		pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,_Creature->GetGUID());
 		break;
 		//Teleport to Ulduar
@@ -1419,7 +1422,7 @@ void SendDefaultMenu_teleport_gh(Player *pPlayer, Creature *_Creature, uint32 ac
                 {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     pPlayer->TeleportTo(571, 8976.240f, -1281.33f, 1059.01f, 0.58f);
-                    pPlayer->ModifyMoney(-400*costo);
+                    pPlayer->ModifyMoney(-10*costo);
                 } else {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL);
@@ -1431,7 +1434,7 @@ void SendDefaultMenu_teleport_gh(Player *pPlayer, Creature *_Creature, uint32 ac
                 {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     pPlayer->TeleportTo(571, 3625.780f, 280.40f, -120.14f, 3.25f);
-                    pPlayer->ModifyMoney(-400*costo);
+                    pPlayer->ModifyMoney(-10*costo);
 		} else {
 			pPlayer->CLOSE_GOSSIP_MENU();
 			_Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL);
@@ -1443,7 +1446,7 @@ void SendDefaultMenu_teleport_gh(Player *pPlayer, Creature *_Creature, uint32 ac
                 {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     pPlayer->TeleportTo(571, 3668.719f, -1262.460f, 243.63f, 5.03f);
-                    pPlayer->ModifyMoney(-400*costo);
+                    pPlayer->ModifyMoney(-10*costo);
                 } else {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL);
@@ -1452,44 +1455,44 @@ void SendDefaultMenu_teleport_gh(Player *pPlayer, Creature *_Creature, uint32 ac
 		//Teleport to Icecrown Citadel
 	case 24:
 		if (pPlayer->getLevel() >= 80)
-		{
-			pPlayer->CLOSE_GOSSIP_MENU();
-			pPlayer->TeleportTo(571, 5873.81f, 2110.97f, 636.01f, 3.55f);
-			pPlayer->ModifyMoney(-400*costo);
-		} else {
-			pPlayer->CLOSE_GOSSIP_MENU();
-			_Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL);
+                {
+                    pPlayer->CLOSE_GOSSIP_MENU();
+                    pPlayer->TeleportTo(571, 5873.81f, 2110.97f, 636.01f, 3.55f);
+                    pPlayer->ModifyMoney(-10*costo);
+                } else {
+                    pPlayer->CLOSE_GOSSIP_MENU();
+                    _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL);
 		}
 		break;
 		//Main menu
-	case 25:
-		if (pPlayer->GetTeam() == ALLIANCE ) {
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Darnassus. 1 Gold"		    , GOSSIP_SENDER_MAIN, 1);
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Exodar. 1 Gold"			    , GOSSIP_SENDER_MAIN, 2);
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Stormwind. 1 Gold"		    , GOSSIP_SENDER_MAIN, 3);
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Ironforge. 1 Gold"		    , GOSSIP_SENDER_MAIN, 4);
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Shattrath City. 1 Gold"       , GOSSIP_SENDER_MAIN, 5);
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Dalaran. 1 Gold"              , GOSSIP_SENDER_MAIN, 6);
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Isle Of Quel'Danas. 1 Gold"   , GOSSIP_SENDER_MAIN, 7);
-        pPlayer->ADD_GOSSIP_ITEM( 7, "[Instances] ->"			    , GOSSIP_SENDER_MAIN, 20);
+        case 25:
+        if (pPlayer->GetTeam() == ALLIANCE ) {
+            pPlayer->ADD_GOSSIP_ITEM( 5, "Darnassus. 1 Gold"		    , GOSSIP_SENDER_MAIN, 1);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "Exodar. 1 Gold"			    , GOSSIP_SENDER_MAIN, 2);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "Stormwind. 1 Gold"		    , GOSSIP_SENDER_MAIN, 3);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "Ironforge. 1 Gold"		    , GOSSIP_SENDER_MAIN, 4);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "Shattrath City. 1 Gold"       , GOSSIP_SENDER_MAIN, 5);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "Dalaran. 1 Gold"              , GOSSIP_SENDER_MAIN, 6);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "Isle Of Quel'Danas. 1 Gold"   , GOSSIP_SENDER_MAIN, 7);
+            pPlayer->ADD_GOSSIP_ITEM( 7, "[Instances] ->"			    , GOSSIP_SENDER_MAIN, 20);
         }  else {
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Orgrimmar. 1 Gold"		    , GOSSIP_SENDER_MAIN, 8);
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Silvermoon. 1 Gold"		    , GOSSIP_SENDER_MAIN, 9);
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Undercity. 1 Gold"	    	, GOSSIP_SENDER_MAIN, 10);
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Thunder Bluff. 1 Gold"	    , GOSSIP_SENDER_MAIN, 11);
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Shattrath City. 1 Gold"       , GOSSIP_SENDER_MAIN, 5);
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Dalaran. 1 Gold"              , GOSSIP_SENDER_MAIN, 6);
-        pPlayer->ADD_GOSSIP_ITEM( 5, "Isle Of Quel'Danas. 1 Gold"   , GOSSIP_SENDER_MAIN, 7);
-        pPlayer->ADD_GOSSIP_ITEM( 7, "[Instances] ->"			    , GOSSIP_SENDER_MAIN, 20);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "Orgrimmar. 1 Gold"		    , GOSSIP_SENDER_MAIN, 8);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "Silvermoon. 1 Gold"		    , GOSSIP_SENDER_MAIN, 9);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "Undercity. 1 Gold"	    	, GOSSIP_SENDER_MAIN, 10);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "Thunder Bluff. 1 Gold"	    , GOSSIP_SENDER_MAIN, 11);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "Shattrath City. 1 Gold"       , GOSSIP_SENDER_MAIN, 5);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "Dalaran. 1 Gold"              , GOSSIP_SENDER_MAIN, 6);
+            pPlayer->ADD_GOSSIP_ITEM( 5, "Isle Of Quel'Danas. 1 Gold"   , GOSSIP_SENDER_MAIN, 7);
+            pPlayer->ADD_GOSSIP_ITEM( 7, "[Instances] ->"			    , GOSSIP_SENDER_MAIN, 20);
         }
-		pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,_Creature->GetGUID());
-		break;
+        pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,_Creature->GetGUID());
+        break;
 	case 26://Teleport to Karazhan
 		if (pPlayer->getLevel() >= 68)
                 {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     pPlayer->TeleportTo(0, -11118.8f, -2010.84f, 47.0807f, 0.0f);
-                    pPlayer->ModifyMoney(-20*costo);
+                    pPlayer->ModifyMoney(-10*costo);
                 } else {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     _Creature->MonsterSay("You must be at least level 68!", LANG_UNIVERSAL);
@@ -1500,7 +1503,7 @@ void SendDefaultMenu_teleport_gh(Player *pPlayer, Creature *_Creature, uint32 ac
                 {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     pPlayer->TeleportTo(530, 3089.579346f, 1399.046509f, 187.653458f, 4.794070f);
-                    pPlayer->ModifyMoney(-20*costo);
+                    pPlayer->ModifyMoney(-10*costo);
                 } else {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     _Creature->MonsterSay("You must be at least level 67!", LANG_UNIVERSAL);
@@ -1511,7 +1514,7 @@ void SendDefaultMenu_teleport_gh(Player *pPlayer, Creature *_Creature, uint32 ac
                 {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     pPlayer->TeleportTo(530, -3610.719482f, 324.987579f, 37.400028f, 3.282981f);
-                    pPlayer->ModifyMoney(-20*costo);
+                    pPlayer->ModifyMoney(-10*costo);
                 } else {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     _Creature->MonsterSay("You must be at least level 70!", LANG_UNIVERSAL);
@@ -1522,7 +1525,7 @@ void SendDefaultMenu_teleport_gh(Player *pPlayer, Creature *_Creature, uint32 ac
                 {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     pPlayer->TeleportTo(571, 5321.13f, 2843.42f, 409.283f, 6.255f);
-                    pPlayer->ModifyMoney(-400*costo);
+                    pPlayer->ModifyMoney(-10*costo);
                 } else {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL);
@@ -1533,7 +1536,7 @@ void SendDefaultMenu_teleport_gh(Player *pPlayer, Creature *_Creature, uint32 ac
                 {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     pPlayer->TeleportTo(1, -4640.93f, -3623.18f, 39.461f, 4.474f);
-                    pPlayer->ModifyMoney(-400*costo);
+                    pPlayer->ModifyMoney(-10*costo);
                 } else {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL);
@@ -1544,7 +1547,7 @@ void SendDefaultMenu_teleport_gh(Player *pPlayer, Creature *_Creature, uint32 ac
                 {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     pPlayer->TeleportTo(571, 8551.76f, 635.458f, 548.063f, 3.557f);
-                    pPlayer->ModifyMoney(-400*costo);
+                    pPlayer->ModifyMoney(-10*costo);
                 } else {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     _Creature->MonsterSay("You must be at least level 75!", LANG_UNIVERSAL);
@@ -1555,7 +1558,7 @@ void SendDefaultMenu_teleport_gh(Player *pPlayer, Creature *_Creature, uint32 ac
                 {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     pPlayer->TeleportTo(571, 3776.950f, 6953.80f, 105.05f, 0.345f);
-                    pPlayer->ModifyMoney(-400*costo);
+                    pPlayer->ModifyMoney(-10*costo);
                 } else {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     _Creature->MonsterSay("You must be at least level 68!", LANG_UNIVERSAL);
@@ -1567,7 +1570,7 @@ void SendDefaultMenu_teleport_gh(Player *pPlayer, Creature *_Creature, uint32 ac
                 {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     pPlayer->TeleportTo(1, 1800.53f,-4394.68f,-17.93f,5.49f);
-                    pPlayer->ModifyMoney(-2*costo);
+                    pPlayer->ModifyMoney(-10*costo);
                 } else {
                     pPlayer->CLOSE_GOSSIP_MENU();
                     _Creature->MonsterSay("You must be at least level 8!", LANG_UNIVERSAL);
