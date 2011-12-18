@@ -1905,7 +1905,7 @@ struct MANGOS_DLL_DECL npc_death_knight_gargoyle : public ScriptedAI
      inCombat = false;
      m_uiGargoyleStrikeTimer = urand(3000, 5000);
 
-	 m_uiDespawnGargoyle = 50000;
+	 m_uiDespawnGargoyle = 30000;
 
      float fPosX, fPosY, fPosZ;
      owner->GetPosition(fPosX, fPosY, fPosZ);
@@ -1961,7 +1961,7 @@ struct MANGOS_DLL_DECL npc_death_knight_gargoyle : public ScriptedAI
     {
 		if (m_uiDespawnGargoyle <= uiDiff)
 			m_creature->ForcedDespawn();
-		else m_uiGargoyleStrikeTimer -= uiDiff;
+		else m_uiDespawnGargoyle -= uiDiff;
 
         if (!m_creature->getVictim())
             if (owner && owner->getVictim())
@@ -1981,7 +1981,7 @@ struct MANGOS_DLL_DECL npc_death_knight_gargoyle : public ScriptedAI
         if (m_uiGargoyleStrikeTimer <= uiDiff)
         {
             DoCastSpellIfCan(m_creature->getVictim(), SPELL_GARGOYLE_STRIKE);
-            m_uiGargoyleStrikeTimer = urand(3000, 5000);
+            m_uiGargoyleStrikeTimer = 2000; //urand(3000, 5000);
         }
         else m_uiGargoyleStrikeTimer -= uiDiff;
     }
