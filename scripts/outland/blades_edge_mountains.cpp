@@ -262,6 +262,29 @@ CreatureAI* GetAI_npc_daranelle(Creature* pCreature)
     return new npc_daranelleAI(pCreature);
 }
 
+struct MANGOS_DLL_DECL npc_bombing_runAI : public ScriptedAI
+{
+    npc_bombing_runAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+
+    void Reset() {}
+
+    void SpellHit(Unit *caster, const SpellEntry *spell)
+    {
+        if (spell->Id == 40160 && caster->GetTypeId() == TYPEID_PLAYER && (caster->HasAuraType(SPELL_AURA_FLY) || caster->HasAuraType(SPELL_AURA_MOUNTED)))
+        {
+            ((Player*)caster)->KilledMonsterCredit(23118);
+            EnterEvadeMode();
+        }
+    }
+
+    void UpdateAI(const uint32 diff) {}
+};
+
+CreatureAI* GetAI_npc_bombing_run(Creature* pCreature)
+{
+    return new npc_bombing_runAI(pCreature);
+}
+
 /*######
 ## AddSC
 ######*/
@@ -283,5 +306,10 @@ void AddSC_blades_edge_mountains()
     pNewScript = new Script;
     pNewScript->Name = "npc_daranelle";
     pNewScript->GetAI = &GetAI_npc_daranelle;
+    pNewScript->RegisterSelf();
+
+    pNewScript = new Script;
+    pNewScript->Name = "npc_bombing_run";
+    pNewScript->GetAI = &GetAI_npc_bombing_run;
     pNewScript->RegisterSelf();
 }

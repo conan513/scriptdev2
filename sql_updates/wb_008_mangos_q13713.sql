@@ -41,3 +41,8 @@ UPDATE `quest_template` SET `ReqCreatureOrGOId1` = 0, `ReqCreatureOrGOCount1` = 
 
 DELETE FROM `creature_template_addon` WHERE (`entry`=33519);
 INSERT INTO `creature_template_addon` (`entry`, `mount`, `bytes1`, `b2_0_sheath`, `b2_1_pvp_state`, `emote`, `moveflags`, `auras`) VALUES (33519, 0, 50331648, 1, 0, 0, 1024, 53112);
+
+DELETE FROM `npc_spellclick_spells` WHERE (`npc_entry`='33842') AND (`spell_id`='63791') AND (`quest_start`='13680');
+DELETE FROM `npc_spellclick_spells` WHERE (`npc_entry`='33843') AND (`spell_id`='63792') AND (`quest_start`='13679');
+INSERT INTO npc_spellclick_spells VALUES ('33843', '63792', '13679', '1', '0', '3');
+INSERT INTO npc_spellclick_spells VALUES ('33842', '63791', '13680', '1', '0', '3');

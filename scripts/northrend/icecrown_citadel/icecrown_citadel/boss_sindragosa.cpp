@@ -198,7 +198,7 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
             DoMark(max);
 
             // set timers
-            m_uiIceTombTimer    = 6000;
+            m_uiIceTombTimer    = 5000;
             m_uiFrostBombTimer  = 12000;
             m_uiPhaseTimer      = 35000;
         }
@@ -658,11 +658,15 @@ struct MANGOS_DLL_DECL mob_rimefangAI : public BSWScriptedAI
     void JustDied(Unit *killer)
     {
         if(!pInstance) return;
-        if (pInstance->GetData(TYPE_SINDRAGOSA) == DONE || pInstance->GetData(TYPE_SINDRAGOSA) == IN_PROGRESS)
+        if (pInstance->GetData(TYPE_SINDRAGOSA) == DONE)
             return;
         if (pBrother && !pBrother->isAlive())
         if (pBrother && !pBrother->isAlive())
         {
+            if (Creature* pSindragosa = pInstance->GetSingleCreatureFromStorage(NPC_SINDRAGOSA))
+                if (pSindragosa->isAlive())
+                    return;
+
             Creature* pSindr = m_creature->SummonCreature(NPC_SINDRAGOSA, SindragosaLoc[0].x, SindragosaLoc[0].y, SindragosaLoc[0].z, 3.17f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*IN_MILLISECONDS, true);
             if (pSindr)
                 pSindr->SetCreatorGuid(ObjectGuid());
@@ -739,7 +743,7 @@ struct MANGOS_DLL_DECL mob_spinestalkerAI : public BSWScriptedAI
 
     void Aggro(Unit *who)
     {
-        if(!pInstance) return;
+        if (!pInstance) return;
         if (pInstance->GetData(TYPE_SINDRAGOSA) != DONE) pInstance->SetData(TYPE_SINDRAGOSA, IN_PROGRESS);
         pBrother = pInstance->GetSingleCreatureFromStorage(NPC_RIMEFANG);
         if (pBrother && !pBrother->isAlive()) pBrother->Respawn();
@@ -750,10 +754,14 @@ struct MANGOS_DLL_DECL mob_spinestalkerAI : public BSWScriptedAI
     {
         if (!pInstance)
             return;
-        if (pInstance->GetData(TYPE_SINDRAGOSA) == DONE || pInstance->GetData(TYPE_SINDRAGOSA) == IN_PROGRESS)
+        if (pInstance->GetData(TYPE_SINDRAGOSA) == DONE)
             return;
         if (pBrother && !pBrother->isAlive())
         {
+            if (Creature* pSindragosa = pInstance->GetSingleCreatureFromStorage(NPC_SINDRAGOSA))
+                if (pSindragosa->isAlive())
+                    return;
+
             Creature* pSindr = m_creature->SummonCreature(NPC_SINDRAGOSA, SindragosaLoc[0].x, SindragosaLoc[0].y, SindragosaLoc[0].z, 3.17f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*IN_MILLISECONDS, true);
             if (pSindr)
                 pSindr->SetCreatorGuid(ObjectGuid());
