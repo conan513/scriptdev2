@@ -39,6 +39,50 @@ UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobje
 UPDATE `gameobject_template` SET `faction` = '0' WHERE `entry` IN (201380,201381,201382,201383);
 UPDATE `gameobject` SET `state` = '1' WHERE `id` IN (201380,201381,201382,201383);
 
+-- ---------
+-- Festergut
+-- ---------
+
+UPDATE `creature_template` SET `ScriptName`='boss_festergut', `AIName`=''  WHERE `entry`= 36626;
+UPDATE `gameobject_template` SET `faction` = '114' WHERE `gameobject_template`.`entry` IN (201371);
+UPDATE `gameobject` SET `state` = '0' WHERE `id` IN (201371);
+UPDATE `creature_template` SET `ScriptName`='mob_vile_gas_malleable_goo', unit_flags = 0, `AIName`='', `flags_extra` = `flags_extra` | 2 | 128  WHERE `entry` IN (38548, 38556);
+-- orange gas stalker
+UPDATE `creature_template` SET `faction_A` = 2212, `faction_H` = 2212,  `ScriptName`='', `AIName`='' WHERE `entry`= 36659;
+DELETE FROM `spell_script_target` WHERE `entry` IN (69157, 69162, 69164);
+INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES
+(69157, 1, 36659),
+(69162, 1, 36659),
+(69164, 1, 36659);
+
+-- original auras from YTDB
+DELETE FROM `creature_template_addon` WHERE `entry` = 36659;
+-- INSERT INTO `creature_template_addon` (`entry`, `mount`, `bytes1`, `bytes2`, `emote`, `moveflags`, `auras`) VALUES
+-- (36659, 0, 0, 1, 0, 0, '69126 69152 69154');
+
+-- gas from valves
+UPDATE `creature` SET `spawnMask` = 15, `modelid` = 11686, `spawntimesecs` = 300 WHERE `id`=37013;
+DELETE FROM `spell_script_target` WHERE `entry` = 69125;
+INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES (69125, 1, 37013);
+
+-- proper way for Gastric Bloat, but cooldowns for creatures not implemented yet
+-- -- Gastric Bloat
+DELETE FROM `spell_proc_event` WHERE `entry` = 72214;
+-- INSERT INTO `spell_proc_event` VALUES
+-- (72214, 0x00,  0, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0.000000, 0.000000, 8);
+
+-- fixed modelID info
+DELETE FROM `creature_model_info` WHERE (`modelid`=31006);
+INSERT INTO `creature_model_info` (`modelid`, `bounding_radius`, `combat_reach`, `gender`, `modelid_other_gender`, `modelid_alternative`) VALUES (31006, 5, 4, 2, 0, 0);
+
+-- fix peroicus modelID info
+DELETE FROM `creature_model_info` WHERE (`modelid`=30483);
+INSERT INTO `creature_model_info` (`modelid`, `bounding_radius`, `combat_reach`, `gender`, `modelid_other_gender`, `modelid_alternative`) VALUES (30483, 5, 1, 2, 0, 0);
+
+-- make triggers not visible
+UPDATE `creature_template` SET `unit_flags` = `unit_flags` | 33554432 | 2 WHERE entry IN (37013, 37986, 38107, 38548, 37006, 38107, 38548, 38556, 36659);
+
+
 -- --------------
 -- Lanathel intro
 -- --------------

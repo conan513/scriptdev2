@@ -159,9 +159,9 @@ enum
 
 };
 
-struct MANGOS_DLL_DECL base_icc_bossAI : public ScriptedAI
+struct MANGOS_DLL_DECL base_icc_bossAI : public BSWScriptedAI
 {
-    base_icc_bossAI(Creature* pCreature) : ScriptedAI(pCreature)
+    base_icc_bossAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         m_uiMapDifficulty = pCreature->GetMap()->GetDifficulty();
