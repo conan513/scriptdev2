@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2011 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -425,7 +425,7 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public BSWScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
-    Unit* pTarget;
+    ObjectGuid targetGuid;
     bool expunded;
     uint32 delay;
 
@@ -435,31 +435,33 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public BSWScriptedAI
         m_creature->SetWalk(true);
         m_creature->SetSpeedRate(MOVE_WALK, 0.5f);
         m_creature->SetSpeedRate(MOVE_RUN, 0.2f);
-        pTarget = NULL;
         expunded = false;
         delay = 10000;
     }
 
     void JustDied(Unit *killer)
     {
-        if (!m_pInstance) return;
-        if (pTarget && pTarget->isAlive())
-            doRemove(SPELL_GASEOUS_BLOAT, pTarget);
+        if (!m_pInstance)
+            return;
+
+        if (Unit* pTarget = m_creature->GetMap()->GetUnit(targetGuid))
+            if (pTarget->isAlive())
+                doRemove(SPELL_GASEOUS_BLOAT, pTarget);
     }
 
-    void Aggro(Unit *who)
+    void Aggro(Unit* who)
     {
-        if (!m_pInstance || who->GetTypeId() != TYPEID_PLAYER) return;
+        if (!who || !m_pInstance || who->GetTypeId() != TYPEID_PLAYER) 
+            return;
 
-        if (!pTarget || pTarget != who ) pTarget = who;
-           else return;
+        if (targetGuid)
+            return;
+
+        targetGuid = who->GetObjectGuid();
 
         delay = 10000;
 
-        if (pTarget)
-        {
-            doAura(SPELL_GASEOUS_BLOAT, pTarget);
-        }
+        doAura(SPELL_GASEOUS_BLOAT, who);
         DoStartMovement(who);
     }
 
@@ -477,12 +479,26 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public BSWScriptedAI
         if(m_pInstance->GetData(TYPE_PUTRICIDE) != IN_PROGRESS)
             m_creature->ForcedDespawn();
 
-        if (expunded) m_creature->ForcedDespawn();
+        if (expunded)
+            m_creature->ForcedDespawn();
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (!pTarget) Aggro(m_creature->getVictim());
+        Unit* pTarget = m_creature->GetMap()->GetUnit(targetGuid);
+
+        if (!pTarget)
+        {
+            Aggro(m_creature->getVictim());
+            return;
+        }
+        else if (!pTarget->isAlive())
+        {
+            targetGuid.Clear();
+            Aggro(m_creature->getVictim());
+            return;
+        }
+
 
         if (delay <= uiDiff)
         {
@@ -492,7 +508,8 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public BSWScriptedAI
                doRemove(SPELL_GASEOUS_BLOAT, pTarget);
                expunded = true;
             };
-        } else delay -= uiDiff;
+        }
+        else delay -= uiDiff;
     }
 };
 
@@ -510,7 +527,7 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public BSWScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
-    Unit* pTarget;
+    ObjectGuid targetGuid;
     bool finita;
     uint32 delay;
 
@@ -520,32 +537,41 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public BSWScriptedAI
         m_creature->SetWalk(true);
         m_creature->SetSpeedRate(MOVE_WALK, 0.5f);
         m_creature->SetSpeedRate(MOVE_RUN, 0.2f);
-        pTarget = NULL;
         finita = false;
         delay = 10000;
     }
 
     void JustDied(Unit *killer)
     {
-        if (!m_pInstance) return;
-        if (pTarget && pTarget->isAlive())
-            doRemove(SPELL_OOZE_ADHESIVE, pTarget);
+        if (!m_pInstance)
+            return;
+
+        if (Unit* pTarget = m_creature->GetMap()->GetUnit(targetGuid))
+            if (pTarget->isAlive())
+                doRemove(SPELL_OOZE_ADHESIVE, pTarget);
     }
 
     void Aggro(Unit *who)
     {
-        if (!m_pInstance || !who || who->GetTypeId() != TYPEID_PLAYER) return;
+        if (!m_pInstance || !who || who->GetTypeId() != TYPEID_PLAYER) 
+            return;
 
-        if (!pTarget || pTarget != who ) 
-			pTarget = who;
+        if (!pTarget || pTarget != who)
+            pTarget = who;
 		else return;
+        if (targetGuid)
+            return;
 
-        delay = 10000;
+        targetGuid = who->GetObjectGuid();
 
         if (pTarget)
             doAura(SPELL_OOZE_ADHESIVE, pTarget);
 
         DoStartMovement(pTarget);
+
+        delay = 10000;
+        doAura(SPELL_OOZE_ADHESIVE, who);
+        DoStartMovement(who);
     }
 
     void JustReachedHome()
@@ -564,8 +590,19 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public BSWScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
+        Unit* pTarget = m_creature->GetMap()->GetUnit(targetGuid);
+
         if (!pTarget)
+        {
             Aggro(m_creature->getVictim());
+            return;
+        }
+        else if (!pTarget->isAlive())
+        {
+            targetGuid.Clear();
+            Aggro(m_creature->getVictim());
+            return;
+        }
 
         if (delay <= uiDiff)
         {
@@ -575,7 +612,8 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public BSWScriptedAI
                 doRemove(SPELL_OOZE_ADHESIVE, pTarget);
                 finita = true;
             };
-        } else delay -= uiDiff;
+        }
+        else delay -= uiDiff;
     }
 };
 

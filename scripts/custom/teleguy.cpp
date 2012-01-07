@@ -1112,9 +1112,6 @@ QueryResult *resultSql;
 
 bool GossipHello_guildhouse(Player *pPlayer, Creature *_Creature)
 {
-    if (!sWorld.getConfig(CONFIG_BOOL_GUIDHOUSE_ENABLE))
-        return false;
-
     if (pPlayer->GetGuildId() == 0)
     {
         pPlayer->CLOSE_GOSSIP_MENU();
@@ -1205,9 +1202,6 @@ bool GossipSelect_guildhouse(Player *pPlayer, Creature *_Creature, uint32 sender
 
 bool ItemUse_item_guildhouse(Player *pPlayer, Item* pItem, const SpellCastTargets &pTargets)
 {
-    if (!sWorld.getConfig(CONFIG_BOOL_GUIDHOUSE_ENABLE))
-        return false;
-
     if (pPlayer->isDead() || pPlayer->isInCombat())
         return true;
 
@@ -1238,9 +1232,6 @@ bool ItemUse_item_guildhouse(Player *pPlayer, Item* pItem, const SpellCastTarget
 
 bool GossipHello_teleport_gh(Player *pPlayer, Creature *_Creature)
 {
-    if (!sWorld.getConfig(CONFIG_BOOL_GUIDHOUSE_ENABLE))
-        return false;
-
     if (pPlayer->GetGuildId() == 0)
     {
         pPlayer->CLOSE_GOSSIP_MENU();
