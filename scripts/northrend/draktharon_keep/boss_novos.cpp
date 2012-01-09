@@ -195,6 +195,9 @@ struct MANGOS_DLL_DECL boss_novosAI : public Scripted_NoMovementAI
                     pSummoned->AI()->AttackStart(pTarget);
                 break;
         }
+        if(m_uiSummonedHandlers>=4)
+            m_uiPhase=PHASE_WAITING;
+
     }
 
     void SummonedCreatureJustDied(Creature* pSummoned)
