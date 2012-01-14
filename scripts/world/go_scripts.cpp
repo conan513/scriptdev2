@@ -242,7 +242,7 @@ bool GOHello_go_orb_of_command(Player* pPlayer, GameObject* pGo)
 {
 	if (pPlayer->GetQuestStatus(QUEST_BLACKHANDS_COMMAND) == QUEST_STATUS_COMPLETE)
 		pPlayer->ADD_GOSSIP_ITEM(0, "Put your hand on the sphere.", GOSSIP_SENDER_MAIN, 2);
-	pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, pGo->GetGUID());
+        pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, pGo->GetObjectGuid());
 	return true;
 }
 

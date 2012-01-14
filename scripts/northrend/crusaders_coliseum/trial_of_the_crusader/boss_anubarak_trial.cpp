@@ -860,13 +860,13 @@ struct MANGOS_DLL_DECL mob_anubarak_permafrostAI : public BSWScriptedAI
        if (m_pInstance && m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS)
             m_creature->ForcedDespawn();
 
-       if (Creature* pCreature = m_creature->GetMap()->GetCreature(NPC_FROST_SPHERE))
-       {
-           if(pCreature->isDead())
-           {
-               m_creature->CastSpell(m_creature, SPELL_PERMAFROST, true);
-           }
-       }
+//       if (Creature* pCreature = m_creature->GetMap()->GetCreature(NPC_FROST_SPHERE))
+//       {
+//           if(pCreature->isDead())
+//           {
+//               m_creature->CastSpell(m_creature, SPELL_PERMAFROST, true);
+//           }
+//       }
 
        if(m_uiPermafrostTimer < uiDiff)
        {

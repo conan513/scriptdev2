@@ -556,6 +556,8 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public BSWScriptedAI
         if (!m_pInstance || !who || who->GetTypeId() != TYPEID_PLAYER) 
             return;
 
+        Unit* pTarget;
+
         if (!pTarget || pTarget != who)
             pTarget = who;
 		else return;

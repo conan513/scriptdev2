@@ -1135,7 +1135,7 @@ bool GossipHello_guildhouse(Player *pPlayer, Creature *_Creature)
 
     }
 
-    pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,_Creature->GetGUID());
+    pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,_Creature->GetObjectGuid());
     return true;
 }
 
@@ -1273,7 +1273,7 @@ bool GossipHello_teleport_gh(Player *pPlayer, Creature *_Creature)
         pPlayer->ADD_GOSSIP_ITEM( 5, "Isle Of Quel'Danas. 1 Gold"   , GOSSIP_SENDER_MAIN, 7);
         pPlayer->ADD_GOSSIP_ITEM( 7, "[Instances] ->"               , GOSSIP_SENDER_MAIN, 20);
         }
-    pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,_Creature->GetGUID());
+    pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,_Creature->GetObjectGuid());
     return true;
 }
 
@@ -1405,7 +1405,7 @@ void SendDefaultMenu_teleport_gh(Player *pPlayer, Creature *_Creature, uint32 ac
                 pPlayer->ADD_GOSSIP_ITEM( 5, "The Nexus. 10 Gold"                           , GOSSIP_SENDER_MAIN, 32);
                 pPlayer->ADD_GOSSIP_ITEM( 5, "Ragefire Chasm. 10 Gold"                      , GOSSIP_SENDER_MAIN, 33);
                 pPlayer->ADD_GOSSIP_ITEM( 7, "<- [Main Menu]"                               , GOSSIP_SENDER_MAIN, 25);
-		pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,_Creature->GetGUID());
+                pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,_Creature->GetObjectGuid());
 		break;
 		//Teleport to Ulduar
 	case 21:
@@ -1476,7 +1476,7 @@ void SendDefaultMenu_teleport_gh(Player *pPlayer, Creature *_Creature, uint32 ac
             pPlayer->ADD_GOSSIP_ITEM( 5, "Isle Of Quel'Danas. 1 Gold"   , GOSSIP_SENDER_MAIN, 7);
             pPlayer->ADD_GOSSIP_ITEM( 7, "[Instances] ->"			    , GOSSIP_SENDER_MAIN, 20);
         }
-        pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,_Creature->GetGUID());
+        pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,_Creature->GetObjectGuid());
         break;
 	case 26://Teleport to Karazhan
 		if (pPlayer->getLevel() >= 68)
