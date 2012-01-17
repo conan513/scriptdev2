@@ -130,15 +130,15 @@ struct MANGOS_DLL_DECL boss_tharonjaAI : public ScriptedAI
     {
         DoScriptText(SAY_DEATH, m_creature);
 
-		Map* pMap = m_creature->GetMap();
-		Map::PlayerList const &PlayerList = pMap->GetPlayers();
-		if (PlayerList.isEmpty())
-			return;
-		for (Map::PlayerList::const_iterator i = PlayerList.begin();i != PlayerList.end(); ++i)
-		{
-			if (i->getSource()->isAlive())
-				DoCastSpellIfCan(i->getSource(), SPELL_ACHIEV_CHECK, CAST_TRIGGERED);  
-		}
+        Map* pMap = m_creature->GetMap();
+        Map::PlayerList const &PlayerList = pMap->GetPlayers();
+        if (PlayerList.isEmpty())
+            return;
+        for (Map::PlayerList::const_iterator i = PlayerList.begin();i != PlayerList.end(); ++i)
+        {
+            if (i->getSource()->isAlive())
+                m_creature->CastSpell(i->getSource(), SPELL_ACHIEV_CHECK, false);
+        }
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_THARONJA, DONE);
