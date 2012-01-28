@@ -194,6 +194,7 @@ UPDATE creature_template SET ScriptName='mob_ethereal_beacon' WHERE entry=18431;
 UPDATE creature_template SET ScriptName='boss_exarch_maladaar' WHERE entry=18373;
 UPDATE creature_template SET ScriptName='mob_avatar_of_martyred' WHERE entry=18478;
 UPDATE creature_template SET ScriptName='mob_stolen_soul' WHERE entry=18441;
+UPDATE creature_template SET ScriptName='boss_shirrak' WHERE entry=18371;
 
 /* SETHEKK HALLS */
 UPDATE instance_template SET ScriptName='instance_sethekk_halls' WHERE map=556;
@@ -210,6 +211,7 @@ UPDATE creature_template SET ScriptName='boss_murmur' WHERE entry=18708;
 UPDATE creature_template SET ScriptName='boss_grandmaster_vorpil' WHERE entry=18732;
 UPDATE creature_template SET ScriptName='boss_blackheart_the_inciter' WHERE entry=18667;
 UPDATE creature_template SET ScriptName='boss_ambassador_hellmaw' WHERE entry=18731;
+UPDATE creature_template SET ScriptName='npc_void_traveler' WHERE entry=19226;
 
 /*  */
 /* AZJOL-NERUB */
@@ -860,7 +862,9 @@ UPDATE gameobject_template SET ScriptName='go_containment_sphere' WHERE entry IN
 UPDATE instance_template SET ScriptName='instance_nexus' WHERE map=576;
 
 /* OCULUS */
-
+UPDATE instance_template SET ScriptName='instance_oculus' WHERE map=578;
+UPDATE creature_template SET ScriptName='boss_eregos' WHERE entry=27656;
+UPDATE creature_template SET ScriptName='boss_urom' WHERE entry=27655;
 
 /* OBSIDIAN SANCTUM */
 UPDATE instance_template SET ScriptName='instance_obsidian_sanctum' WHERE map=615;

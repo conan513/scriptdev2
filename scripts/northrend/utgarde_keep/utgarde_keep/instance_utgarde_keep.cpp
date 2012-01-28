@@ -42,6 +42,7 @@ void instance_utgarde_keep::OnCreatureCreate(Creature* pCreature)
         case NPC_KELESETH:
         case NPC_SKARVALD:
         case NPC_DALRONN:
+        case NPC_INGVAR:
             m_mNpcEntryGuidStore[pCreature->GetEntry()] = pCreature->GetObjectGuid();
             break;
     }
@@ -75,7 +76,9 @@ void instance_utgarde_keep::OnObjectCreate(GameObject* pGo)
             if (m_auiEncounter[TYPE_BELLOW_3] == DONE)
                 pGo->SetGoState(GO_STATE_ACTIVE);
             break;
-
+        case GO_EXITDOOR_1:
+        case GO_EXITDOOR_2:
+            break;
         default:
             return;
     }
@@ -100,6 +103,11 @@ void instance_utgarde_keep::SetData(uint32 uiType, uint32 uiData)
         case TYPE_SKARVALD_DALRONN:
         case TYPE_INGVAR:
             m_auiEncounter[uiType] = uiData;
+            if (uiData == DONE)
+            {
+                DoUseDoorOrButton(GO_EXITDOOR_1);
+                DoUseDoorOrButton(GO_EXITDOOR_2);
+            }
             break;
         case TYPE_BELLOW_1:
             m_auiEncounter[uiType] = uiData;

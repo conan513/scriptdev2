@@ -48,6 +48,9 @@ bool GOUse_go_containment_sphere(Player* pPlayer, GameObject* pGo)
 instance_nexus::instance_nexus(Map* pMap) : ScriptedInstance(pMap)
 {
     Initialize();
+
+    for (uint8 i = 0; i < MAX_SPECIAL_ACHIEV_CRITS; ++i)
+        m_abAchievCriteria[i] = false;
 }
 
 void instance_nexus::Initialize()
@@ -92,27 +95,14 @@ uint32 instance_nexus::GetData(uint32 uiType)
     return 0;
 }
 
-bool instance_nexus::CheckAchievementCriteriaMeet(uint32 uiCriteriaId, Player const* pSource, Unit const* pTarget, uint32 uiMiscValue1 /* = 0*/)
-{
-    switch (uiCriteriaId)
-    {
-        case ACHIEV_CHAOS_THEORY:
-            return !m_bCriteriaChaosTheoryFailed;
-        case ACHIEV_DOUBLE_PERSONALITY:
-            return !m_bCriteriaDoublePersonalityFailed;
-        case ACHIEV_INTENSE_COLD:
-            return !m_bCriteriaIntenseColdFailed;
-        default:
-            return 0;
-    }
-}
-
 void instance_nexus::SetData(uint32 uiType, uint32 uiData)
 {
     switch (uiType)
     {
         case TYPE_TELESTRA:
             m_auiEncounter[uiType] = uiData;
+            if (uiData == IN_PROGRESS)
+                SetSpecialAchievementCriteria(TYPE_ACHIEV_SPLIT_PERSONALITY, true);
             if (uiData == DONE)
             {
                 if (GameObject* pGo = GetSingleGameObjectFromStorage(GO_CONTAINMENT_SPHERE_TELESTRA))
@@ -121,6 +111,8 @@ void instance_nexus::SetData(uint32 uiType, uint32 uiData)
             break;
         case TYPE_ANOMALUS:
             m_auiEncounter[uiType] = uiData;
+            if (uiData == IN_PROGRESS)
+                SetSpecialAchievementCriteria(TYPE_ACHIEV_CHAOS_THEORY, true);
             if (uiData == DONE)
             {
                 if (GameObject* pGo = GetSingleGameObjectFromStorage(GO_CONTAINMENT_SPHERE_ANOMALUS))
@@ -137,16 +129,14 @@ void instance_nexus::SetData(uint32 uiType, uint32 uiData)
             break;
         case TYPE_KERISTRASZA:
             m_auiEncounter[uiType] = uiData;
+            if (uiData == IN_PROGRESS)
+                m_sIntenseColdFailPlayers.clear();
             break;
-        case TYPE_ACHIEV_ANOMALUS:
-            m_bCriteriaChaosTheoryFailed = (uiData == FAIL);
-            return;
-        case TYPE_ACHIEV_TELESTRA:
-            m_bCriteriaDoublePersonalityFailed = (uiData == FAIL);
-            return;
-        case TYPE_ACHIEV_KERISTRASZA:
-            m_bCriteriaIntenseColdFailed = (uiData == FAIL);
-            return;
+        case TYPE_INTENSE_COLD_FAILED:
+            // Insert the players who fail the achiev and haven't been already inserted in the set
+            if (m_sIntenseColdFailPlayers.find(uiData) == m_sIntenseColdFailPlayers.end())
+                m_sIntenseColdFailPlayers.insert(uiData);
+            break;
         default:
             error_log("SD2: Instance Nexus: ERROR SetData = %u for type %u does not exist/not implemented.", uiType, uiData);
             return;
@@ -179,6 +169,29 @@ void instance_nexus::SetData(uint32 uiType, uint32 uiData)
 
         SaveToDB();
         OUT_SAVE_INST_DATA_COMPLETE;
+    }
+}
+
+void instance_nexus::SetSpecialAchievementCriteria(uint32 uiType, bool bIsMet)
+{
+    if (uiType < MAX_SPECIAL_ACHIEV_CRITS)
+        m_abAchievCriteria[uiType] = bIsMet;
+}
+
+bool instance_nexus::CheckAchievementCriteriaMeet(uint32 uiCriteriaId, Player const* pSource, Unit const* pTarget, uint32 uiMiscValue1 /* = 0*/)
+{
+    switch (uiCriteriaId)
+    {
+        case ACHIEV_CRIT_CHAOS_THEORY:
+            return m_abAchievCriteria[TYPE_ACHIEV_CHAOS_THEORY];
+        case ACHIEV_CRIT_SPLIT_PERSONALITY:
+            return m_abAchievCriteria[TYPE_ACHIEV_SPLIT_PERSONALITY];
+        case ACHIEV_CRIT_INTENSE_COLD:
+            // Return true if not found in the set
+            return m_sIntenseColdFailPlayers.find(pSource->GetGUIDLow()) == m_sIntenseColdFailPlayers.end();
+
+        default:
+            return false;
     }
 }
 
@@ -236,7 +249,7 @@ struct MANGOS_DLL_DECL boss_commander_kolurgAI : public ScriptedAI // triggers s
     }
 
     //ScriptedInstance* m_pInstance;
-	//bool m_bIsRegularMode;
+    //bool m_bIsRegularMode;
 
     uint32 SPELL_BATTLE_SHOUT_Timer;
     uint32 SPELL_CHARGE_Timer;
@@ -334,7 +347,7 @@ struct MANGOS_DLL_DECL boss_commander_stoutbeardAI : public ScriptedAI
     }
 
     //ScriptedInstance* m_pInstance;
-	//bool m_bIsRegularMode;
+    //bool m_bIsRegularMode;
 
     uint32 SPELL_BATTLE_SHOUT_Timer;
     uint32 SPELL_CHARGE_Timer;

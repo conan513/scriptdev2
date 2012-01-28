@@ -61,15 +61,17 @@ enum BossSpells
 // talks
 enum
 {
-    SAY_AGGRO                   = -1631121,
-    SAY_BITE_1                  = -1631122,
-    SAY_BITE_2                  = -1631123,
-    SAY_SHADOWS                 = -1631124,
-    SAY_PACT                    = -1631125,
-    SAY_MC                      = -1631126,
-    SAY_AIR_PHASE               = -1631127,
-    SAY_BERSERK                 = -1631128,
-    SAY_DEATH                   = -1631129,
+    SAY_AGGRO                   = -1631321,
+    SAY_BITE_1                  = -1631322,
+    SAY_BITE_2                  = -1631323,
+    SAY_SHADOWS                 = -1631325,
+    SAY_PACT                    = -1631326,
+    SAY_MC                      = -1631329,
+    SAY_AIR_PHASE               = -1631327,
+    SAY_SLAY_1                  = -1631330,
+    SAY_SLAY_2                  = -1631331,
+    SAY_BERSERK                 = -1631332,
+    SAY_DEATH                   = -1631333,
 };
 
 static Locations QueenLocs[]=
@@ -145,9 +147,17 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public base_icc_bossAI
 
     void KilledUnit(Unit* pVictim)
     {
-        // entry missing in sd2 database
-        if (pVictim->GetTypeId() == TYPEID_PLAYER)
-            m_creature->MonsterYell("Is that all you got?", 0);
+        switch (urand(0,1))
+        {
+            case 0:
+               DoScriptText(SAY_SLAY_1, m_creature, pVictim);
+               break;
+            case 1:
+               DoScriptText(SAY_SLAY_2, m_creature, pVictim);
+               break;
+            default:
+                break;
+        }
     }
 
     void Aggro(Unit* pWho)
@@ -439,15 +449,14 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public base_icc_bossAI
                      * but we can use SelectAttackingTarget() here
                      * if (DoCastSpellIfCan(m_creature, SPELL_SWARMING_SHADOWS) == CAST_OK)
                      */
-                    /*if (Unit *pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1,
-                            SPELL_SWARMING_SHADOWS_TRIGGERED, SELECT_FLAG_PLAYER | SELECT_FLAG_NOT_IN_MELEE_RANGE))
+                    if (Unit *pTarget = SelectRandomRangedTarget(m_creature))
                     {
                         if (DoCastSpellIfCan(pTarget, SPELL_SWARMING_SHADOWS_TRIGGERED) == CAST_OK)
                         {
                             m_uiSwarmingShadowsTimer = urand(30000, 35000);
                             DoScriptText(SAY_SHADOWS, m_creature);
                         }
-                    }*/
+                    }
                 }
                 else
                     m_uiSwarmingShadowsTimer -= uiDiff;

@@ -88,7 +88,7 @@ enum BossSpells
 
     // Blistering Zombie
     SPELL_CORROSION                 = 70749,
-    SPELL_ACID_BURST                = 70744, //also persists in event_ai
+    SPELL_ACID_BURST                = 70744, // 750ms cast time. seems like it is cast always before dying
 
     // Gluttonous Abomination
     SPELL_GUT_SPRAY                 = 71283,
@@ -139,7 +139,6 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
     boss_valithria_dreamwalkerAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        pInstance = (instance_icecrown_spire*)pCreature->GetInstanceData();
         m_uiMapDifficulty = pCreature->GetMap()->GetDifficulty();
         m_bIsHeroic = m_uiMapDifficulty > RAID_DIFFICULTY_25MAN_NORMAL;
         m_bIs25Man = (m_uiMapDifficulty == RAID_DIFFICULTY_25MAN_NORMAL || m_uiMapDifficulty == RAID_DIFFICULTY_25MAN_HEROIC);
@@ -151,7 +150,6 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
     }
 
     ScriptedInstance *m_pInstance;
-    instance_icecrown_spire * pInstance;
     Difficulty m_uiMapDifficulty;
     bool m_bIsHeroic;
     bool m_bIs25Man;
@@ -201,26 +199,6 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
         m_creature->SetHealth(m_creature->GetMaxHealth() / 2.0f);
         DoCastSpellIfCan(m_creature, SPELL_CORRUPTION, CAST_TRIGGERED);
     }
-    uint32 GetDoor(uint8 doornum)
-    {
-        switch (doornum) {
-            case 1:
-               return GO_VALITHRIA_DOOR_1;
-               break;
-            case 2:
-               return GO_VALITHRIA_DOOR_2;
-               break;
-            case 3:
-               return GO_VALITHRIA_DOOR_3;
-               break;
-            case 4:
-               return GO_VALITHRIA_DOOR_4;
-               break;
-            default:
-               return 0;
-               break;
-        };
-    }
 
     void JustReachedHome()
     {
@@ -252,15 +230,6 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
                     pTmp->SetInCombatWithZone();
                     m_bCombatStarted = true;
                 }
-                //Doors Openning
-                pInstance->DoOpenDoor(GO_VALITHRIA_DOOR_2);
-                pInstance->DoOpenDoor(GO_VALITHRIA_DOOR_4);
-                if(m_bIs25Man)
-                {
-                    pInstance->DoOpenDoor(GO_VALITHRIA_DOOR_3);
-                    pInstance->DoOpenDoor(GO_VALITHRIA_DOOR_1);
-                }
-
             }
         }
     }
@@ -268,10 +237,6 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
     void EnterEvadeMode()
     {
         m_bCombatStarted = false;
-        pInstance->DoCloseDoor(GO_VALITHRIA_DOOR_1);
-        pInstance->DoCloseDoor(GO_VALITHRIA_DOOR_2);
-        pInstance->DoCloseDoor(GO_VALITHRIA_DOOR_3);
-        pInstance->DoCloseDoor(GO_VALITHRIA_DOOR_4);
         ScriptedAI::EnterEvadeMode();
     }
 
@@ -299,7 +264,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
     void DoSummonAdd(uint32 uiEntry)
     {
         uint32 loc = urand(1, 2 + (m_bIs25Man ? 2 : 0));
-        m_creature->SummonCreature(uiEntry, SpawnLoc[loc].x, SpawnLoc[loc].y, SpawnLoc[loc].z, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 1000);
+        m_creature->SummonCreature(uiEntry, SpawnLoc[loc].x, SpawnLoc[loc].y, SpawnLoc[loc].z, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
 
         // some additional control of summoning adds (anti flood system)
         if (!m_bIsEnrage)
@@ -347,7 +312,6 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
 
                 m_uiOutroTimer = 30000;
                 m_creature->ForcedDespawn(1000);
-
             }
             else
                 m_uiOutroTimer -= uiDiff;
@@ -381,10 +345,9 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
             }
 
             // check if encounter is completed
-            if (fHP >= 95.0f)
+            if (fHP > 95.0f)
             {
                 if (DoCastSpellIfCan(m_creature, SPELL_DREAMWALKER_RAGE) == CAST_OK)
-				//m_creature->CastSpell(m_creature,SPELL_DREAMWALKER_RAGE,false);
                 {
                     DoScriptText(SAY_VICTORY, m_creature);
                     m_creature->RemoveAllAuras();
@@ -598,34 +561,15 @@ struct MANGOS_DLL_DECL mob_gluttonous_abominationAI : public ScriptedAI
     }
 
     uint32 m_uiGutSprayTimer;
-    bool m_bIsRotWormsCast;
-    bool m_bIsDead;
-    uint32 m_uiTimeBeforeRotWormsSpawn;
 
     void Reset()
     {
         m_uiGutSprayTimer = urand(3000, 5000);
-        m_bIsRotWormsCast = false;
-		m_bIsDead = false;
-		m_uiTimeBeforeRotWormsSpawn = 3000;
     }
 
-	void DamageTaken(Unit *pDealer, uint32 &uiDamage)
+    void JustDied(Unit *pKiller)
     {
-        if (uiDamage > m_creature->GetHealth())
-        {
-            uiDamage = 0;
-            m_creature->GetMotionMaster()->MovementExpired(false);
-            m_creature->GetMotionMaster()->MoveIdle();
-            SetCombatMovement(false);
-            m_creature->RemoveAllAuras();
-            m_creature->CombatStop(true);
-            m_creature->SetStandState(UNIT_STAND_STATE_DEAD);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            m_creature->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
-            m_bIsRotWormsCast=true;
-            m_bIsDead=true;
-        }
+        DoCastSpellIfCan(m_creature, SPELL_ROT_WORM_SPAWNER, CAST_TRIGGERED);
     }
 
     void JustSummoned(Creature *pCreature)
@@ -638,6 +582,7 @@ struct MANGOS_DLL_DECL mob_gluttonous_abominationAI : public ScriptedAI
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
+
         // Gut Spray
         if (m_uiGutSprayTimer <= uiDiff)
         {
@@ -646,20 +591,8 @@ struct MANGOS_DLL_DECL mob_gluttonous_abominationAI : public ScriptedAI
         }
         else
             m_uiGutSprayTimer -= uiDiff;
-        if (m_bIsRotWormsCast == true)
-        {
-            if (m_uiTimeBeforeRotWormsSpawn<= uiDiff)
-            {
-                //if (DoCastSpellIfCan(m_creature, SPELL_ROT_WORM_SPAWNER, CAST_TRIGGERED) == CAST_OK)  //Doesn't work
-                m_creature->CastSpell(m_creature,SPELL_ROT_WORM_SPAWNER,true);
-                m_creature->ForcedDespawn(6000);
-                m_bIsRotWormsCast=false;
-            }
-            else
-                m_uiTimeBeforeRotWormsSpawn-=uiDiff;
-        }
-        if (!m_bIsDead)
-            DoMeleeAttackIfReady();
+
+        DoMeleeAttackIfReady();
     }
 };
 
@@ -672,7 +605,13 @@ CreatureAI* GetAI_mob_gluttonous_abomination(Creature *pCreature)
 struct MANGOS_DLL_DECL mob_blistering_zombieAI : public ScriptedAI
 {
     mob_blistering_zombieAI(Creature *pCreature) : ScriptedAI(pCreature){}
-    void Reset(){}
+
+    bool m_bHasDied;
+
+    void Reset()
+    {
+        m_bHasDied = false;
+    }
 
     void Aggro(Unit *pWho)
     {
@@ -685,18 +624,22 @@ struct MANGOS_DLL_DECL mob_blistering_zombieAI : public ScriptedAI
         {
             uiDamage = 0;
             SetCombatMovement(false);
-            m_creature->RemoveAllAuras();
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            m_creature->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
-            m_creature->SetStandState(UNIT_STAND_STATE_DEAD);
-            m_creature->SetHealth(m_creature->GetMaxHealth());
-            if (DoCastSpellIfCan(m_creature, SPELL_ACID_BURST) == CAST_OK)
-                m_creature->ForcedDespawn(1200);
+            if (!m_bHasDied)
+            {
+                if (DoCastSpellIfCan(m_creature, SPELL_ACID_BURST) == CAST_OK)
+                {
+                    m_bHasDied = true;
+                    m_creature->ForcedDespawn(2000);
+                }
+            }
         }
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
+        if (m_bHasDied)
+            return;
+
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 

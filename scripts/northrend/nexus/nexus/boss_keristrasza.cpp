@@ -16,8 +16,8 @@
 
 /* ScriptData
 SDName: Boss_Keristrasza
-SD%Complete: 80%
-SDComment: timers tuning
+SD%Complete: 65%
+SDComment: timers tuning, add achievement
 SDCategory: Nexus
 EndScriptData */
 
@@ -26,23 +26,27 @@ EndScriptData */
 
 enum
 {
-    // Spells
-    SPELL_INTENSE_COLD          = 48094,
-    SPELL_CRYSTALFIRE_BREATH    = 48096,
-    SPELL_CRYSTALFIRE_BREATH_H  = 57091,
-    SPELL_CRYSTALLIZE           = 48179,
-    SPELL_CRYSTAL_CHAINS        = 50997,
-    SPELL_TAIL_SWEEP            = 50155,
-    SPELL_ENRAGE                = 8599,
-
-    // Texts
     SAY_AGGRO                   = -1576016,
     SAY_CRYSTAL_NOVA            = -1576017,
     SAY_ENRAGE                  = -1576018,
     SAY_KILL                    = -1576019,
     SAY_DEATH                   = -1576020,
 
-    NPC_DAILY_DUNGEON           = 22852,
+    MAX_INTENSE_COLD_STACK      = 2,            // the max allowed stacks for the achiev to pass
+
+    SPELL_INTENSE_COLD          = 48094,
+    SPELL_INTENSE_COLD_AURA     = 48095,        // used for Intense cold achiev
+
+    SPELL_CRYSTALFIRE_BREATH    = 48096,
+    SPELL_CRYSTALFIRE_BREATH_H  = 57091,
+
+    SPELL_CRYSTALLIZE           = 48179,
+
+    SPELL_CRYSTAL_CHAINS        = 50997,
+
+    SPELL_TAIL_SWEEP            = 50155,
+
+    SPELL_ENRAGE                = 8599
 };
 
 /*######
@@ -61,23 +65,23 @@ struct MANGOS_DLL_DECL boss_keristraszaAI : public ScriptedAI
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
 
+    uint32 uiCrystalChainTimer;
+    uint32 uiTailSweepTimer;
+    uint32 uiCrystalfireBreathTimer;
+    uint32 uiCrystallizeTimer;
+    uint32 uiCheckIntenseColdTimer;
+
     bool m_bIsEnraged;
-    bool m_bAchievFailed;
-    uint32 m_uiCrystalChainTimer;
-    uint32 m_uiTailSweepTimer;
-    uint32 m_uiCrystalfireBreathTimer;
-    uint32 m_uiCrystallizeTimer;
-    uint32 m_uiCheckTimer;
 
     void Reset()
     {
-        m_uiCrystalChainTimer = 30*IN_MILLISECONDS;
-        m_uiTailSweepTimer = urand(5*IN_MILLISECONDS, 7.5*IN_MILLISECONDS);
-        m_uiCrystalfireBreathTimer = urand(10*IN_MILLISECONDS, 20*IN_MILLISECONDS);
-        m_uiCrystallizeTimer = urand(20*IN_MILLISECONDS, 30*IN_MILLISECONDS);
-        m_uiCheckTimer = 1000;
+        uiCrystalChainTimer = 30000;
+        uiTailSweepTimer = urand(5000, 7500);
+        uiCrystalfireBreathTimer = urand(10000, 20000);
+        uiCrystallizeTimer = urand(20000, 30000);
+        uiCheckIntenseColdTimer = 2000;
+
         m_bIsEnraged = false;
-        m_bAchievFailed = false;
 
         if (!m_pInstance)
             return;
@@ -89,15 +93,6 @@ struct MANGOS_DLL_DECL boss_keristraszaAI : public ScriptedAI
         }
     }
 
-    void JustReachedHome()
-    {
-        if (m_pInstance)
-        {
-            m_pInstance->SetData(TYPE_KERISTRASZA, FAIL);
-            m_pInstance->SetData(TYPE_ACHIEV_KERISTRASZA, FAIL);
-        }
-    }
-
     void Aggro(Unit* pWho)
     {
         DoScriptText(SAY_AGGRO, m_creature);
@@ -106,15 +101,10 @@ struct MANGOS_DLL_DECL boss_keristraszaAI : public ScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_KERISTRASZA, IN_PROGRESS);
-
-        if (!m_bIsRegularMode)
-            m_pInstance->SetData(TYPE_ACHIEV_KERISTRASZA, IN_PROGRESS);
     }
 
     void JustDied(Unit* pKiller)
     {
-        m_creature->SummonCreature(NPC_DAILY_DUNGEON, 301.69f, -5.44f, -15.56f, 3.14f, TEMPSUMMON_MANUAL_DESPAWN, 5000);
-
         DoScriptText(SAY_DEATH, m_creature);
 
         if (m_pInstance)
@@ -127,47 +117,34 @@ struct MANGOS_DLL_DECL boss_keristraszaAI : public ScriptedAI
             DoScriptText(SAY_KILL, m_creature);
     }
 
-    void CheckAchievement()
-    {
-        Map* pMap = m_creature->GetMap();
-        Map::PlayerList const& pPlayers = pMap->GetPlayers();
-        if (!pPlayers.isEmpty())
-        {
-            for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
-            {
-                Unit *pTarget = itr->getSource();
-                if (pTarget)
-                {
-                    SpellAuraHolderPtr holder = pTarget->GetSpellAuraHolder(48095);
-                    if (holder)
-                    {
-                        if (holder->GetStackAmount() > 2)
-                        {
-                            m_pInstance->SetData(TYPE_ACHIEV_KERISTRASZA, FAIL);
-                            m_bAchievFailed = true;
-                        }
-                        else
-                            m_bAchievFailed = false;
-                    }
-                }
-            }
-        }
-    }
-
     void UpdateAI(const uint32 uiDiff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (!m_bAchievFailed)
+        if (uiCheckIntenseColdTimer < uiDiff)
         {
-            if (m_uiCheckTimer < uiDiff)
+            ThreatList playerList = m_creature->getThreatManager().getThreatList();
+            for (ThreatList::const_iterator itr = playerList.begin(); itr != playerList.end(); ++itr)
             {
-                CheckAchievement();
-                m_uiCheckTimer = 1000;
+                if (Player* pTarget = m_creature->GetMap()->GetPlayer((*itr)->getUnitGuid()))
+                {
+                    Aura* pAuraIntenseCold = pTarget->GetAura(SPELL_INTENSE_COLD_AURA, EFFECT_INDEX_0);
+
+                    if (pAuraIntenseCold)
+                    {
+                        if (pAuraIntenseCold->GetStackAmount() > MAX_INTENSE_COLD_STACK)
+                        {
+                            if (m_pInstance)
+                                m_pInstance->SetData(TYPE_INTENSE_COLD_FAILED, pTarget->GetGUIDLow());
+                        }
+                    }
+                }
             }
-            else m_uiCheckTimer -= uiDiff;
+            uiCheckIntenseColdTimer = 1000;
         }
+        else
+            uiCheckIntenseColdTimer -= uiDiff;
 
         if (!m_bIsEnraged && m_creature->GetHealthPercent() < 25.0f)
         {
@@ -179,7 +156,7 @@ struct MANGOS_DLL_DECL boss_keristraszaAI : public ScriptedAI
             }
         }
 
-        if (m_uiCrystalChainTimer < uiDiff)
+        if (uiCrystalChainTimer < uiDiff)
         {
             if (!m_creature->IsNonMeleeSpellCasted(false))
             {
@@ -190,14 +167,14 @@ struct MANGOS_DLL_DECL boss_keristraszaAI : public ScriptedAI
                         if (Player* pPlayer = pTarget->GetCharmerOrOwnerPlayerOrPlayerItself())
                             DoCastSpellIfCan(pPlayer, SPELL_CRYSTAL_CHAINS);
 
-                        m_uiCrystalChainTimer = 30*IN_MILLISECONDS;
+                        uiCrystalChainTimer = 30000;
                     }
                 }
                 else
                 {
                     if (Unit* pSource = m_creature->getVictim())
                     {
-                        m_uiCrystalChainTimer = 15*IN_MILLISECONDS;
+                        uiCrystalChainTimer = 15000;
 
                         Player* pPlayer = pSource->GetCharmerOrOwnerPlayerOrPlayerItself();
 
@@ -222,36 +199,36 @@ struct MANGOS_DLL_DECL boss_keristraszaAI : public ScriptedAI
             }
         }
         else
-            m_uiCrystalChainTimer -= uiDiff;
+            uiCrystalChainTimer -= uiDiff;
 
-        if (m_uiTailSweepTimer < uiDiff)
+        if (uiTailSweepTimer < uiDiff)
         {
             if (DoCastSpellIfCan(m_creature, SPELL_TAIL_SWEEP) == CAST_OK)
-                m_uiTailSweepTimer = urand(2.5*IN_MILLISECONDS, 7.5*IN_MILLISECONDS);
+                uiTailSweepTimer = urand(2500, 7500);
         }
         else
-            m_uiCrystalChainTimer -= uiDiff;
+            uiCrystalChainTimer -= uiDiff;
 
-        if (m_uiCrystalfireBreathTimer < uiDiff)
+        if (uiCrystalfireBreathTimer < uiDiff)
         {
             if (DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_CRYSTALFIRE_BREATH : SPELL_CRYSTALFIRE_BREATH_H) == CAST_OK)
-                m_uiCrystalfireBreathTimer = urand(15*IN_MILLISECONDS, 20*IN_MILLISECONDS);
+                uiCrystalfireBreathTimer = urand(15000, 20000);
         }
         else
-            m_uiCrystalfireBreathTimer -= uiDiff;
+            uiCrystalfireBreathTimer -= uiDiff;
 
         if (!m_bIsRegularMode)
         {
-            if (m_uiCrystallizeTimer < uiDiff)
+            if (uiCrystallizeTimer < uiDiff)
             {
                 if (DoCastSpellIfCan(m_creature, SPELL_CRYSTALLIZE) == CAST_OK)
                 {
-                    m_uiCrystallizeTimer = urand(15*IN_MILLISECONDS, 25*IN_MILLISECONDS);
+                    uiCrystallizeTimer = urand(15000, 25000);
                     DoScriptText(SAY_CRYSTAL_NOVA, m_creature);
                 }
             }
             else
-                m_uiCrystallizeTimer -= uiDiff;
+                uiCrystallizeTimer -= uiDiff;
         }
 
         DoMeleeAttackIfReady();

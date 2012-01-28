@@ -244,7 +244,7 @@ struct boss_skadi_graufAI : public ScriptedAI
     uint8 m_uiHarpoonHitCounter;
     uint8 m_uiHarpoonHitCounterAchiev;
     uint32 m_uiSummon;
-      
+
     void Reset()
     {
         isInFlight = false;
@@ -271,13 +271,16 @@ struct boss_skadi_graufAI : public ScriptedAI
 
     void MovementInform(uint32 uiMovementType, uint32 uiData)
     {
+        if (uiMovementType != POINT_MOTION_TYPE)
+            return;
+
         switch(uiData)
         {
             case 1: // short after start
             case 2: // rotating position
                 ++uiWaypointId;
                 uiMovementTimer = 1000;
-                break;             
+                break;
             case 3: // shoot position
             {
                 ++uiWaypointId;
@@ -316,7 +319,11 @@ struct boss_skadi_graufAI : public ScriptedAI
             default:
                 uiWaypointId = 0;
                 uiMovementTimer = 1000;
+                break;
         }
+
+        if ( uiWaypointId > 6 )
+            error_log("SD2: Instance Pinnacle: Skadi Grauf try move to point %u!", uiWaypointId);
     }
 
     void JustDied(Unit* pTarget)
@@ -355,10 +362,10 @@ struct boss_skadi_graufAI : public ScriptedAI
             m_creature->DealDamage(m_creature, m_creature->GetHealth(),  NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
         }
     }
-      
+
     void UpdateAI(const uint32 uiDiff)
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->getVictim() || (!uiWaypointId && !m_creature->SelectHostileTarget()))
             return;
 
         if (vehicle->GetPassenger(0) && !isInFlight)
@@ -370,12 +377,14 @@ struct boss_skadi_graufAI : public ScriptedAI
             uiWaypointId = 1;
             uiMovementTimer = 1000;
         }
-        if (isInFlight)
+
+        if (isInFlight && m_creature->isAlive())
         {
             if (uiMovementTimer < uiDiff)
             {
-                m_creature->GetMotionMaster()->Clear();
-                m_creature->GetMotionMaster()->MovePoint(uiWaypointId, FlightPosition[uiWaypointId].x, FlightPosition[uiWaypointId].y, FlightPosition[uiWaypointId].z);
+                m_creature->GetMotionMaster()->Clear(true,true);
+                if ( uiWaypointId < 7)
+                    m_creature->GetMotionMaster()->MovePoint(uiWaypointId, FlightPosition[uiWaypointId].x, FlightPosition[uiWaypointId].y, FlightPosition[uiWaypointId].z);
                 uiMovementTimer = 20000;
             }
             else

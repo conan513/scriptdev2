@@ -14,25 +14,13 @@ enum
     TYPE_KING_DRED                  = 2,
     TYPE_THARONJA                   = 3,
 
+    NPC_NOVOS                       = 26631,
     NPC_KING_DRED                   = 27483,
-
-    TYPE_CRYSTAL_1                = 5,
-    TYPE_CRYSTAL_2                = 6,
-    TYPE_CRYSTAL_3                = 7,
-    TYPE_CRYSTAL_4                = 8,
-    TYPE_NOVOS_PHASE2_CHECK       = 9,
-    TYPE_NOVOS_EVENT              = 10,
-
-    NPC_CRYSTAL_CHANNEL_TARGET    = 26710,
-    NPC_CRYSTAL_CHANNEL           = 26712,
-    NPC_TRIGGER_TARGET            = 26714,
-    NPC_NOVOS                     = 26631,
-
-    NPC_RISEN_SHADOWCASTER        = 27600,
 
     // Adds of King Dred Encounter - deaths counted for achievement
     NPC_DRAKKARI_GUTRIPPER          = 26641,
     NPC_DRAKKARI_SCYTHECLAW         = 26628,
+    NPC_WORLD_TRIGGER               = 22515,
 
     // Novos Encounter
     SPELL_BEAM_CHANNEL              = 52106,
@@ -42,6 +30,7 @@ enum
     SPELL_CRYSTAL_HANDLER_DEATH_4   = 55805,
 
     MAX_CRYSTALS                    = 4,
+    NPC_CRYSTAL_CHANNEL_TARGET      = 26712,
     GO_CRYSTAL_SW                   = 189299,
     GO_CRYSTAL_NE                   = 189300,
     GO_CRYSTAL_NW                   = 189301,
@@ -81,6 +70,9 @@ class MANGOS_DLL_DECL instance_draktharon_keep : public ScriptedInstance
         void OnCreatureCreate(Creature* pCreature);
         void OnObjectCreate(GameObject* pGo);
 
+        void GetTrollgoreOutsideTriggers(GUIDVector& vTriggers) { vTriggers = m_vTriggerGuids; }
+        ObjectGuid GetTrollgoreCornerTrigger() { return m_trollgoreCornerTriggerGuid; }
+
         bool CheckAchievementCriteriaMeet(uint32 uiCriteriaId, Player const* pSource, Unit const* pTarget, uint32 uiMiscValue1 /* = 0*/);
 
         const char* Save() { return m_strInstData.c_str(); }
@@ -101,11 +93,13 @@ class MANGOS_DLL_DECL instance_draktharon_keep : public ScriptedInstance
         bool m_bTrollgoreConsume;
 
         ObjectGuid m_novosChannelGuid;
+        ObjectGuid m_trollgoreCornerTriggerGuid;
 
         NovosCrystalInfo m_aNovosCrystalInfo[MAX_CRYSTALS];
 
         GUIDVector m_vSummonDummyGuids;
         GUIDList m_lNovosDummyGuids;
+        GUIDVector m_vTriggerGuids;
 };
 
 #endif

@@ -27,11 +27,11 @@ EndScriptData */
 enum
 {
     SAY_AGGRO               = -1576000,
-    SAY_KILL                = -1576001,
-    SAY_DEATH               = -1576002,
+    SAY_SPLIT_1             = -1576001,
+    SAY_SPLIT_2             = -1576002,
     SAY_MERGE               = -1576003,
-    SAY_SPLIT_1             = -1576004,
-    SAY_SPLIT_2             = -1576005,
+    SAY_KILL                = -1576004,
+    SAY_DEATH               = -1576005,
 
     SPELL_FIREBOMB          = 47773,
     SPELL_FIREBOMB_H        = 56934,
@@ -64,7 +64,7 @@ enum
     PHASE_1                 = 1,
     PHASE_2                 = 2,
     PHASE_3                 = 3,
-    PHASE_4                 = 4,
+    PHASE_4                 = 4
 };
 
 /*######
@@ -75,31 +75,35 @@ struct MANGOS_DLL_DECL boss_telestraAI : public ScriptedAI
 {
     boss_telestraAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_pInstance = (instance_nexus*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
-    ScriptedInstance* m_pInstance;
+    instance_nexus* m_pInstance;
     bool m_bIsRegularMode;
 
     uint8 m_uiPhase;
     uint8 m_uiCloneDeadCount;
 
+    uint32 m_uiPersonalityTimer;
     uint32 m_uiFirebombTimer;
     uint32 m_uiIceNovaTimer;
     uint32 m_uiGravityWellTimer;
-    uint32 m_uiAchievTimer;
+
+    bool m_bCanCheckAchiev;
 
     void Reset()
     {
         m_uiPhase = PHASE_1;
         m_uiCloneDeadCount = 0;
 
+        m_uiPersonalityTimer = 0;
         m_uiFirebombTimer = urand(2000, 4000);
         m_uiIceNovaTimer = urand(8000, 12000);
         m_uiGravityWellTimer = urand(15000, 25000);
-        m_uiAchievTimer = 0;
+
+        m_bCanCheckAchiev = false;
     }
 
     void JustReachedHome()
@@ -124,7 +128,7 @@ struct MANGOS_DLL_DECL boss_telestraAI : public ScriptedAI
         DoScriptText(SAY_AGGRO, m_creature);
 
         if (m_pInstance)
-            m_pInstance->SetData(TYPE_ACHIEV_TELESTRA, IN_PROGRESS);
+            m_pInstance->SetData(TYPE_TELESTRA, IN_PROGRESS);
     }
 
     void JustDied(Unit* pKiller)
@@ -152,6 +156,13 @@ struct MANGOS_DLL_DECL boss_telestraAI : public ScriptedAI
             {
                 ++m_uiCloneDeadCount;
 
+                // After the first clone from each split phase is dead start the achiev timer
+                if (m_uiCloneDeadCount == 1 || m_uiCloneDeadCount == 4)
+                {
+                    m_bCanCheckAchiev = true;
+                    m_uiPersonalityTimer = 0;
+                }
+
                 if (m_uiCloneDeadCount == 3 || m_uiCloneDeadCount == 6)
                 {
                     m_creature->RemoveAurasDueToSpell(SPELL_SUMMON_CLONES);
@@ -160,6 +171,14 @@ struct MANGOS_DLL_DECL boss_telestraAI : public ScriptedAI
                     m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
                     DoScriptText(SAY_MERGE, m_creature);
+
+                    // Check if it took longer than 5 sec
+                    if (m_uiPersonalityTimer > 5000)
+                    {
+                        if (m_pInstance)
+                            m_pInstance->SetSpecialAchievementCriteria(TYPE_ACHIEV_SPLIT_PERSONALITY, false);
+                    }
+                    m_bCanCheckAchiev = false;
 
                     m_uiPhase = m_uiCloneDeadCount == 3 ? PHASE_3 : PHASE_4;
                 }
@@ -175,15 +194,9 @@ struct MANGOS_DLL_DECL boss_telestraAI : public ScriptedAI
     {
         switch(pSummoned->GetEntry())
         {
-            case NPC_TELEST_FIRE: 
-                pSummoned->CastSpell(pSummoned, SPELL_FIRE_VISUAL, true); 
-                break;
-            case NPC_TELEST_ARCANE: 
-                pSummoned->CastSpell(pSummoned, SPELL_ARCANE_VISUAL, true); 
-                break;
-            case NPC_TELEST_FROST: 
-                pSummoned->CastSpell(pSummoned, SPELL_FROST_VISUAL, true); 
-                break;
+            case NPC_TELEST_FIRE: pSummoned->CastSpell(pSummoned, SPELL_FIRE_VISUAL, true); break;
+            case NPC_TELEST_ARCANE: pSummoned->CastSpell(pSummoned, SPELL_ARCANE_VISUAL, true); break;
+            case NPC_TELEST_FROST: pSummoned->CastSpell(pSummoned, SPELL_FROST_VISUAL, true); break;
         }
     }
 
@@ -192,8 +205,8 @@ struct MANGOS_DLL_DECL boss_telestraAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (!m_bIsRegularMode && m_uiAchievTimer > 5000)
-            m_pInstance->SetData(TYPE_ACHIEV_TELESTRA, FAIL);
+        if (m_bCanCheckAchiev)
+            m_uiPersonalityTimer += uiDiff;
 
         switch(m_uiPhase)
         {
@@ -224,7 +237,6 @@ struct MANGOS_DLL_DECL boss_telestraAI : public ScriptedAI
                         if (DoCastSpellIfCan(m_creature, SPELL_SUMMON_CLONES, CAST_INTERRUPT_PREVIOUS) == CAST_OK)
                         {
                             DoScriptText(urand(0, 1) ? SAY_SPLIT_1 : SAY_SPLIT_2, m_creature);
-                            m_uiAchievTimer += uiDiff;
                             m_uiPhase = PHASE_2;
                         }
                     }
@@ -266,10 +278,10 @@ CreatureAI* GetAI_boss_telestra(Creature* pCreature)
 
 void AddSC_boss_telestra()
 {
-    Script *newscript;
+    Script* pNewScript;
 
-    newscript = new Script;
-    newscript->Name = "boss_telestra";
-    newscript->GetAI = &GetAI_boss_telestra;
-    newscript->RegisterSelf();
+    pNewScript = new Script;
+    pNewScript->Name = "boss_telestra";
+    pNewScript->GetAI = &GetAI_boss_telestra;
+    pNewScript->RegisterSelf();
 }

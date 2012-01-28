@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: boss_deathbringer_saurfang
 SD%Complete: 99%
-SDComment: by przemratajczak, alliance intro/outro and corrects by carlos93 & walkum
+SDComment: Events - intro and outro missing for alliance version
 SDCategory: Icecrown Citadel
 EndScriptData */
 
@@ -27,94 +27,92 @@ EndScriptData */
 // talks
 enum
 {
-    SAY_AGGRO                   = -1731028,
-    SAY_FALLENCHAMPION          = -1731029,
-    SAY_BLOODBEASTS             = -1731030,
-    SAY_SLAY_1                  = -1731031,
-    SAY_SLAY_2                  = -1731032,
-    SAY_BERSERK                 = -1731033,
-    SAY_DEATH                   = -1731034,
-    SAY_INTRO_ALLY_0            = -1731035,
-    SAY_INTRO_ALLY_1            = -1731036,
-    SAY_INTRO_ALLY_2            = -1731037,
-    SAY_INTRO_ALLY_3            = -1731038,
-    SAY_INTRO_ALLY_4            = -1731039,
-    SAY_INTRO_ALLY_5            = -1731040,
-    SAY_INTRO_HORDE_1           = -1731041,
-    SAY_INTRO_HORDE_2           = -1731042,
-    SAY_INTRO_HORDE_3           = -1731043,
-    SAY_INTRO_HORDE_4           = -1731044,
-    SAY_INTRO_HORDE_5           = -1731045,
-    SAY_INTRO_HORDE_6           = -1731046,
-    SAY_INTRO_HORDE_7           = -1731047,
-    SAY_INTRO_HORDE_8           = -1731048,
-    SAY_INTRO_HORDE_9           = -1731049,
-    SAY_OUTRO_ALLY_1            = -1731050,
-    SAY_OUTRO_ALLY_2            = -1731051,
-    SAY_OUTRO_ALLY_3            = -1731052,
-    SAY_OUTRO_ALLY_4            = -1731053,
-    SAY_OUTRO_ALLY_5            = -1731054,
-    SAY_OUTRO_ALLY_6            = -1731055,
-    SAY_OUTRO_ALLY_7            = -1731056,
-    SAY_OUTRO_ALLY_8            = -1731057,
-    SAY_OUTRO_ALLY_9            = -1731058,
-    SAY_OUTRO_ALLY_10           = -1731059,
-    SAY_OUTRO_ALLY_11           = -1731060,
-    SAY_OUTRO_ALLY_12           = -1731061,
-    SAY_OUTRO_ALLY_13           = -1731062,
-    SAY_OUTRO_ALLY_14           = -1731063,
-    SAY_OUTRO_ALLY_15           = -1731064,
-    SAY_OUTRO_ALLY_16           = -1731065,
-    SAY_OUTRO_HORDE_1           = -1731066,
-    SAY_OUTRO_HORDE_2           = -1731067,
-    SAY_OUTRO_HORDE_3           = -1731068,
-    SAY_OUTRO_HORDE_4           = -1731069,
+    SAY_AGGRO                   = -1631028,
+    SAY_FALLENCHAMPION          = -1631029,
+    SAY_BLOODBEASTS             = -1631030,
+    SAY_SLAY_1                  = -1631031,
+    SAY_SLAY_2                  = -1631032,
+    SAY_BERSERK                 = -1631033,
+    SAY_DEATH                   = -1631034,
+    SAY_INTRO_ALLY_0            = -1631035,
+    SAY_INTRO_ALLY_1            = -1631036,
+    SAY_INTRO_ALLY_2            = -1631037,
+    SAY_INTRO_ALLY_3            = -1631038,
+    SAY_INTRO_ALLY_4            = -1631039,
+    SAY_INTRO_ALLY_5            = -1631040,
+    SAY_INTRO_HORDE_1           = -1631041,
+    SAY_INTRO_HORDE_2           = -1631042,
+    SAY_INTRO_HORDE_3           = -1631043,
+    SAY_INTRO_HORDE_4           = -1631044,
+    SAY_INTRO_HORDE_5           = -1631045,
+    SAY_INTRO_HORDE_6           = -1631046,
+    SAY_INTRO_HORDE_7           = -1631047,
+    SAY_INTRO_HORDE_8           = -1631048,
+    SAY_INTRO_HORDE_9           = -1631049,
+    SAY_OUTRO_ALLY_1            = -1631050,
+    SAY_OUTRO_ALLY_2            = -1631051,
+    SAY_OUTRO_ALLY_3            = -1631052,
+    SAY_OUTRO_ALLY_4            = -1631053,
+    SAY_OUTRO_ALLY_5            = -1631054,
+    SAY_OUTRO_ALLY_6            = -1631055,
+    SAY_OUTRO_ALLY_7            = -1631056,
+    SAY_OUTRO_ALLY_8            = -1631057,
+    SAY_OUTRO_ALLY_9            = -1631058,
+    SAY_OUTRO_ALLY_10           = -1631059,
+    SAY_OUTRO_ALLY_11           = -1631060,
+    SAY_OUTRO_ALLY_12           = -1631061,
+    SAY_OUTRO_ALLY_13           = -1631062,
+    SAY_OUTRO_ALLY_14           = -1631063,
+    SAY_OUTRO_ALLY_15           = -1631064,
+    SAY_OUTRO_ALLY_16           = -1631065,
+    SAY_OUTRO_HORDE_1           = -1631066,
+    SAY_OUTRO_HORDE_2           = -1631067,
+    SAY_OUTRO_HORDE_3           = -1631068,
+    SAY_OUTRO_HORDE_4           = -1631069,
 };
 
 enum
 {
-        // Blood Power
-        SPELL_BLOOD_POWER                       = 72371,
-        SPELL_BLOOD_LINK_BEAST                  = 72176, // proc aura for Blood Beasts
-        SPELL_BLOOD_LINK                        = 72202, // cast on Saurfang to give 1 Blood Power
+    // Intro
+    SPELL_GRIP_OF_AGONY                     = 70572,
 
-        // Mark of the Fallen Champion
-        SPELL_MARK_OF_FALLEN_CHAMPION           = 72256, // proc on melee hit, dmg to marked targets
-        SPELL_MARK_OF_FALLEN_CHAMPION_DEBUFF    = 72293, // proc on death - heal Saurfang
-        SPELL_REMOVE_MARKS                      = 72257,
+    // Blood Power
+    SPELL_BLOOD_POWER                       = 72371,
+    SPELL_BLOOD_LINK_BEAST                  = 72176, // proc aura for Blood Beasts
+    SPELL_BLOOD_LINK                        = 72202, // cast on Saurfang to give 1 Blood Power
 
-        // Rune of Blood
-        SPELL_RUNE_OF_BLOOD                     = 72408, // cast on self on aggro
-        SPELL_RUNE_OF_BLOOD_DEBUFF              = 72410,
+    // Mark of the Fallen Champion
+    SPELL_MARK_OF_FALLEN_CHAMPION           = 72256, // proc on melee hit, dmg to marked targets
+    SPELL_MARK_OF_FALLEN_CHAMPION_DEBUFF    = 72293, // proc on death - heal Saurfang
+    SPELL_REMOVE_MARKS                      = 72257,
 
-        // Blood Nova
-        SPELL_BLOOD_NOVA_10                     = 72378,
-        SPELL_BLOOD_NOVA_25                     = 73058,
+    // Rune of Blood
+    SPELL_RUNE_OF_BLOOD                     = 72408, // cast on self on aggro
+    SPELL_RUNE_OF_BLOOD_DEBUFF              = 72410,
 
-        // Boiling Blood
-        SPELL_BOILING_BLOOD_10                  = 72385,
-        SPELL_BOILING_BLOOD_25                  = 72441,
+    // Blood Nova
+    SPELL_BLOOD_NOVA                        = 72378,
 
-        // Grip of Agony
-        SPELL_GRIP_OF_AGONY                     = 70572,
+    // Boiling Blood
+    SPELL_BOILING_BLOOD                     = 72385,
 
-        // Blood Beasts
-        SPELL_CALL_BLOOD_BEAST_1                = 72172,
-        SPELL_CALL_BLOOD_BEAST_2                = 72173,
-        SPELL_CALL_BLOOD_BEAST_3                = 72356,
-        SPELL_CALL_BLOOD_BEAST_4                = 72357,
-        SPELL_CALL_BLOOD_BEAST_5                = 72358,
+    // Blood Beasts
+    SPELL_CALL_BLOOD_BEAST_1                = 72172,
+    SPELL_CALL_BLOOD_BEAST_2                = 72173,
+    SPELL_CALL_BLOOD_BEAST_3                = 72356,
+    SPELL_CALL_BLOOD_BEAST_4                = 72357,
+    SPELL_CALL_BLOOD_BEAST_5                = 72358,
 
-        SPELL_SCENT_OF_BLOOD                    = 72769,
-        SPELL_SCENT_OF_BLOOD_TRIGGERED          = 72771, // doesn't trigger, so cast in script...
-        SPELL_RESISTANT_SKIN                    = 72723,
+    SPELL_SCENT_OF_BLOOD                    = 72769,
+    SPELL_SCENT_OF_BLOOD_TRIGGERED          = 72771, // doesn't trigger, so cast in script...
+    SPELL_RESISTANT_SKIN                    = 72723,
 
-        // enrage
-        SPELL_BERSERK                           = 26662,
-        SPELL_FRENZY                            = 72737,
+    // enrage
+    SPELL_BERSERK                           = 26662,
+    SPELL_FRENZY                            = 72737,
 
-        //summons
-        NPC_BLOOD_BEAST                         = 38508,
+    //summons
+    NPC_BLOOD_BEAST                         = 38508
 };
 
 enum Equipment
@@ -131,16 +129,13 @@ enum SaurfangEvent
     NPC_KORKRON_REAVER          = 37920,
 
     NPC_MURADIN_BRONZEBEARD     = 37200,
-    NPC_ALLIANCE_MASON          = 37190,
-
-    NPC_JAINA                   = 37188,
-    NPC_VARIAN                  = 37879,
+    NPC_ALLIANCE_MASON          = 37902,
 
     SPELL_VEHICLE_HARDCODED     = 46598, // Deathbringer enters Overlord
 };
 
 // positions
-float fPositions[18][4] =
+float fPositions[12][4] =
 {
     {-468.05f, 2211.69f, 541.11f, 3.16f}, // Deathbringer teleport point
     {-491.30f, 2211.35f, 541.11f, 3.16f}, // Deathbringer dest point
@@ -153,119 +148,387 @@ float fPositions[18][4] =
     {-536.87f, 2215.94f, 539.30f, 6.28f}, // guard npc1 first move
     {-535.17f, 2214.17f, 539.30f, 6.28f}, // guard npc2 first move
     {-535.17f, 2207.71f, 539.30f, 6.28f}, // guard npc3 first move
-    {-536.87f, 2205.68f, 539.30f, 6.28f}, // guard npc4 first move
-    {-539.53f, 2221.15f, 539.30f, 5.92f}, // Varian spawn
-    {-540.92f, 2217.24f, 539.30f, 6.09f}, // Jaina spawn
-    {-525.09f, 2211.31f, 539.28f, 3.13f}, // Muradin looks Overlord
-    {-528.83f, 2211.31f, 539.28f, 3.13f}, // Muradin aproxime to Overlord
-    {-536.65f, 2211.27f, 539.29f, 0.02f}, // Overlord aproxime to Muradin
-    {-505.54f ,2211.20f, 539.28f, 6.25f}  // Other Muradin moves
+    {-536.87f, 2205.68f, 539.30f, 6.28f} // guard npc4 first move
 };
 
 // Event handler
-struct MANGOS_DLL_DECL boss_deathbringer_saurfang_eventAI : public BSWScriptedAI
+struct MANGOS_DLL_DECL npc_highlord_saurfang_iccAI : public base_icc_bossAI
 {
-    boss_deathbringer_saurfang_eventAI(Creature* pCreature) : BSWScriptedAI(pCreature)
+    npc_highlord_saurfang_iccAI(Creature* pCreature) : base_icc_bossAI(pCreature)
     {
-        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_uiMapDifficulty = pCreature->GetMap()->GetDifficulty();
-        m_powerBloodPower = m_creature->getPowerType(); // don't call this function multiple times in script
-        m_bIs25Man = (m_uiMapDifficulty == RAID_DIFFICULTY_25MAN_NORMAL || m_uiMapDifficulty == RAID_DIFFICULTY_25MAN_HEROIC);
-
+        m_bIsEventStarted = false;
         m_uiEventStep = 0;
         m_uiNextEventTimer = 0;
-        n = 8;
-		m_uiMarkCastCount = 0;		
 
-        m_bIsAlliance = true;
-
-        m_bTeleported = false;
-        m_bIsIntroStarted = false;
-        m_bIsIntroFinished = false; // if true - boss is now ready to fight untill death - outro event
-        m_bIsOutroStarted = false;
-
-        m_guidNpc.Clear();
-        m_guidVarian.Clear();
-        m_guidJaina.Clear();
-        m_guidOverlord.Clear();
         m_lGuards.clear();
     }
 
-    ScriptedInstance *m_pInstance;
-
     uint32 m_uiNextEventTimer;
     uint32 m_uiEventStep;
-    int8 n;
-	uint32 m_uiMarkCastCount; // For achievement I've Gone and Made a Mess (4613 and 4537)
+    bool m_bIsEventStarted;
 
-    bool m_bIsAlliance;
-    bool m_bIs25Man;
+    GUIDList m_lGuards;
+
+    void Reset(){}
+
+    void DamageTaken(Unit *pDealer, uint32 &uiDamage)
+    {
+        uiDamage = 0;
+    }
+
+    Creature* GetSaurfang()
+    {
+        if (m_pInstance)
+            return m_pInstance->GetSingleCreatureFromStorage(NPC_DEATHBRINGER_SAURFANG);
+
+        return NULL;
+    }
+
+    void DoSummonGuards()
+    {
+        // 4 adds
+        if (Creature *pTmp = m_creature->SummonCreature(NPC_KORKRON_REAVER, fPositions[3][0], fPositions[3][1], fPositions[3][2], fPositions[3][3], TEMPSUMMON_MANUAL_DESPAWN, 0))
+            m_lGuards.push_back(pTmp->GetObjectGuid());
+        if (Creature *pTmp = m_creature->SummonCreature(NPC_KORKRON_REAVER, fPositions[4][0], fPositions[4][1], fPositions[4][2], fPositions[4][3], TEMPSUMMON_MANUAL_DESPAWN, 0))
+            m_lGuards.push_back(pTmp->GetObjectGuid());
+        if (Creature *pTmp = m_creature->SummonCreature(NPC_KORKRON_REAVER, fPositions[5][0], fPositions[5][1], fPositions[5][2], fPositions[5][3], TEMPSUMMON_MANUAL_DESPAWN, 0))
+            m_lGuards.push_back(pTmp->GetObjectGuid());
+        if (Creature *pTmp = m_creature->SummonCreature(NPC_KORKRON_REAVER, fPositions[6][0], fPositions[6][1], fPositions[6][2], fPositions[6][3], TEMPSUMMON_MANUAL_DESPAWN, 0))
+            m_lGuards.push_back(pTmp->GetObjectGuid());
+    }
+
+    void DoStartEvent()
+    {
+        m_bIsEventStarted = true;
+        NextStep(0);
+    }
+
+    void DoContinueEvent()
+    {
+        NextStep();
+    }
+
+    void NextStep(uint32 uiTime = 1000)
+    {
+        ++m_uiEventStep;
+        m_uiNextEventTimer = uiTime;
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!m_bIsEventStarted || !m_pInstance)
+            return;
+
+        if (m_uiNextEventTimer <= uiDiff)
+        {
+            switch (m_uiEventStep)
+            {
+                case 0:
+                {
+                    break;
+                }
+                case 1:
+                {
+                    DoSummonGuards();
+                    m_pInstance->DoUseDoorOrButton(GO_SAURFANG_DOOR, 0, false);
+                    if (Creature *pSaurfang = GetSaurfang())
+                        pSaurfang->GetMotionMaster()->MovePoint(0, fPositions[1][0], fPositions[1][1], fPositions[1][2]);
+                    NextStep(1000);
+                    break;
+                }
+                case 2:
+                {
+                    m_pInstance->DoUseDoorOrButton(GO_SAURFANG_DOOR, 0, true);
+                    DoScriptText(SAY_INTRO_HORDE_1, m_creature);
+                    m_creature->GetMotionMaster()->MovePoint(0, fPositions[7][0], fPositions[7][1], fPositions[7][2]);
+
+                    // move guards
+                    int8 n = 8;
+                    for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
+                    {
+                        if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
+                            pTmp->GetMotionMaster()->MovePoint(0, fPositions[n][0], fPositions[n][1], fPositions[n][2]);
+                        ++n;
+                    }
+                    NextStep(6000);
+                    break;
+                }
+                case 3:
+                {
+                    if (Creature *pSaurfang = GetSaurfang())
+                        DoScriptText(SAY_INTRO_HORDE_2, pSaurfang);
+                    NextStep(13000);
+                    break;
+                }
+                case 4:
+                {
+                    DoScriptText(SAY_INTRO_HORDE_3, m_creature);
+                    NextStep(7000);
+                    break;
+                }
+                case 5:
+                {
+                    if (Creature *pSaurfang = GetSaurfang())
+                        DoScriptText(SAY_INTRO_HORDE_4, pSaurfang);
+                    NextStep(11000);
+                    break;
+                }
+                case 6:
+                {
+                    DoScriptText(SAY_INTRO_HORDE_5, m_creature);
+                    NextStep(16000);
+                    break;
+                }
+                case 7:
+                {
+                    DoScriptText(SAY_INTRO_HORDE_6, m_creature);
+                    NextStep(15000);
+                    break;
+                }
+                case 8:
+                {
+                    DoScriptText(SAY_INTRO_HORDE_7, m_creature);
+                    NextStep(3000);
+                    break;
+                }
+                case 9:
+                {
+                    float x, y, z;
+                    if (Creature *pSaurfang = GetSaurfang())
+                        pSaurfang->GetPosition(x, y, z);
+
+                    DoScriptText(SAY_INTRO_HORDE_8, m_creature);
+                    m_creature->SetWalk(false);
+                    m_creature->GetMotionMaster()->MovePoint(0, x, y, z);
+
+                    // move guards
+                    for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
+                    {
+                        if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
+                        {
+                            pTmp->SetWalk(false);
+                            pTmp->GetMotionMaster()->MovePoint(0, x, y, z);
+                        }
+                    }
+                    NextStep(2000);
+                    break;
+                }
+                case 10:
+                {
+                    float x, y, z;
+                    // npcs float in air
+                    m_creature->SetWalk(true);
+                    m_creature->SetSpeedRate(MOVE_WALK, 3.0f);
+                    m_creature->SetLevitate(true);
+                    m_creature->GetPosition(x, y, z);
+                    m_creature->GetMotionMaster()->MovePoint(0, x, y, z + frand(5.0f, 7.0f));
+                    m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                    m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
+
+                    // move guards
+                    for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
+                    {
+                        if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
+                        {
+                            pTmp->SetWalk(true);
+                            pTmp->SetSpeedRate(MOVE_WALK, 3.0f);
+                            pTmp->SetLevitate(true);
+                            pTmp->GetPosition(x, y, z);
+                            pTmp->GetMotionMaster()->MovePoint(0, x, y, z + frand(5.0f, 7.0f));
+                            pTmp->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                            pTmp->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
+                        }
+                    }
+                    if (Creature *pSaurfang = GetSaurfang())
+                    {
+                        DoScriptText(SAY_INTRO_HORDE_9, pSaurfang);
+                        // doesnt work :/ can't target creatures, need to check why
+                        pSaurfang->CastSpell(pSaurfang, SPELL_GRIP_OF_AGONY, true);
+                    }
+                    NextStep(10000);
+                    break;
+                }
+                case 11:
+                {
+                    if (Creature *pSaurfang = GetSaurfang())
+                    {
+                        pSaurfang->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                        pSaurfang->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                        pSaurfang->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                        pSaurfang->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
+                        pSaurfang->SetInCombatWithZone();
+                    }
+
+                    NextStep();
+                    break;
+                }
+                case 12:
+                {
+                    // fight is in progress
+                    break;
+                }
+                case 13:
+                {
+                    float x, y, z;
+
+                    m_creature->HandleEmote(EMOTE_ONESHOT_NONE);
+                    m_creature->GetPosition(x, y, z);
+                    m_creature->UpdateAllowedPositionZ(x, y, z);
+                    m_creature->GetMotionMaster()->MovePoint(0, x, y, z);
+
+                    // move guards
+                    for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
+                    {
+                        if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
+                        {
+                            pTmp->GetPosition(x, y, z);
+                            m_creature->UpdateAllowedPositionZ(x, y, z);
+                            pTmp->GetMotionMaster()->MovePoint(0, x, y, z);
+                            pTmp->HandleEmote(EMOTE_ONESHOT_NONE);
+                        }
+                    }
+                    NextStep(1000);
+                    break;
+                }
+                case 14:
+                {
+                    m_creature->SetLevitate(false);
+                    m_creature->SetSpeedRate(MOVE_WALK, 1.0f);
+
+                    for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
+                    {
+                        if (Creature *pGuard = m_creature->GetMap()->GetCreature(*i))
+                        {
+                            pGuard->SetLevitate(false);
+                            pGuard->SetSpeedRate(MOVE_WALK, 1.0f);
+                            pGuard->GetMotionMaster()->MoveFollow(m_creature, frand(2.0f, 5.0f), frand(M_PI_F / 2, 1.5f * M_PI_F));
+                        }
+                    }
+
+                    NextStep(1000);
+                    break;
+                }
+                case 15:
+                {
+                    DoScriptText(SAY_OUTRO_HORDE_1, m_creature);
+                    m_creature->HandleEmote(EMOTE_ONESHOT_KNEEL);
+                    NextStep(3000);
+                    break;
+                }
+                case 16:
+                {
+                    if (Creature *pSaurfang = GetSaurfang())
+                    {
+                        float x, y, z;
+                        pSaurfang->GetContactPoint(m_creature, x, y, z, 1.0f);
+                        m_creature->GetMotionMaster()->MovePoint(0, x, y, z);
+                    }
+                    NextStep(0);
+                    break;
+                }
+                case 17:
+                {
+                    if (Creature *pSaurfang = GetSaurfang())
+                    {
+                        // wait until Overlord comes to Deathbringer
+                        if (!m_creature->IsWithinDist(pSaurfang, 2.0f))
+                            return;
+
+                        m_creature->StopMoving();
+                        m_creature->SetFacingToObject(pSaurfang);
+                    }
+                    NextStep(1000);
+                    break;
+                }
+                case 18:
+                {
+                    if (Creature *pSaurfang = GetSaurfang())
+                    {
+                        DoScriptText(SAY_OUTRO_HORDE_2, m_creature);
+                        m_creature->HandleEmote(EMOTE_ONESHOT_KNEEL);
+                        // doesnt work, invalid target (probably related to strangluating aura problem, maybe factions?)
+                        pSaurfang->CastSpell(m_creature, SPELL_VEHICLE_HARDCODED, true);
+                    }
+                    NextStep(3000);
+                    break;
+                }
+                case 19:
+                {
+                    // take deathbringer
+                    DoScriptText(SAY_OUTRO_HORDE_3, m_creature);
+                    NextStep(11000);
+                    break;
+                }
+                case 20:
+                {
+                    DoScriptText(SAY_OUTRO_HORDE_4, m_creature);
+                    m_creature->GetMotionMaster()->MovePoint(0, fPositions[2][0], fPositions[2][1], fPositions[2][2]);
+                    NextStep();
+                    break;
+                }
+                case 21:
+                {
+                    // wait until coming to gunship boarding place
+                    if (!m_creature->IsWithinDist2d(fPositions[2][0], fPositions[2][1], 3.0f))
+                        return;
+
+                    for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
+                    {
+                        if (Creature *pGuard = m_creature->GetMap()->GetCreature(*i))
+                            pGuard->ForcedDespawn();
+                    }
+                    m_creature->ForcedDespawn();
+                    return;
+                }
+                default:
+                    break;
+            }
+        }
+        else
+            m_uiNextEventTimer -= uiDiff;
+    }
+};
+
+struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public base_icc_bossAI
+{
+    boss_deathbringer_saurfangAI(Creature* pCreature) : base_icc_bossAI(pCreature)
+    {
+        m_powerBloodPower = m_creature->getPowerType(); // don't call this function multiple times in script
+        m_bTeleported = false;
+        m_bIsIntroStarted = false;
+        m_guidEventNpcGuid.Clear();
+        Reset();
+    }
+
+    uint32 m_uiRuneOfBloodTimer;
+    uint32 m_uiBoilingBloodTimer;
+    uint32 m_uiBloodNovaTimer;
+    uint32 m_uiBloodBeastsTimer;
+    uint32 m_uiScentOfBloodTimer;
+    uint32 m_uiBerserkTimer;
+
+    bool m_bIsFrenzied;
+
     bool m_bTeleported;
     bool m_bIsIntroStarted;
-    bool m_bIsIntroFinished;
-    bool m_bIsOutroStarted;
-
-    Difficulty m_uiMapDifficulty;
-
-    ObjectGuid m_guidNpc;
-    ObjectGuid m_guidVarian;
-    ObjectGuid m_guidJaina;
-    ObjectGuid m_guidOverlord;
-    ObjectGuid m_guidKiller;
-    GUIDList m_lGuards;
+    bool m_bIsAlliance;
 
     Powers m_powerBloodPower;
 
+    ObjectGuid m_guidEventNpcGuid;
+
     void Reset()
     {
-        if (m_bIsAlliance)
-        {
-            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidVarian))
-                pTmp->ForcedDespawn();
+        m_uiRuneOfBloodTimer    = 20000;
+        m_uiBoilingBloodTimer   = urand(10000, 35000);
+        m_uiBloodNovaTimer      = urand(16000, 35000);
+        m_uiBloodBeastsTimer    = 40000;
+        m_uiScentOfBloodTimer   = 47000; // 5 seconds after beasts engage in combat
+        m_uiBerserkTimer        = (m_bIsHeroic ? 6 : 8) * MINUTE * IN_MILLISECONDS;
 
-            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidJaina))
-                pTmp->ForcedDespawn();
-        }
-        // Despawn MainNPC
-        if (Creature *pTmp = GetMainNpc())
-        {
-            pTmp->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_NONE);
-            pTmp->ForcedDespawn();
-            pTmp->GetMotionMaster()->Clear();
-        }
+        m_bIsFrenzied = false;
 
-        // Despawn guards
-        for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
-        {
-            if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
-            {
-                pTmp->ForcedDespawn();
-                pTmp->GetMotionMaster()->Clear();
-            }
-        }
-        m_creature->GetMotionMaster()->Clear();
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
-        DoCastSpellIfCan(m_creature, SPELL_REMOVE_MARKS, CAST_TRIGGERED);
-        DoRemoveFromAll(SPELL_MARK_OF_FALLEN_CHAMPION_DEBUFF);
-        DoRemoveFromAll(SPELL_MARK_OF_FALLEN_CHAMPION);
         m_creature->SetPower(m_powerBloodPower, 0);
-
-        m_uiEventStep = 0;
-        m_uiNextEventTimer = 0;
-		m_uiMarkCastCount = 0;
-        n = 8;
-        m_guidNpc.Clear();
-        m_guidVarian.Clear();
-        m_guidJaina.Clear();
-        m_guidOverlord.Clear();
-        m_lGuards.clear();
-
-        m_bTeleported = false;
-        m_bIsIntroStarted = false;
-        m_bIsIntroFinished = false;
-        m_bIsOutroStarted = false;
     }
 
     void MoveInLineOfSight(Unit *pWho)
@@ -279,1109 +542,21 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfang_eventAI : public BSWScriptedAI
 
         if (m_bTeleported && !m_bIsIntroStarted && pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->isGameMaster() && m_creature->GetDistance2d(pWho) < 50.0f)
         {
-            if (((Player*)pWho)->GetTeam() == ALLIANCE)
-                m_bIsAlliance = true;
-            else
-                m_bIsAlliance = false;
-            //m_bIsAlliance = false;  //DEBUG ONLY
-            DoSummonEventNpcs();
+            m_bIsAlliance = false; //((Player*)pWho)->GetTeam() == ALLIANCE;
+            DoSummonEventNpc();
             m_bIsIntroStarted = true;
-            NextStep(0);
         }
     }
 
-    void DamageTaken(Unit *pDealer, uint32 &uiDamage)
+    void DoSummonEventNpc()
     {
-        if (m_bIsOutroStarted)
-        {
-            uiDamage = 0;
-            return;
-        }
-
-        if (uiDamage >= m_creature->GetHealth())
-        {
-            m_bIsOutroStarted = true;
-            uiDamage = 0;
-            m_creature->RemoveAllAuras();
-            m_guidKiller = pDealer->GetObjectGuid();
-            DoFakeDeath();
-            m_uiEventStep = 0;
-        }
-    }
-
-    void DoSummonEventNpcs()
-    {
-        // main npc
+        // main npc: Saurfang or Muradin
         if (Creature *pTmp = m_creature->SummonCreature(m_bIsAlliance ? NPC_MURADIN_BRONZEBEARD : NPC_OVERLORD_SAURFANG, fPositions[2][0], fPositions[2][1], fPositions[2][2], fPositions[2][3], TEMPSUMMON_MANUAL_DESPAWN, 0))
-            m_guidNpc = pTmp->GetObjectGuid();
-        // 4 adds
-        if (Creature *pTmp = m_creature->SummonCreature(m_bIsAlliance ? NPC_ALLIANCE_MASON : NPC_KORKRON_REAVER, fPositions[3][0], fPositions[3][1], fPositions[3][2], fPositions[3][3], TEMPSUMMON_MANUAL_DESPAWN, 0))
-            m_lGuards.push_back(pTmp->GetObjectGuid());
-        if (Creature *pTmp = m_creature->SummonCreature(m_bIsAlliance ? NPC_ALLIANCE_MASON : NPC_KORKRON_REAVER, fPositions[4][0], fPositions[4][1], fPositions[4][2], fPositions[4][3], TEMPSUMMON_MANUAL_DESPAWN, 0))
-            m_lGuards.push_back(pTmp->GetObjectGuid());
-        if (Creature *pTmp = m_creature->SummonCreature(m_bIsAlliance ? NPC_ALLIANCE_MASON : NPC_KORKRON_REAVER, fPositions[5][0], fPositions[5][1], fPositions[5][2], fPositions[5][3], TEMPSUMMON_MANUAL_DESPAWN, 0))
-            m_lGuards.push_back(pTmp->GetObjectGuid());
-        if (Creature *pTmp = m_creature->SummonCreature(m_bIsAlliance ? NPC_ALLIANCE_MASON : NPC_KORKRON_REAVER, fPositions[6][0], fPositions[6][1], fPositions[6][2], fPositions[6][3], TEMPSUMMON_MANUAL_DESPAWN, 0))
-            m_lGuards.push_back(pTmp->GetObjectGuid());
-    }
-
-    void DoSummonVarianAndJaina()
-    {
-        if (Creature *pTmp = m_creature->SummonCreature(NPC_VARIAN, fPositions[12][0], fPositions[12][1], fPositions[12][2], fPositions[12][3], TEMPSUMMON_MANUAL_DESPAWN, 0))
-            m_guidVarian = pTmp->GetObjectGuid();
-
-        if (Creature *pTmp = m_creature->SummonCreature(NPC_JAINA, fPositions[13][0], fPositions[13][1], fPositions[13][2], fPositions[13][3], TEMPSUMMON_MANUAL_DESPAWN, 0))
-            m_guidJaina = pTmp->GetObjectGuid();
-    }
-
-    void DoSummonHighOverlordSaurfang()
-    {
-        if (Creature *pTmp = m_creature->SummonCreature(NPC_OVERLORD_SAURFANG, fPositions[2][0], fPositions[2][1], fPositions[2][2], fPositions[2][3], TEMPSUMMON_MANUAL_DESPAWN, 0))
-            m_guidOverlord = pTmp->GetObjectGuid();
-    }
-
-    Creature* GetMainNpc()
-    {
-        return m_creature->GetMap()->GetCreature(m_guidNpc);
-    }
-
-    void DoRemoveFromAll(uint32 spell)
-    {
-        Map* pMap = m_creature->GetMap();
-        Map::PlayerList const& pPlayers = pMap->GetPlayers();
-        if (!pPlayers.isEmpty())
         {
-            for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
-            {
-                Unit *pTarget = itr->getSource();
-                if (pTarget->HasAura(spell))
-                    m_creature->RemoveAurasDueToSpell(spell);
-            }
+            m_guidEventNpcGuid = pTmp->GetObjectGuid();
+            if (npc_highlord_saurfang_iccAI *pTmpAI = dynamic_cast<npc_highlord_saurfang_iccAI*>(pTmp->AI()))
+                pTmpAI->DoStartEvent();
         }
-    }
-
-    void DoFakeDeath()
-    {
-        m_creature->InterruptNonMeleeSpells(false);
-        m_creature->SetHealth(1);
-        m_creature->StopMoving();
-        m_creature->ClearComboPointHolders();
-        m_creature->RemoveAllAurasOnDeath();
-        m_creature->ModifyAuraState(AURA_STATE_HEALTHLESS_20_PERCENT, false);
-        m_creature->ModifyAuraState(AURA_STATE_HEALTHLESS_35_PERCENT, false);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        m_creature->ClearAllReactives();
-        m_creature->GetMotionMaster()->Clear();
-        m_creature->GetMotionMaster()->MoveIdle();
-        m_creature->SetStandState(UNIT_STAND_STATE_DEAD);
-
-        // like in JustDied()
-        if (m_pInstance)
-            m_pInstance->SetData(TYPE_SAURFANG, DONE);
-
-        DoScriptText(SAY_DEATH, m_creature);
-
-        DoCastSpellIfCan(m_creature, SPELL_REMOVE_MARKS, CAST_TRIGGERED);
-        DoRemoveFromAll(SPELL_MARK_OF_FALLEN_CHAMPION_DEBUFF);
-        DoRemoveFromAll(SPELL_MARK_OF_FALLEN_CHAMPION);
-
-
-    }
-
-    void NextStep(uint32 uiTime = 1000)
-    {
-        ++m_uiEventStep;
-        m_uiNextEventTimer = uiTime;
-    }
-
-    virtual void UpdateFightAI(const uint32 uiDiff) {}
-
-    void UpdateAI(const uint32 uiDiff)
-    {
-        // INTRO
-        if (m_bIsIntroStarted && !m_bIsIntroFinished)
-        {
-            if (m_bIsAlliance)
-            {
-                // **************
-                // ALLIANCE INTRO
-                // **************
-                if (m_uiNextEventTimer <= uiDiff)
-                {
-                    switch (m_uiEventStep)
-                    {
-                        case 0:
-                        {
-                            break;
-                        }
-                        case 1:
-                        {
-                            m_creature->SetPower(m_powerBloodPower, 0);
-                            m_pInstance->DoUseDoorOrButton(GO_SAURFANG_DOOR, 0, false);
-                            m_creature->GetMotionMaster()->MovePoint(0, fPositions[1][0], fPositions[1][1], fPositions[1][2]);
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-                                pTmp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                                pTmp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
-                            }
-                            for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
-                            {
-                                if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
-                                {
-                                    pTmp->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-                                    pTmp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                                    pTmp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
-                                }
-                            }
-                            NextStep(1000);
-                            break;
-                        }
-                        case 2:
-                        {
-                            m_pInstance->DoUseDoorOrButton(GO_SAURFANG_DOOR, 0, true);
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                DoScriptText(SAY_INTRO_ALLY_0, pTmp);
-                                pTmp->GetMotionMaster()->MovePoint(0, fPositions[7][0], fPositions[7][1], fPositions[7][2]);
-                            }
-                            // move guards
-                            for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
-                            {
-                                if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
-                                    pTmp->GetMotionMaster()->MovePoint(0, fPositions[n][0], fPositions[n][1], fPositions[n][2]);
-                                ++n;
-                            }
-                            NextStep(3000);
-                            break;
-                        }
-                        case 3:
-                        {
-                            m_creature->HandleEmote(EMOTE_STATE_TALK);
-                            DoScriptText(SAY_INTRO_ALLY_1, m_creature);
-                            NextStep(18000);
-                            break;
-                        }
-                        case 4:
-                        {
-                            m_creature->HandleEmote(EMOTE_STATE_TALK);
-                            DoScriptText(SAY_INTRO_ALLY_2, m_creature);
-                            NextStep(11000);
-                            break;
-                        }
-                        case 5:
-                        {
-                            m_creature->HandleEmote(EMOTE_STATE_NONE);
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->HandleEmote(EMOTE_STATE_TALK);
-                                DoScriptText(SAY_INTRO_ALLY_3, pTmp);
-                            }
-                            NextStep(6500);
-                            break;
-                        }
-                        case 6:
-                        {
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->HandleEmote(EMOTE_STATE_READY1H);
-                                DoScriptText(SAY_INTRO_ALLY_4, pTmp);
-                            }
-                            for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
-                            {
-                                if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
-                                {
-                                    pTmp->HandleEmote(EMOTE_STATE_READY1H);
-                                }
-                            }
-                            NextStep(2000);
-                            break;
-                        }
-                        case 7:
-                        {
-                            float x, y, z;
-                            m_creature->GetPosition(x, y, z);
-
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->SetWalk(false);
-                                pTmp->GetMotionMaster()->MovePoint(0, x, y, z);
-                            }
-                            // move guards
-                            for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
-                            {
-                                if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
-                                {
-                                    pTmp->SetWalk(false);
-                                    pTmp->GetMotionMaster()->MovePoint(0, x, y, z);
-                                }
-                            }
-                            NextStep(3000);
-                            break;
-                        }
-                        case 8:
-                        {
-                            float x, y, z;
-                            // npcs float in air
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->SetWalk(true);
-                                pTmp->SetSpeedRate(MOVE_WALK, 3.0f);
-                                pTmp->GetPosition(x, y, z);
-                                pTmp->GetMotionMaster()->MovePoint(0, x, y, z + frand(5.0f, 7.0f));
-                                pTmp->_AddAura(70572);
-                            }
-                            // move guards
-                            for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
-                            {
-                                if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
-                                {
-                                    pTmp->SetWalk(true);
-                                    pTmp->SetSpeedRate(MOVE_WALK, 3.0f);
-                                    pTmp->GetPosition(x, y, z);
-                                    pTmp->GetMotionMaster()->MovePoint(0, x, y, z + frand(5.0f, 7.0f));
-                                    pTmp->_AddAura(70572);
-                                }
-                            }
-                            m_creature->HandleEmote(EMOTE_STATE_TALK);
-                            DoScriptText(SAY_INTRO_ALLY_5, m_creature);
-                            NextStep(7000);
-                            break;
-                        }
-                        case 9:
-                        {
-                            m_bIsIntroFinished = true;
-
-                            m_creature->HandleEmote(EMOTE_STATE_NONE);
-                            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
-                            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
-                            m_creature->SetInCombatWithZone();
-
-                            NextStep();
-                            break;
-                        }
-                        case 12:
-                        {
-                            // fight is in progress
-                            break;
-                        }
-                        default:
-                            break;
-                    }
-                }
-                else
-                    m_uiNextEventTimer -= uiDiff;
-            }
-            else
-            {
-                // ***********
-                // HORDE INTRO
-                // ***********
-                if (m_uiNextEventTimer <= uiDiff)
-                {
-                    switch (m_uiEventStep)
-                    {
-                        case 0:
-                        {
-                            break;
-                        }
-                        case 1:
-                        {
-                            m_creature->SetPower(m_powerBloodPower, 0);
-                            m_pInstance->DoUseDoorOrButton(GO_SAURFANG_DOOR, 0, false);
-                            m_creature->GetMotionMaster()->MovePoint(0, fPositions[1][0], fPositions[1][1], fPositions[1][2]);
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-                                pTmp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                                pTmp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
-                            }
-                            for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
-                            {
-                                if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
-                                {
-                                    pTmp->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-                                    pTmp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                                    pTmp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
-                                }
-                            }
-                            NextStep(1000);
-                            break;
-                        }
-                        case 2:
-                        {
-                            m_pInstance->DoUseDoorOrButton(GO_SAURFANG_DOOR, 0, true);
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->HandleEmote(EMOTE_STATE_TALK);
-                                DoScriptText(SAY_INTRO_HORDE_1, pTmp);
-                                pTmp->GetMotionMaster()->MovePoint(0, fPositions[7][0], fPositions[7][1], fPositions[7][2]);
-                            }
-                            // move guards
-                            for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
-                            {
-                                if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
-                                    pTmp->GetMotionMaster()->MovePoint(0, fPositions[n][0], fPositions[n][1], fPositions[n][2]);
-                                ++n;
-                            }
-                            NextStep(6000);
-                            break;
-                        }
-                        case 3:
-                        {
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->HandleEmote(EMOTE_STATE_NONE);
-                            }
-                            m_creature->HandleEmote(EMOTE_STATE_TALK);
-                            DoScriptText(SAY_INTRO_HORDE_2, m_creature);
-                            NextStep(14000);
-                            break;
-                        }
-                        case 4:
-                        {
-                            m_creature->HandleEmote(EMOTE_STATE_NONE);
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->HandleEmote(EMOTE_STATE_TALK);
-                                DoScriptText(SAY_INTRO_HORDE_3, pTmp);
-                            }
-                            NextStep(7000);
-                            break;
-                        }
-                        case 5:
-                        {
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->HandleEmote(EMOTE_STATE_NONE);
-                            }
-                            m_creature->HandleEmote(EMOTE_STATE_TALK);
-                            DoScriptText(SAY_INTRO_HORDE_4, m_creature);
-                            NextStep(11000);
-                            break;
-                        }
-                        case 6:
-                        {
-                            m_creature->HandleEmote(EMOTE_STATE_NONE);
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->HandleEmote(EMOTE_STATE_TALK);
-                                DoScriptText(SAY_INTRO_HORDE_5, pTmp);
-                            }
-                            NextStep(16000);
-                            break;
-                        }
-                        case 7:
-                        {
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->HandleEmote(EMOTE_STATE_NONE);
-                            }
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->HandleEmote(EMOTE_STATE_TALK);
-                                DoScriptText(SAY_INTRO_HORDE_6, pTmp);
-                            }
-                            NextStep(15000);
-                            break;
-                        }
-                        case 8:
-                        {
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->HandleEmote(EMOTE_STATE_READY1H);
-                                DoScriptText(SAY_INTRO_HORDE_7, pTmp);
-                            }
-                            for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
-                            {
-                                if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
-                                {
-                                    pTmp->HandleEmote(EMOTE_STATE_READY1H);
-                                }
-                            }
-                            NextStep(3000);
-                            break;
-                        }
-                        case 9:
-                        {
-                            float x, y, z;
-                            m_creature->GetPosition(x, y, z);
-
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                DoScriptText(SAY_INTRO_HORDE_8, pTmp);
-                                pTmp->SetWalk(false);
-                                pTmp->GetMotionMaster()->MovePoint(0, x, y, z);
-                            }
-                            // move guards
-                            for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
-                            {
-                                if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
-                                {
-                                    pTmp->SetWalk(false);
-                                    pTmp->GetMotionMaster()->MovePoint(0, x, y, z);
-                                }
-                            }
-                            NextStep(3000);
-                            break;
-                        }
-                        case 10:
-                        {
-                            float x, y, z;
-                            // npcs float in air
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->SetWalk(true);
-                                pTmp->SetSpeedRate(MOVE_WALK, 3.0f);
-                                pTmp->GetPosition(x, y, z);
-                                pTmp->GetMotionMaster()->MovePoint(0, x, y, z + frand(5.0f, 7.0f));
-                                pTmp->_AddAura(SPELL_GRIP_OF_AGONY);
-                            }
-                            // move guards
-                            for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
-                            {
-                                if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
-                                {
-                                    pTmp->SetWalk(true);
-                                    pTmp->SetSpeedRate(MOVE_WALK, 3.0f);
-                                    pTmp->GetPosition(x, y, z);
-                                    pTmp->GetMotionMaster()->MovePoint(0, x, y, z + frand(5.0f, 7.0f));
-                                    pTmp->_AddAura(SPELL_GRIP_OF_AGONY);
-                                }
-                            }
-                            m_creature->HandleEmote(EMOTE_STATE_TALK);
-                            DoScriptText(SAY_INTRO_HORDE_9, m_creature);
-                            NextStep(10000);
-                            break;
-                        }
-                        case 11:
-                        {
-                            m_bIsIntroFinished = true;
-
-                            m_creature->HandleEmote(EMOTE_STATE_NONE);
-                            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
-                            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
-                            m_creature->SetInCombatWithZone();
-
-                            NextStep();
-                            break;
-                        }
-                        case 12:
-                        {
-                            // fight is in progress
-                            break;
-                        }
-                        default:
-                            break;
-                    }
-                }
-                else
-                    m_uiNextEventTimer -= uiDiff;
-            }
-
-            return;
-        }
-        // END OF INTRO
-
-        // OUTRO
-        if (m_bIsOutroStarted)
-        {
-            if (m_bIsAlliance)
-            {
-                // **************
-                // ALLIANCE OUTRO
-                // **************
-                if (m_uiNextEventTimer <= uiDiff)
-                {
-                    switch (m_uiEventStep)
-                    {
-                        case 0:
-                        {
-                            float x, y, z;
-
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->HandleEmote(EMOTE_ONESHOT_NONE);
-                                pTmp->GetPosition(x, y, z);
-                                m_creature->UpdateAllowedPositionZ(x, y, z);
-                                pTmp->GetMotionMaster()->MovePoint(0, x, y, z - frand(5.0f, 7.0f));
-                                pTmp->RemoveAllAuras();
-                            }
-                            // move guards
-                            for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
-                            {
-                                if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
-                                {
-                                    pTmp->GetPosition(x, y, z);
-                                    m_creature->UpdateAllowedPositionZ(x, y, z);
-                                    pTmp->GetMotionMaster()->MovePoint(0, x, y, z - frand(5.0f, 7.0f));
-                                    pTmp->HandleEmote(EMOTE_ONESHOT_NONE);
-                                    pTmp->RemoveAllAuras();
-                                }
-                            }
-                            NextStep(1000);
-                        }
-                        break;
-                        case 1:
-                        {
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->SetLevitate(false);
-                                pTmp->SetSpeedRate(MOVE_WALK, 1.0f);
-
-                                for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
-                                {
-                                    if (Creature *pGuard = m_creature->GetMap()->GetCreature(*i))
-                                    {
-                                        pGuard->SetLevitate(false);
-                                        pGuard->SetSpeedRate(MOVE_WALK, 1.0f);
-                                        pGuard->GetMotionMaster()->MoveFollow(pTmp, frand(2.0f, 5.0f), frand(M_PI_F / 2, 1.5f * M_PI_F));
-                                    }
-                                }
-                            }
-                            NextStep(1000);
-                            break;
-                        }
-                        case 2:
-                        {
-                            float x ,y ,z;
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                DoScriptText(SAY_OUTRO_ALLY_1, pTmp);
-                                m_creature->GetContactPoint(pTmp, x, y, z, 1.0f);
-                                pTmp->GetMotionMaster()->MovePoint(0, x, y, z);
-                            }
-                            NextStep(1000);
-                            break;
-                        }
-                        case 3:
-                        {
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                if (!pTmp->IsWithinDist(m_creature, 2.0f))
-                                    return;
-
-                                pTmp->StopMoving();
-                                pTmp->SetFacingToObject(m_creature);
-                            }
-                            NextStep(1000);
-                            break;
-                        }
-                        case 4:
-                        {
-                            NextStep(1000);
-                            break;
-                        }
-                        case 5:
-                        {
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                DoScriptText(SAY_OUTRO_ALLY_2, pTmp);
-                                NextStep(10000);
-                            }
-                            break;
-                        }
-                        case 6:
-                        {
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                DoSummonHighOverlordSaurfang();
-                                pTmp->HandleEmote(EMOTE_ONESHOT_EXCLAMATION);
-                                DoScriptText(SAY_OUTRO_ALLY_3, pTmp);
-                                pTmp->GetMotionMaster()->MovePoint(0, fPositions[14][0], fPositions[14][1], fPositions[14][2]);
-                                NextStep(10000);
-                            }
-                            break;
-                        }
-                        case 7:
-                        {
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                DoScriptText(SAY_OUTRO_ALLY_4, pTmp);
-                                pTmp->GetMotionMaster()->MovePoint(0, fPositions[15][0], fPositions[15][1], fPositions[15][2]);
-                                NextStep(10000);
-                            }
-                            break;
-                        }
-                        case 8:
-                        {
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->HandleEmote(EMOTE_STATE_READY1H);
-                                for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
-                                {
-                                    if (Creature *pGuard = m_creature->GetMap()->GetCreature(*i))
-                                    {
-                                         pGuard->HandleEmote(EMOTE_STATE_READY1H);
-                                    }
-                                }
-                                DoScriptText(SAY_OUTRO_ALLY_5, pTmp);
-                                NextStep(10000);
-                            }
-                            break;
-                        }
-                        case 9:
-                        {
-                            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidOverlord))
-                            {
-                                pTmp->GetMotionMaster()->MovePoint(0, fPositions[16][0], fPositions[16][1], fPositions[16][2]);
-                                DoScriptText(SAY_OUTRO_ALLY_6, pTmp);
-                                NextStep(10000);
-                            }
-                            break;
-                        }
-                        case 10:
-                        {
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                DoScriptText(SAY_OUTRO_ALLY_7, pTmp);
-                                NextStep(10000);
-                            }
-                            break;
-                        }
-                        case 11:
-                        {
-                            DoSummonVarianAndJaina();
-                            NextStep(100);
-                            break;
-                        }
-                        case 12:
-                        {
-                            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidVarian))
-                            {
-                                pTmp->CastSpell(pTmp, 52096, true);
-                            }
-                            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidJaina))
-                            {
-                                pTmp->CastSpell(pTmp, 52096, true);
-                            }
-                            NextStep(1000);
-                            break;
-                        }
-                        case 13:
-                        {
-                            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidVarian))
-                            {
-                                DoScriptText(SAY_OUTRO_ALLY_8, pTmp);
-                                pTmp->HandleEmote(EMOTE_STATE_TALK);
-                                NextStep(10000);
-                            }
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->HandleEmote(EMOTE_STATE_NONE);
-                            }
-                            for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
-                            {
-                                if (Creature *pGuard = m_creature->GetMap()->GetCreature(*i))
-                                {
-                                    pGuard->HandleEmote(EMOTE_STATE_NONE);
-                                }
-                            }
-                            break;
-                        }
-                        case 14:
-                        {
-                            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidVarian))
-                            {
-                                pTmp->HandleEmote(EMOTE_STATE_NONE);
-                            }
-                            float x ,y ,z;
-                            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidOverlord))
-                            {
-                                m_creature->GetContactPoint(pTmp, x, y, z, 1.0f);
-                                pTmp->GetMotionMaster()->MovePoint(0, x, y, z);
-                            }
-                            NextStep(1000);
-                            break;
-                        }
-                        case 15:
-                        {
-                            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidOverlord))
-                            {
-                                // wait until Overlord comes to Deathbringer
-                                if (!pTmp->IsWithinDist(m_creature, 2.0f))
-                                    return;
-
-                                pTmp->StopMoving();
-                                pTmp->SetFacingToObject(m_creature);
-                            }
-                            NextStep(1000);
-                            break;
-                        }
-                        case 16:
-                        {
-                            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidOverlord))
-                            {
-                                DoScriptText(SAY_OUTRO_ALLY_9, pTmp);
-                                pTmp->HandleEmote(EMOTE_ONESHOT_KNEEL);
-                                // Overlord should take Deathbringer on hands (vehicle ride?)
-                            }
-                            NextStep(3000);
-                            break;
-                        }
-                        case 17:
-                        {
-                            float x ,y ,z;
-                            if (Creature *pTmp1 = m_creature->GetMap()->GetCreature(m_guidOverlord))
-                            {
-                                if (Creature *pTmp2 = m_creature->GetMap()->GetCreature(m_guidVarian))
-                                {
-                                    pTmp2->GetContactPoint(pTmp1, x, y, z, 1.0f);
-                                    pTmp1->GetMotionMaster()->MovePoint(0, x, y, z);
-                                }
-                            }
-                            NextStep(1000);
-                            break;
-                        }
-                        case 18:
-                        {
-                            if (Creature *pTmp1 = m_creature->GetMap()->GetCreature(m_guidOverlord))
-                            {
-                                if (Creature *pTmp2 = m_creature->GetMap()->GetCreature(m_guidVarian))
-                                {
-                                    // wait until Overlord comes to Varian
-                                    if (!pTmp1->IsWithinDist(pTmp2, 2.0f))
-                                        return;
-
-                                    pTmp1->StopMoving();
-                                    pTmp1->SetFacingToObject(pTmp2);
-                                }
-                            }
-                            NextStep(1000);
-                            break;
-                        }
-                        case 19:
-                        {
-                            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidOverlord))
-                            {
-                                DoScriptText(SAY_OUTRO_ALLY_10, pTmp);
-                                pTmp->HandleEmote(EMOTE_STATE_TALK);
-                                NextStep(10000);
-                            }
-                            break;
-                        }
-                        case 20:
-                        {
-                            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidVarian))
-                            {
-                                DoScriptText(SAY_OUTRO_ALLY_11, pTmp);
-                                NextStep(10000);
-                            }
-                            break;
-                        }
-                        case 21:
-                        {
-                            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidJaina))
-                            {
-                                DoScriptText(SAY_OUTRO_ALLY_12, pTmp);
-                                pTmp->HandleEmote(EMOTE_ONESHOT_CRY);
-                                NextStep(10000);
-                            }
-                            break;
-                        }
-                        case 22:
-                        {
-                            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidVarian))
-                            {
-                                DoScriptText(SAY_OUTRO_ALLY_13, pTmp);
-                                NextStep(6000);
-                            }
-                            break;
-                        }
-                        case 23:
-                        {
-                            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidJaina))
-                            {
-                                DoScriptText(SAY_OUTRO_ALLY_14, pTmp);
-                                NextStep(10000);
-                            }
-                            break;
-                        }
-                        case 24:
-                        {
-                            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidVarian))
-                            {
-                                DoScriptText(SAY_OUTRO_ALLY_15, pTmp);
-                                NextStep(10000);
-                            }
-                            break;
-                        }
-                        case 25:
-                        {
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                DoScriptText(SAY_OUTRO_ALLY_16, pTmp);
-                                pTmp->GetMotionMaster()->MovePoint(0, fPositions[2][0], fPositions[2][1], fPositions[2][2]);
-                            }
-                            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidOverlord))
-                            {
-                                pTmp->GetMotionMaster()->MovePoint(0, fPositions[2][0], fPositions[2][1], fPositions[2][2]);
-                            }
-                            NextStep();
-                            break;
-                        }
-                        case 26:
-                        {
-                            // wait until coming to gunship boarding place
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                if (!pTmp->IsWithinDist2d(fPositions[2][0], fPositions[2][1], 3.0f))
-                                    return;
-
-                                pTmp->ForcedDespawn();
-                                for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
-                                {
-                                    if (Creature *pGuard = m_creature->GetMap()->GetCreature(*i))
-                                        pGuard->ForcedDespawn();
-                                }
-                            }
-
-                            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidVarian))
-                                pTmp->ForcedDespawn();
-
-                            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidJaina))
-                                pTmp->ForcedDespawn();
-
-                            if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidOverlord))
-                            {
-                                if (!pTmp->IsWithinDist2d(fPositions[2][0], fPositions[2][1], 3.0f))
-                                    return;
-
-                                pTmp->ForcedDespawn();
-                            }
-
-                            Unit *pKiller = m_creature;
-
-                            if (m_pInstance)
-                            {
-                                if (Unit *pTmp = m_creature->GetMap()->GetUnit(m_guidKiller))
-                                    pKiller = pTmp;
-                            }
-
-                            if (pKiller)
-                                pKiller->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
-
-                            return;
-                            break;
-                        }
-                        default:
-                            break;
-                    }
-                }
-                else
-                    m_uiNextEventTimer -= uiDiff;
-            }
-            else
-            {
-                // ***********
-                // HORDE OUTRO
-                // ***********
-                if (m_uiNextEventTimer <= uiDiff)
-                {
-                    switch (m_uiEventStep)
-                    {
-                        case 0:
-                        {
-                            float x, y, z;
-
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->HandleEmote(EMOTE_ONESHOT_NONE);
-                                pTmp->GetPosition(x, y, z);
-                                m_creature->UpdateAllowedPositionZ(x, y, z);
-                                pTmp->GetMotionMaster()->MovePoint(0, x, y, z - frand(5.0f, 7.0f));
-                                pTmp->RemoveAllAuras();
-                            }
-                            // move guards
-                            for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
-                            {
-                                if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
-                                {
-                                    pTmp->GetPosition(x, y, z);
-                                    m_creature->UpdateAllowedPositionZ(x, y, z);
-                                    pTmp->GetMotionMaster()->MovePoint(0, x, y, z - frand(5.0f, 7.0f));
-                                    pTmp->HandleEmote(EMOTE_ONESHOT_NONE);
-                                    pTmp->RemoveAllAuras();
-                                }
-                            }
-                            NextStep(1000);
-                            break;
-                        }
-                        case 1:
-                        {
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                pTmp->SetLevitate(false);
-                                pTmp->SetSpeedRate(MOVE_WALK, 1.0f);
-
-                                for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
-                                {
-                                    if (Creature *pGuard = m_creature->GetMap()->GetCreature(*i))
-                                    {
-                                        pGuard->SetLevitate(false);
-                                        pGuard->SetSpeedRate(MOVE_WALK, 1.0f);
-                                        pGuard->GetMotionMaster()->MoveFollow(pTmp, frand(2.0f, 5.0f), frand(M_PI_F / 2, 1.5f * M_PI_F));
-                                    }
-                                }
-                            }
-                            NextStep(1000);
-                            break;
-                        }
-                        case 2:
-                        {
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                DoScriptText(SAY_OUTRO_HORDE_1, pTmp);
-                                pTmp->HandleEmote(EMOTE_ONESHOT_KNEEL);
-                            }
-                            NextStep(3000);
-                            break;
-                        }
-                        case 3:
-                        {
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                float x, y, z;
-                                m_creature->GetContactPoint(pTmp, x, y, z, 1.0f);
-                                pTmp->GetMotionMaster()->MovePoint(0, x, y, z);
-                            }
-                            NextStep(0);
-                            break;
-                        }
-                        case 4:
-                        {
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                // wait until Overlord comes to Deathbringer
-                                if (!pTmp->IsWithinDist(m_creature, 2.0f))
-                                    return;
-
-                                pTmp->StopMoving();
-                                pTmp->SetFacingToObject(m_creature);
-                            }
-                            NextStep(1000);
-                            break;
-                        }
-                        case 5:
-                        {
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                DoScriptText(SAY_OUTRO_HORDE_2, pTmp);
-                                pTmp->HandleEmote(EMOTE_ONESHOT_KNEEL);
-                                // Overlord should take Deathbringer on hands (vehicle ride?)
-                            }
-                            NextStep(3000);
-                            break;
-                        }
-                        case 6:
-                        {
-                            // take deathbringer
-                            if (Creature *pTmp = GetMainNpc())
-                                DoScriptText(SAY_OUTRO_HORDE_3, pTmp);
-
-                            NextStep(11000);
-                            break;
-                        }
-                        case 7:
-                        {
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                DoScriptText(SAY_OUTRO_HORDE_4, pTmp);
-                                pTmp->GetMotionMaster()->MovePoint(0, fPositions[2][0], fPositions[2][1], fPositions[2][2]);
-                            }
-                            NextStep();
-                            break;
-                        }
-                        case 8:
-                        {
-                            // wait until coming to gunship boarding place
-                            if (Creature *pTmp = GetMainNpc())
-                            {
-                                if (!pTmp->IsWithinDist2d(fPositions[2][0], fPositions[2][1], 3.0f))
-                                    return;
-
-                                pTmp->ForcedDespawn();
-                                for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
-                                {
-                                    if (Creature *pGuard = m_creature->GetMap()->GetCreature(*i))
-                                        pGuard->ForcedDespawn();
-                                }
-                            }
-
-                            Unit *pKiller = m_creature;
-
-                            if (m_pInstance)
-                            {
-                                if (Unit *pTmp = m_creature->GetMap()->GetUnit(m_guidKiller))
-                                    pKiller = pTmp;
-                            }
-
-                            if (pKiller)
-                                pKiller->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
-
-                            return;
-                        }
-                    }
-                }
-                else
-                    m_uiNextEventTimer -= uiDiff;
-            }
-            return;
-        }
-
-        // fight
-        UpdateFightAI(uiDiff);
-    }
-};
-
-struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public boss_deathbringer_saurfang_eventAI
-{
-    boss_deathbringer_saurfangAI(Creature* pCreature) : boss_deathbringer_saurfang_eventAI(pCreature)
-    {
-        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_powerBloodPower = m_creature->getPowerType(); // don't call this function multiple times in script
-        m_uiMapDifficulty = pCreature->GetMap()->GetDifficulty();
-        m_bIsHeroic = m_uiMapDifficulty > RAID_DIFFICULTY_25MAN_NORMAL;
-        m_bIs25Man = (m_uiMapDifficulty == RAID_DIFFICULTY_25MAN_NORMAL || m_uiMapDifficulty == RAID_DIFFICULTY_25MAN_HEROIC);
-
-        ResetFight();
-    }
-
-    ScriptedInstance *m_pInstance;
-
-    uint32 m_uiRuneOfBloodTimer;
-    uint32 m_uiBoilingBloodTimer;
-    uint32 m_uiBloodNovaTimer;
-    uint32 m_uiBloodBeastsTimer;
-    uint32 m_uiScentOfBloodTimer;
-    uint32 m_uiBerserkTimer;
-
-    bool m_bIsFrenzied;
-    bool m_bIsHeroic;
-    bool m_bIs25Man;
-	uint8 beasts;
-
-    Powers m_powerBloodPower;
-    Difficulty m_uiMapDifficulty;
-
-    void ResetFight()
-    {
-        m_uiRuneOfBloodTimer    = 20000;
-        m_uiBoilingBloodTimer   = urand(10000, 35000);
-        m_uiBloodNovaTimer      = urand(16000, 35000);
-        m_uiBloodBeastsTimer    = 40000;
-        m_uiScentOfBloodTimer   = 47000; // 5 seconds after beasts engage in combat
-        m_uiBerserkTimer        = (m_bIsHeroic ? 6 : 8) * MINUTE * IN_MILLISECONDS;
-
-        m_bIsFrenzied = false;
-		beasts = 0;
-
-        m_creature->SetPower(m_powerBloodPower, 0);
-        //m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
     void Aggro(Unit *pWho)
@@ -1403,48 +578,32 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public boss_deathbringer_s
         if (m_pInstance)
             m_pInstance->SetData(TYPE_SAURFANG, FAIL);
 
-        m_creature->SetPower(m_powerBloodPower, 0);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
     }
 
     // used for unlocking bugged encounter
     void JustDied(Unit *pKiller)
     {
-        if (m_pInstance && m_pInstance->GetData(TYPE_SAURFANG) != DONE)
+        if (m_pInstance)
             m_pInstance->SetData(TYPE_SAURFANG, DONE);
+
+        DoScriptText(SAY_DEATH, m_creature);
+        DoCastSpellIfCan(m_creature, SPELL_REMOVE_MARKS, CAST_TRIGGERED);
+
+        if (Creature *pTmp = m_creature->GetMap()->GetCreature(m_guidEventNpcGuid))
+        {
+            if (npc_highlord_saurfang_iccAI *pTmpAI = dynamic_cast<npc_highlord_saurfang_iccAI*>(pTmp->AI()))
+                pTmpAI->DoContinueEvent();
+        }
     }
 
     void KilledUnit(Unit* pVictim)
     {
         if (pVictim->GetTypeId() == TYPEID_PLAYER)
-        {
             DoScriptText(SAY_SLAY_1 - urand(0,1), m_creature, pVictim);
-        }
-    }
-/* using DamageDeal also increase Blood Power from basic attack
-    void DamageDeal(Unit* pDoneTo, uint32& uiDamage)
-    {
-        if (pDoneTo == m_creature->getVictim())
-        {
-            if (pDoneTo->HasAura(SPELL_RUNE_OF_BLOOD_DEBUFF))
-                m_creature->SetPower(m_powerBloodPower, m_creature->GetPower(m_powerBloodPower) - 1);
-
-		}
-    }
-*/
-
-    void SpellHitTarget(Unit* pTarget, const SpellEntry* pSpell)
-    {
-        //if (pSpell->Id == SPELL_MARK_OF_FALLEN_CHAMPION_DEBUFF)
-        //        m_creature->SetPower(m_powerBloodPower, m_creature->GetPower(m_powerBloodPower) + 1);
-        if (pSpell->Id == SPELL_MARK_OF_FALLEN_CHAMPION)
-                m_creature->SetPower(m_powerBloodPower, m_creature->GetPower(m_powerBloodPower) + 1);
-		if (pSpell->Id == SPELL_BLOOD_NOVA_10 || pSpell->Id == SPELL_BLOOD_NOVA_25)
-                m_creature->SetPower(m_powerBloodPower, m_creature->GetPower(m_powerBloodPower) + 1);
-		if (pSpell->Id == SPELL_BOILING_BLOOD_10 || pSpell->Id == SPELL_BOILING_BLOOD_25)
-                m_creature->SetPower(m_powerBloodPower, m_creature->GetPower(m_powerBloodPower) + 1);
-		// Rune of Blood do not need check.
-		//if (pTarget->HasAura(SPELL_RUNE_OF_BLOOD_DEBUFF))
-        //        m_creature->SetPower(m_powerBloodPower, m_creature->GetPower(m_powerBloodPower) + 1);
     }
 
     void JustSummoned(Creature *pSummoned)
@@ -1502,7 +661,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public boss_deathbringer_s
         return pResult;
     }
 
-    void UpdateFightAI(const uint32 uiDiff)
+    void UpdateAI(const uint32 uiDiff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
@@ -1520,7 +679,6 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public boss_deathbringer_s
                     int32 power = m_creature->GetPower(m_powerBloodPower);
                     m_creature->CastCustomSpell(m_creature, 72371, &power, &power, NULL, true);
                     DoScriptText(SAY_FALLENCHAMPION, m_creature);
-					m_uiMarkCastCount++;
                 }
             }
         }
@@ -1560,35 +718,32 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public boss_deathbringer_s
         // Boiling Blood
         if (m_uiBoilingBloodTimer <= uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature, m_bIs25Man ? SPELL_BOILING_BLOOD_25 : SPELL_BOILING_BLOOD_10) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature, SPELL_BOILING_BLOOD) == CAST_OK)
                 m_uiBoilingBloodTimer = urand(10000, 35000);
         }
         else
             m_uiBoilingBloodTimer -= uiDiff;
 
-        // Blood Nova
+        // Boiling Blood
         if (m_uiBloodNovaTimer <= uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature, m_bIs25Man ? SPELL_BLOOD_NOVA_25 : SPELL_BLOOD_NOVA_10) == CAST_OK)
+            if (DoCastSpellIfCan(m_creature, SPELL_BLOOD_NOVA) == CAST_OK)
                 m_uiBloodNovaTimer = urand(16000, 35000);
         }
         else
             m_uiBloodNovaTimer -= uiDiff;
 
-		// Call Blood Beasts
+        // Call Blood Beasts
         if (m_uiBloodBeastsTimer <= uiDiff)
         {
-			for (uint8 i = 0; i < 2; ++i)
-				if (Creature* pTemp = m_creature->SummonCreature(38508, m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ(), m_creature->GetOrientation(), TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 90000))
-					if (Unit* pTarget = pTemp->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))					
-						pTemp->AI()->AttackStart(pTarget);
+            m_creature->CastSpell(m_creature, SPELL_CALL_BLOOD_BEAST_1, true);
+            m_creature->CastSpell(m_creature, SPELL_CALL_BLOOD_BEAST_2, true);
 
             if (m_bIs25Man)
             {
-				for (uint8 i = 0; i < 3; ++i)
-					if (Creature* pTemp = m_creature->SummonCreature(38508, m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ(), m_creature->GetOrientation(), TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 90000))
-						if (Unit* pTarget = pTemp->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))					
-							pTemp->AI()->AttackStart(pTarget);
+                m_creature->CastSpell(m_creature, SPELL_CALL_BLOOD_BEAST_3, true);
+                m_creature->CastSpell(m_creature, SPELL_CALL_BLOOD_BEAST_4, true);
+                m_creature->CastSpell(m_creature, SPELL_CALL_BLOOD_BEAST_5, true);
             }
 
             m_uiBloodBeastsTimer  = 40000;
@@ -1623,6 +778,11 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public boss_deathbringer_s
 CreatureAI* GetAI_boss_deathbringer_saurfang(Creature* pCreature)
 {
     return new boss_deathbringer_saurfangAI(pCreature);
+}
+
+CreatureAI* GetAI_npc_highlord_saurfang_icc(Creature* pCreature)
+{
+    return new npc_highlord_saurfang_iccAI(pCreature);
 }
 
 struct MANGOS_DLL_DECL  mob_blood_beastAI : public ScriptedAI
@@ -1687,6 +847,11 @@ void AddSC_boss_deathbringer_saurfang()
     newscript = new Script;
     newscript->Name = "boss_deathbringer_saurfang";
     newscript->GetAI = &GetAI_boss_deathbringer_saurfang;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_highlord_saurfang_icc";
+    newscript->GetAI = &GetAI_npc_highlord_saurfang_icc;
     newscript->RegisterSelf();
 
     newscript = new Script;

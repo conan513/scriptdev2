@@ -259,7 +259,7 @@ struct MANGOS_DLL_DECL boss_festergutAI : public base_icc_bossAI
             // DoCastSpellIfCan(m_creature, SPELL_VILE_GAS_SUMMON, CAST_TRIGGERED);
             // DoCastSpellIfCan(m_creature, SPELL_VILE_GAS, CAST_TRIGGERED);
 
-            if (Unit *pTarget = doSelectRandomPlayerAtRange(50.0f, false))
+            if (Unit *pTarget = SelectRandomRangedTarget(m_creature))
             {
                 pTarget->CastSpell(pTarget, SPELL_VILE_GAS_SUMMON_TRIG, true);
                 DoCastSpellIfCan(m_creature, SPELL_VILE_GAS, CAST_TRIGGERED);
@@ -276,7 +276,7 @@ struct MANGOS_DLL_DECL boss_festergutAI : public base_icc_bossAI
             {
                 if (Creature *pProfessor = m_pInstance->GetSingleCreatureFromStorage(NPC_PROFESSOR_PUTRICIDE))
                 {
-                    if (Unit *pTarget = doSelectRandomPlayerAtRange(50.0f, false))
+                    if (Unit *pTarget = SelectRandomRangedTarget(m_creature))
                     {
                         // pProfessor->CastSpell(m_creature, SPELL_MALLEABLE_GOO_SUMMON, true);
                         // pProfessor->CastSpell(m_creature, SPELL_MALLEABLE_GOO, true);
@@ -323,14 +323,14 @@ CreatureAI* GetAI_mob_vile_gas_malleable_goo(Creature* pCreature)
 
 void AddSC_boss_festergut()
 {
-    Script *pNewScript;
-    pNewScript = new Script;
-    pNewScript->Name = "boss_festergut";
-    pNewScript->GetAI = &GetAI_boss_festergut;
-    pNewScript->RegisterSelf();
+    Script *newscript;
+    newscript = new Script;
+    newscript->Name = "boss_festergut";
+    newscript->GetAI = &GetAI_boss_festergut;
+    newscript->RegisterSelf();
 
-    pNewScript = new Script;
-    pNewScript->Name = "mob_vile_gas_malleable_goo";
-    pNewScript->GetAI = &GetAI_mob_vile_gas_malleable_goo;
-    pNewScript->RegisterSelf();
+    newscript = new Script;
+    newscript->Name = "mob_vile_gas_malleable_goo";
+    newscript->GetAI = &GetAI_mob_vile_gas_malleable_goo;
+    newscript->RegisterSelf();
 }
