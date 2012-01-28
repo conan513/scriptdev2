@@ -136,7 +136,7 @@ struct MANGOS_DLL_DECL boss_tharonjaAI : public ScriptedAI
         }
         // TODO check if this spell casting is infact also needed on phase-switch or only here (possible that there is also some sort of hp% dependency
         if (m_uiPhase == PHASE_FLESH)
-            DoCastSpellIfCan(m_creature, SPELL_CLEAR_GIFT_OF_THARONJA, CAST_TRIGGERED | CAST_FORCE_CAST);
+            DoCastSpellIfCan(m_creature, SPELL_CLEAR_GIFT_OF_THARONJA, CAST_TRIGGERED | CAST_FORCE_CAST);                
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_THARONJA, DONE);
