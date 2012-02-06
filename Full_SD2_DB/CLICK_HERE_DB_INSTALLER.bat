@@ -42,19 +42,17 @@ set /p port=What is your MySQL port?                [3306]        :
 if %port%. == . set port=3306
 set /p wdb=What is your World database name?       [mangos]      : 
 if %wdb%. == . set wdb=mangos
-set /p sd2db=What is your ScriptDev2 database name?  [scriptdev2]  : 
-if %sd2db%. == . set sd2db=scriptdev2
+set /p cdb=What is your Characters database name?  [scriptdev2]  : 
+if %cdb%. == . set cdb=scriptdev2
 
 
 :install
-set dbpath=sql_mr
-set dbpath3=sql_mr
-set optim=Tools\DB_Optimizer
+set dbpath=sql
+set dbpath1=sql
 set mysql=.
 
 :checkpaths
 if not exist %dbpath% then goto patherror
-if not exist %optim% then goto patherror
 if not exist %mysql%\mysql.exe then goto patherror
 goto world
 
@@ -74,36 +72,17 @@ echo Importing World database
 
 for %%i in (%dbpath%\mr*mangos*sql) do if %%i neq %dbpath3%\mr*mangos*sql if %%i neq %dbpath1%\mr*mangos*sql if %%i neq %dbpath2%\mr*mangos*sql echo %%i & %mysql%\mysql -q -s -h %svr% --user=%user% --password=%pass% --port=%port% %wdb% < %%i
 
-:sd2
-if %quick% == off echo.
-if %quick% == off echo This will wipe out your current ScriptDev2 database and replace it.
-if %quick% == off set /p yesno=Do you wish to continue? (y/n) 
-if %quick% == off if %yesno% neq y if %yesno% neq Y goto characters
+
+:characters
+echo.
+echo This will wipe out your current ScriptDev2 database and replace it.
+set /p yesno=Do you wish to continue? (y/n) 
+if %yesno% neq y if %yesno% neq Y goto realm
 
 echo.
 echo Importing ScriptDev2 database
 
-for %%i in (%dbpath3%\mr*scriptdev2*sql) do if %%i neq %dbpath%\mr*scriptdev2*sql if %%i neq %dbpath1%\mr*scriptdev2*sql if %%i neq %dbpath2%\mr*scriptdev2*sql echo %%i & %mysql%\mysql -q -s -h %svr% --user=%user% --password=%pass% --port=%port% %sd2db% < %%i
-
-if %quick% neq off goto optimize
-
-:optimize
-if %quick% == off echo.
-if %quick% == off echo This will optimize your current database.
-if %quick% == off set /p yesno=Do you wish to continue? (y/n) 
-if %quick% == off if %yesno% neq y if %yesno% neq Y goto done
-
-echo.
-echo Optimizing database
-
-%optim%\Optimizer.exe
-copy %optim%\scriptdev2_optimize.sql . >nul
-echo World
-%mysql%\mysql -q -s -h %svr% --user=%user% --password=%pass% --port=%port% %wdb% < optimize.sql >nul
-echo ScriptDev2
-%mysql%\mysql -q -s -h %svr% --user=%user% --password=%pass% --port=%port% %sd2db% < scriptdev2_optimize.sql >nul
-del optimize.sql
-del scriptdev2_optimize.sql
+for %%i in (%dbpath1%\mr*scriptdev2*sql) do if %%i neq %dbpath%\mr*scriptdev2*sql if %%i neq %dbpath1%\mr*scriptdev2*sql if %%i neq %dbpath2%\mr*scriptdev2*sql echo %%i & %mysql%\mysql -q -s -h %svr% --user=%user% --password=%pass% --port=%port% %cdb% < %%i
 
 if %quick% neq off goto :eof
 
