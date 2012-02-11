@@ -1316,7 +1316,6 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
             case 3100:
                 DoScriptText(-1713535, m_creature);
                 UpdateTimer = 5000;
-                m_creature->CastSpell(m_creature, 68184, true);
                 m_pInstance->SetData(TYPE_EVENT, 0);
                 break;
             case 4000:
