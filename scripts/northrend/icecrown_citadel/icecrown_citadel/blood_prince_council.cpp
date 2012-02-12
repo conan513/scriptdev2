@@ -820,7 +820,7 @@ struct MANGOS_DLL_DECL mob_ball_of_flamesAI : public ScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
-    uint32 m_uiStartTimer;
+    uint32 m_uiFlamesStackCount;
     bool m_bIsDespawned;
     bool m_bIsStarted;
 
@@ -832,7 +832,7 @@ struct MANGOS_DLL_DECL mob_ball_of_flamesAI : public ScriptedAI
         m_creature->SetLevitate(true);
         m_creature->SetDisplayId(26767);
 
-        m_uiStartTimer = 3000;
+        m_uiFlamesStackCount = 0;
         m_bIsDespawned = false;
         m_bIsStarted = false;
 
@@ -862,7 +862,7 @@ struct MANGOS_DLL_DECL mob_ball_of_flamesAI : public ScriptedAI
         }
         else
         {
-            if (m_uiStartTimer <= uiDiff)
+            if (m_uiFlamesStackCount >= 20)
             {
                 m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
                 m_bIsStarted = true;
@@ -870,7 +870,7 @@ struct MANGOS_DLL_DECL mob_ball_of_flamesAI : public ScriptedAI
             else
             {
                 m_creature->CastSpell(m_creature, SPELL_FLAMES_BUFF, true);
-                m_uiStartTimer -= uiDiff;
+                ++m_uiFlamesStackCount;
             }
         }
     }
