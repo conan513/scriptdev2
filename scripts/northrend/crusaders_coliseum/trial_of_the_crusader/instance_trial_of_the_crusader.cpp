@@ -197,7 +197,7 @@ void instance_trial_of_the_crusader::SetData(uint32 uiType, uint32 uiData)
                     for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
                     {
                         if (Player* pPlayer = itr->getSource())
-                            pPlayer->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_BE_SPELL_TARGET, ACHIEVE_SPELL_FACTION_CHAMPION_COMLETE);
+                            pPlayer->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_BE_SPELL_TARGET, ACHIEVE_SPELL_FACTION_CHAMPIONS_DEFEAT);
                     }
                 }
             }
