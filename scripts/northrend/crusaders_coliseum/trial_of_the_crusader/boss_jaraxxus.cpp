@@ -149,6 +149,8 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
         if (!m_pInstance)
             return;
 
+        CheckAchiev();
+
         DoScriptText(SAY_DEATH, m_creature);
         m_pInstance->SetData(TYPE_JARAXXUS, DONE);
         m_pInstance->SetData(TYPE_EVENT,1999);
@@ -181,28 +183,20 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
 
         if (mistressEntryList.empty())
         {
-            m_pInstance->SetSpecialAchievementCriteria(TYPE_SIXTY_PAIN_SPIKE, false);
+            m_pInstance->SetSpecialAchievementCriteria(TYPE_THREE_SIXTY_PAIN_SPIKE, false);
             return;
         }
 
-        if (mistressEntryList.size()-1 >= 2)
-            m_pInstance->SetSpecialAchievementCriteria(TYPE_SIXTY_PAIN_SPIKE, true);
+        if (mistressEntryList.size() >= 2)
+            m_pInstance->SetSpecialAchievementCriteria(TYPE_THREE_SIXTY_PAIN_SPIKE, true);
         else
-            m_pInstance->SetSpecialAchievementCriteria(TYPE_SIXTY_PAIN_SPIKE, false);
+            m_pInstance->SetSpecialAchievementCriteria(TYPE_THREE_SIXTY_PAIN_SPIKE, false);
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
-
-        if (m_uiCheckTimer < uiDiff)
-        {
-            CheckAchiev();
-            m_uiCheckTimer = 500;
-        }
-        else
-            m_uiCheckTimer -= uiDiff;
 
         if (m_uiEnrageTimer <= uiDiff)
         {
