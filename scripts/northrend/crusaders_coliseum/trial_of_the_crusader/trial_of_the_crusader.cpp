@@ -1352,6 +1352,7 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                 m_pInstance->DoUseDoorOrButton(GO_MAIN_GATE_DOOR);
                 break;
             case 4015:
+            {
                 m_pInstance->SetData(TYPE_STAGE,7);
                 m_pInstance->SetData(TYPE_VALKIRIES,IN_PROGRESS);
                 m_creature->SummonCreature(NPC_LIGHTBANE, SpawnLoc[3].x, SpawnLoc[3].y, SpawnLoc[3].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
@@ -1368,10 +1369,21 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                     pTemp->SetWalk(true);
                     pTemp->SetInCombatWithZone();
                 }
+
+                Map* pMap = m_creature->GetMap();
+                Map::PlayerList const& pPlayers = pMap->GetPlayers();
+                if (!pPlayers.isEmpty())
+                for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
+                {
+                    Player* pPlayer = itr->getSource();
+                        if (pPlayer)
+                         pPlayer->StartTimedAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_KILL_CREATURE, ACHIEVE_TIMER_SALT_AND_PEPPER);
+                }
                 UpdateTimer = 10000;
                 m_pInstance->SetData(TYPE_EVENT,4016);
                 m_pInstance->DoUseDoorOrButton(GO_MAIN_GATE_DOOR);
                 break;
+            }
             case 4040:
                 UpdateTimer = 60000;
                 m_pInstance->SetData(TYPE_EVENT,5000);

@@ -34,13 +34,12 @@ enum
 
     TYPE_UPPER_BACK_PAIN        = 0,
     TYPE_SIXTY_PAIN_SPIKE       = 1,
-    TYPE_SALT_AND_PEPPER        = 2,
-    TYPE_SKILL                  = 3,
-    TYPE_MAD_SKILL              = 4,
-    TYPE_INSANITY               = 5,
-    TYPE_DEDICATED_INSANITY     = 6,
-    TYPE_IMMORTALITY            = 7,
-    MAX_SPECIAL_ACHIEV_CRITS    = 8,
+    TYPE_SKILL                  = 2,
+    TYPE_MAD_SKILL              = 3,
+    TYPE_INSANITY               = 4,
+    TYPE_DEDICATED_INSANITY     = 5,
+    TYPE_IMMORTALITY            = 6,
+    MAX_SPECIAL_ACHIEV_CRITS    = 7,
 
     NPC_BARRENT                 = 34816,
     NPC_TIRION                  = 34996,
@@ -143,11 +142,6 @@ enum
     CRITERIA_ACHIEV_SIXTY_PAIN_SPIKE_10N            = 11838,
     CRITERIA_ACHIEV_SIXTY_PAIN_SPIKE_25N            = 11839,
 
-    CRITERIA_ACHIEV_SALT_AND_PEPPER_10N             = 11778,
-    CRITERIA_ACHIEV_SALT_AND_PEPPER_10H             = 12258,
-    CRITERIA_ACHIEV_SALT_AND_PEPPER_25N             = 11818,
-    CRITERIA_ACHIEV_SALT_AND_PEPPER_25H             = 11860,
-
     CRITERIA_ACHIEV_TRIBUTE_TO_SKILL_10             = 12344,
     CRITERIA_ACHIEV_TRIBUTE_TO_SKILL_25             = 12338,
     CRITERIA_ACHIEV_TRIBUTE_TO_MAD_SKILL_10         = 12347,
@@ -161,6 +155,8 @@ enum
     ACHIEVE_SPELL_FACTION_CHAMPIONS_DEFEAT          = 68184,
     ACHIEVE_SPELL_NOT_ONE_BUT_TWO_JORMUNGARS        = 68523,
     ACHIEVE_SPELL_RESILIENCE_WILL_FIX_IT            = 68620,
+
+    ACHIEVE_TIMER_SALT_AND_PEPPER                   = 21853,
 };
 
 static Locations SpawnLoc[]=
