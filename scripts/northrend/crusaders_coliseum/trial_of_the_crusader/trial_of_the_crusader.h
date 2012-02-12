@@ -128,6 +128,9 @@ enum
     TYPE_EVENT_NPC              = 103,
     TYPE_NORTHREND_BEASTS       = 104,
     TYPE_CRUSADERS_COUNT        = 105,
+    TYPE_CRUSADERS_DEAD         = 106,
+    TYPE_CRUSADERS_ACHIE_TIMER  = 107,
+    TYPE_CRUSADERS_ACHIE_FAIL   = 108,
 
     DATA_HEALTH_EYDIS           = 201,
     DATA_HEALTH_FJOLA           = 202,
@@ -157,6 +160,7 @@ enum
 
     ACHIEVE_SPELL_FACTION_CHAMPIONS_DEFEAT          = 68184,
     ACHIEVE_SPELL_NOT_ONE_BUT_TWO_JORMUNGARS        = 68523,
+    ACHIEVE_SPELL_RESILIENCE_WILL_FIX_IT            = 68620,
 };
 
 static Locations SpawnLoc[]=
@@ -294,6 +298,9 @@ private:
     uint32 m_uiTributeChest4;
 
     uint32 m_auiCrusadersCount;
+    uint32 m_auiCrusadersDead;
+    uint32 m_auiCrusadersAchieTimer;
+    uint32 m_auiCrusadersAchieFail;
 };
 
 #endif

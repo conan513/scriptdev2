@@ -47,6 +47,9 @@ void instance_trial_of_the_crusader::Initialize()
     m_auiNorthrendBeasts = NOT_STARTED;
     m_auiEventTimer = 1000;
     m_auiCrusadersCount = 6;
+    m_auiCrusadersDead = 0;
+    m_auiCrusadersAchieFail = 0;
+    m_auiCrusadersAchieTimer = 60000;
     needsave = false;
 }
 
@@ -227,6 +230,20 @@ void instance_trial_of_the_crusader::SetData(uint32 uiType, uint32 uiData)
         else
             m_auiCrusadersCount = uiData;
         break;
+    case TYPE_CRUSADERS_DEAD:
+        m_auiCrusadersDead = uiData;
+        break;
+    case TYPE_CRUSADERS_ACHIE_TIMER:
+        if(m_auiCrusadersAchieFail)
+            break;
+        if (m_auiCrusadersAchieTimer <= uiData)
+            m_auiCrusadersAchieFail = 1;
+        else
+            m_auiCrusadersAchieTimer -= uiData;
+        break;
+    case TYPE_CRUSADERS_ACHIE_FAIL:
+        m_auiCrusadersAchieFail = uiData;
+        break;
     case TYPE_VALKIRIES:
         /*if (m_auiEncounter[4] == SPECIAL && uiData == SPECIAL)
             uiData = DONE;*/
@@ -388,6 +405,9 @@ uint32 instance_trial_of_the_crusader::GetData(uint32 uiType)
         case TYPE_NORTHREND_BEASTS:     return m_auiNorthrendBeasts;
         case TYPE_EVENT_TIMER:          return m_auiEventTimer;
         case TYPE_CRUSADERS_COUNT:      return m_auiCrusadersCount;
+        case TYPE_CRUSADERS_DEAD:       return m_auiCrusadersDead;
+        case TYPE_CRUSADERS_ACHIE_TIMER:return m_auiCrusadersAchieTimer;
+        case TYPE_CRUSADERS_ACHIE_FAIL :return m_auiCrusadersAchieFail;
         case TYPE_EVENT_NPC:
             switch (m_auiEncounter[8])
             {

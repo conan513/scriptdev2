@@ -791,6 +791,11 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
 
         UpdateTimer = m_pInstance->GetData(TYPE_EVENT_TIMER);
 
+        if (m_pInstance->GetData(TYPE_STAGE) == 6)  // Crusaders
+            if (m_pInstance->GetData(TYPE_CRUSADERS) == IN_PROGRESS)
+                if (m_pInstance->GetData(TYPE_CRUSADERS_DEAD))
+                    m_pInstance->SetData(TYPE_CRUSADERS_ACHIE_TIMER, diff);
+
         if (UpdateTimer <= diff)
         {
             switch (m_pInstance->GetData(TYPE_EVENT))
@@ -1123,6 +1128,9 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                     }
                 }
                 m_pInstance->SetData(TYPE_CRUSADERS_COUNT,crusaderscount);
+                m_pInstance->SetData(TYPE_CRUSADERS_DEAD, 0);
+                m_pInstance->SetData(TYPE_CRUSADERS_ACHIE_TIMER, 60000);
+                m_pInstance->SetData(TYPE_CRUSADERS_ACHIE_FAIL, 0);
                 UpdateTimer = 3000;
                 m_pInstance->SetData(TYPE_EVENT,0);
                 m_pInstance->DoUseDoorOrButton(GO_MAIN_GATE_DOOR);
@@ -1307,6 +1315,9 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                     }
                 }
                 m_pInstance->SetData(TYPE_CRUSADERS_COUNT,crusaderscount);
+                m_pInstance->SetData(TYPE_CRUSADERS_DEAD, 0);
+                m_pInstance->SetData(TYPE_CRUSADERS_ACHIE_TIMER, 60000);
+                m_pInstance->SetData(TYPE_CRUSADERS_ACHIE_FAIL, 0);
                 UpdateTimer = 3000;
                 m_pInstance->SetData(TYPE_EVENT,0);
                 m_pInstance->DoUseDoorOrButton(GO_MAIN_GATE_DOOR);
