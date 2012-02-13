@@ -524,7 +524,19 @@ struct MANGOS_DLL_DECL mob_swarm_scarabAI : public BSWScriptedAI
 
     void JustDied(Unit* Killer)
     {
-        m_creature->CastSpell(m_creature, m_bIs25Man ? SPELL_ACHIEV_TRAITOR_KING_25 : SPELL_ACHIEV_TRAITOR_KING_10, false);
+        Map* pMap = m_creature->GetMap();
+        Map::PlayerList const& pPlayers = pMap->GetPlayers();
+        if (!pPlayers.isEmpty())
+            for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
+            {
+                Player* pPlayer = itr->getSource();
+                if (pPlayer)
+                {
+                    pPlayer->StartTimedAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_BE_SPELL_TARGET, m_bIs25Man ? SPELL_ACHIEV_TRAITOR_KING_25 : SPELL_ACHIEV_TRAITOR_KING_10);
+                    m_creature->CastSpell(pPlayer, m_bIs25Man ? SPELL_ACHIEV_TRAITOR_KING_25 : SPELL_ACHIEV_TRAITOR_KING_10, false);
+                }
+            }
+
         m_creature->ForcedDespawn(5000);
     }
 
