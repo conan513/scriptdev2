@@ -34,6 +34,8 @@ enum
         SPELL_DEATH_PLAGUE                      = 72865,
 //        SPELL_DEATH_PLAGUE                      = 72879,
 
+        SPELL_ACHIEVEMENT                       = 72959,
+
 };
 
 struct MANGOS_DLL_DECL mob_spire_frostwyrmAI : public BSWScriptedAI
@@ -111,6 +113,8 @@ struct MANGOS_DLL_DECL mob_frost_giantAI : public BSWScriptedAI
         if(!pInstance) return;
         if (killer->GetTypeId() == TYPEID_PLAYER || killer->GetCharmerOrOwnerOrSelf()->GetTypeId() == TYPEID_PLAYER )
               pInstance->SetData(TYPE_FLIGHT_WAR, DONE);
+
+        m_creature->CastSpell(m_creature, SPELL_ACHIEVEMENT, false);
     }
 
     void JustReachedHome()

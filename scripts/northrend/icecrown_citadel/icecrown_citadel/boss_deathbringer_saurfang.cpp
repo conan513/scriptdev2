@@ -116,7 +116,10 @@ enum
     SPELL_FRENZY                            = 72737,
 
     //summons
-    NPC_BLOOD_BEAST                         = 38508
+    NPC_BLOOD_BEAST                         = 38508,
+
+    //achieve
+    SPELL_ACHIEVEMENT                       = 72928,
 };
 
 enum Equipment
@@ -608,6 +611,9 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public base_icc_bossAI
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_SAURFANG, DONE);
+
+        m_creature->CastSpell(m_creature, SPELL_ACHIEVEMENT, false);
+
 
         DoScriptText(SAY_DEATH, m_creature);
         DoCastSpellIfCan(m_creature, SPELL_REMOVE_MARKS, CAST_TRIGGERED);

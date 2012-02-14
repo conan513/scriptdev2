@@ -116,6 +116,9 @@ enum BossSpells
     NPC_DREAM_PORTAL_PRE            = 38186,
     NPC_DREAM_PORTAL                = 37945,
     NPC_DREAM_CLOUD                 = 37985,
+
+    // Achievements
+    SPELL_ACHIEVEMENT_CHECK         = 72706,
 };
 
 enum
@@ -312,6 +315,9 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
 
                     if (Creature *pDummy = m_pInstance->GetSingleCreatureFromStorage(NPC_COMBAT_TRIGGER))
                         m_creature->DealDamage(pDummy, pDummy->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
+
+                    // Set valithria credit
+                    m_creature->CastSpell(m_creature, SPELL_ACHIEVEMENT_CHECK, false);
                 }
 
                 m_uiOutroTimer = 30000;
