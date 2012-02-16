@@ -96,6 +96,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public base_icc_bossAI
 {
     boss_lord_marrowgarAI(Creature* pCreature) : base_icc_bossAI(pCreature)
     {
+        m_pInstance = (instance_icecrown_spire*)pCreature->GetInstanceData();
         m_bSaidIntro = false;
         m_uiMaxCharges = m_bIsHeroic ? MAX_CHARGES_HEROIC : MAX_CHARGES_NORMAL;
 
@@ -103,6 +104,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public base_icc_bossAI
     }
 
     bool m_bSaidIntro;
+    instance_icecrown_spire* m_pInstance;
 
     uint8 m_uiPhase;
     uint8 m_uiChargesCount;
@@ -133,6 +135,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public base_icc_bossAI
         m_uiChargesCount            = 0;
 
         m_creature->SetSpeedRate(MOVE_RUN, 1.0f);
+        m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_BONED, true);
     }
 
     void MoveInLineOfSight(Unit* pWho)
@@ -150,6 +153,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public base_icc_bossAI
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_MARROWGAR, FAIL);
+        m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_BONED, false);
     }
 
     void Aggro(Unit* pWho)
@@ -377,17 +381,22 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
 {
     mob_bone_spikeAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
-        m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
+        m_pInstance = ((instance_icecrown_spire*)pCreature->GetInstanceData());
         m_victimGuid.Clear();
         m_bEmerged = false;
         SetCombatMovement(false);
+        Reset();
     }
 
-    ScriptedInstance* m_pInstance;
+    instance_icecrown_spire* m_pInstance;
     bool m_bEmerged;
     ObjectGuid m_victimGuid;
+    uint32 m_uiEmpaledTime;
 
-    void Reset(){}
+    void Reset()
+    {
+        m_uiEmpaledTime = 0;
+    }
     void AttackStart(Unit *pWho){}
 
     void JustDied(Unit *Killer)
@@ -396,11 +405,16 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
         {
             pCreator->RemoveAurasDueToSpell(SPELL_IMPALED);
             m_creature->ForcedDespawn();
+
+            if (m_uiEmpaledTime > 8000)
+               m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_BONED, false);
         }
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
+        m_uiEmpaledTime += uiDiff;
+
         if (!m_bEmerged)
         {
             m_creature->HandleEmote(EMOTE_ONESHOT_EMERGE);
