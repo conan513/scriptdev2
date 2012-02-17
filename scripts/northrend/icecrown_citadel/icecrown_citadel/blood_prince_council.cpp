@@ -678,13 +678,40 @@ struct MANGOS_DLL_DECL boss_taldaram_iccAI : public base_blood_prince_council_bo
     void JustSummoned(Creature *pSummoned)
     {
         pSummoned->SetInCombatWithZone();
-        if (Unit *pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0, 99999, SELECT_FLAG_IN_LOS|SELECT_FLAG_PLAYER))
+        Player* pTarget = GetFarthestPlayer(pSummoned, 60.0f);
+
+        if (pTarget)
         {
             pSummoned->AddThreat(pTarget, 1000000.0f, true);
             pSummoned->AI()->AttackStart(pTarget);
             if (m_bIsEmpowered)
                 pSummoned->CastSpell(pSummoned, SPELL_BALL_FLAMES_PERIODIC, true);
         }
+    }
+
+    Player* GetFarthestPlayer(Creature *pCreature, float MaxRangeDistance = 100.0f)
+    {
+        Player* farPlayer;
+        uint32 m_iuMaxDistance = 0;
+        uint32 m_iuCurDistance = 0;
+        Map* pMap = pCreature->GetMap();
+        Map::PlayerList const& pPlayers = pMap->GetPlayers();
+
+        if (!pPlayers.isEmpty())
+        for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
+        {
+            Player* pPlayer = itr->getSource();
+            if(pPlayer)
+            {
+                m_iuCurDistance = pCreature->GetDistance(pPlayer);
+                if (m_iuCurDistance > m_iuMaxDistance && m_iuCurDistance < MaxRangeDistance)
+                {
+                    m_iuMaxDistance = m_iuCurDistance;
+                    farPlayer = pPlayer;
+                }
+            }
+        }
+        return farPlayer;
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -821,6 +848,7 @@ struct MANGOS_DLL_DECL mob_ball_of_flamesAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     uint32 m_uiFlamesStackCount;
+    uint32 m_uiTimeToStartMoving;
     bool m_bIsDespawned;
     bool m_bIsStarted;
 
@@ -830,9 +858,11 @@ struct MANGOS_DLL_DECL mob_ball_of_flamesAI : public ScriptedAI
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         m_creature->SetLevitate(true);
+        SetCombatMovement(false);
         m_creature->SetDisplayId(26767);
 
         m_uiFlamesStackCount = 0;
+        m_uiTimeToStartMoving = 2000;
         m_bIsDespawned = false;
         m_bIsStarted = false;
 
@@ -846,6 +876,12 @@ struct MANGOS_DLL_DECL mob_ball_of_flamesAI : public ScriptedAI
 
         if (!m_creature->getVictim())
             return;
+
+        if (m_uiTimeToStartMoving > uiDiff)
+        {
+            m_uiTimeToStartMoving -= uiDiff;
+            return;
+        }
 
         if (m_bIsStarted)
         {
@@ -862,15 +898,15 @@ struct MANGOS_DLL_DECL mob_ball_of_flamesAI : public ScriptedAI
         }
         else
         {
-            if (m_uiFlamesStackCount >= 20)
-            {
-                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-                m_bIsStarted = true;
-            }
-            else
+            if (m_creature->HasAura(SPELL_BALL_FLAMES_PERIODIC) && m_uiFlamesStackCount < 20)
             {
                 m_creature->CastSpell(m_creature, SPELL_FLAMES_BUFF, true);
                 ++m_uiFlamesStackCount;
+            }
+            else
+            {
+                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                m_bIsStarted = true;
             }
         }
     }
