@@ -92,7 +92,8 @@ enum BossSpells
     NPC_GROWING_OOZE_PUDDLE_TRIG    = 38234,
     NPC_CHOKING_GAS_BOMB            = 38159,
     NPC_VOLATILE_OOZE               = 37697,
-    NPC_MUTATED_ABOMINATION         = 37672,
+    NPC_MUTATED_ABOMINATION_1       = 37672,
+    NPC_MUTATED_ABOMINATION_2       = 38285,
     NPC_MALLEABLE_GOO               = 38556,
 
 /*
@@ -370,12 +371,7 @@ struct MANGOS_DLL_DECL boss_professor_putricideAI : public base_icc_bossAI
 
         switch (pSummoned->GetEntry())
         {
-            case NPC_GROWING_OOZE_PUDDLE:
-            {
-                pSummoned->CastSpell(pSummoned, SPELL_SLIME_PUDDLE_AURA, true);
-                pSummoned->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
-                break;
-            }
+
             case NPC_CHOKING_GAS_BOMB:
             {
                 pSummoned->CastSpell(pSummoned, SPELL_CHOKING_GAS_BOMB_AURA, true);
@@ -741,12 +737,13 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public ScriptedAI
                 m_bIsVariable = true;
             }
         }
-        m_creature->SetSpeedRate(MOVE_RUN, 1.0f);
+        m_creature->SetSpeedRate(MOVE_RUN, 0.7f);
         Reset();
     }
 
     ScriptedInstance *m_pInstance;
 
+    Unit *pTarget;
     uint32 m_uiWaitTimer;
     uint32 m_uiMoveTimer;
     bool m_bIsWaiting;
@@ -759,6 +756,7 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public ScriptedAI
         m_uiMoveTimer   = 4000;
         SetCombatMovement(false);
         DoCastSpellIfCan(m_creature, SPELL_GASEOUS_BLOAT_VISUAL, CAST_TRIGGERED);
+        pTarget = NULL;
     }
 
     void DamageTaken(Unit *pDealer, uint32 &uiDamage)
@@ -814,8 +812,6 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public ScriptedAI
                 {
                     if (Creature *pProf = m_pInstance->GetSingleCreatureFromStorage(NPC_PROFESSOR_PUTRICIDE))
                     {
-                        Unit *pTarget = NULL;
-
                         pTarget = pProf->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1, SPELL_GASEOUS_BLOAT, SELECT_FLAG_PLAYER);
                         if (!pTarget)
                             pTarget = pProf->getVictim();
@@ -839,7 +835,7 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public ScriptedAI
                 SetCombatMovement(true);
                 m_bIsWaiting = false;
                 m_creature->GetMotionMaster()->Clear();
-                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                m_creature->GetMotionMaster()->MoveChase(pTarget);
             }
             else
                 m_uiMoveTimer -= uiDiff;
@@ -850,17 +846,17 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public ScriptedAI
         {
             // follow the victim - problems with updating the moving while channeling the spell
             m_creature->GetMotionMaster()->Clear();
-            m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+            m_creature->GetMotionMaster()->MoveChase(pTarget);
         }
 
-        if (m_creature->GetDistance(m_creature->getVictim()) <= 4.0f)
+        if (m_creature->GetDistance(pTarget) <= 4.0f)
         {
-            m_creature->getVictim()->CastSpell(m_creature->getVictim(), SPELL_EXPUNGED_GAS, true);
+            m_creature->getVictim()->CastSpell(pTarget, SPELL_EXPUNGED_GAS, true);
             m_creature->InterruptSpell(CURRENT_CHANNELED_SPELL);
             SetCombatMovement(false);
             m_creature->GetMotionMaster()->Clear();
             m_bIsWaiting = true;
-            m_uiWaitTimer = 2000;
+            m_uiWaitTimer = 4000;
             m_uiMoveTimer = 5000;
         }
     }
@@ -888,10 +884,10 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public base_icc_bossAI
                 m_bIsVariable = true;
             }
         }
-        m_creature->SetSpeedRate(MOVE_RUN, 1.0f);
+        m_creature->SetSpeedRate(MOVE_RUN, 0.7f);
         Reset();
     }
-
+    Unit *pTarget;
     uint32 m_uiWaitTimer;
     uint32 m_uiMoveTimer;
     bool m_bIsWaiting;
@@ -903,6 +899,7 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public base_icc_bossAI
         m_uiWaitTimer   = 1000;
         m_uiMoveTimer   = 4000;
         SetCombatMovement(false);
+        pTarget = NULL;
     }
 
     void DamageTaken(Unit *pDealer, uint32 &uiDamage)
@@ -958,8 +955,6 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public base_icc_bossAI
                 {
                     if (Creature *pProf = m_pInstance->GetSingleCreatureFromStorage(NPC_PROFESSOR_PUTRICIDE))
                     {
-                        Unit *pTarget = NULL;
-
                         pTarget = pProf->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1, SPELL_OOZE_ADHESIVE, SELECT_FLAG_PLAYER);
                         if (!pTarget)
                             pTarget = pProf->getVictim();
@@ -997,10 +992,10 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public base_icc_bossAI
             m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
         }
 
-        if (m_creature->GetDistance(m_creature->getVictim()) <= 4.0f)
+        if (m_creature->GetDistance(pTarget) <= 4.0f)
         {
             m_creature->InterruptSpell(CURRENT_CHANNELED_SPELL);
-            DoCastSpellIfCan(m_creature->getVictim(), SPELL_OOZE_ERUPTION);
+            DoCastSpellIfCan(pTarget, SPELL_OOZE_ERUPTION);
             SetCombatMovement(false);
             m_creature->GetMotionMaster()->Clear();
             m_bIsWaiting = true;
@@ -1052,16 +1047,20 @@ struct MANGOS_DLL_DECL mob_ooze_puddleAI : public ScriptedAI
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         m_creature->SetObjectScale(0.2f);
         DoCastSpellIfCan(m_creature, SPELL_GROW_STACKER, CAST_TRIGGERED);
+        m_creature->CastSpell(m_creature, SPELL_SLIME_PUDDLE_AURA, true);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_STUNNED);
     }
 
     ScriptedInstance *m_pInstance;
 
     void Reset(){}
-    void AttackStart(Unit *pWho){}
+    void Aggro(Unit* who)
+    {m_creature->CombatStop(); }
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (m_pInstance)
+        //if (m_pInstance)
+        if (false)
         {
             uint32 data = m_pInstance->GetData(TYPE_PUTRICIDE);
             if (data == SPECIAL)
@@ -1077,6 +1076,42 @@ struct MANGOS_DLL_DECL mob_ooze_puddleAI : public ScriptedAI
 CreatureAI* GetAI_mob_ooze_puddle(Creature* pCreature)
 {
     return new mob_ooze_puddleAI(pCreature);
+}
+
+// mob Mutated Abomination
+struct MANGOS_DLL_DECL mob_mutated_amobinationAI : public ScriptedAI
+{
+    mob_mutated_amobinationAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        SetCombatMovement(false);
+        //DoCastSpellIfCan(m_creature, SPELL_MUTATED_AURA, CAST_TRIGGERED);
+        DoCastSpellIfCan(m_creature, SPELL_ABOMINATION_POWER_DRAIN, CAST_TRIGGERED);
+        Reset();
+    }
+
+    void Reset()
+    {
+        m_creature->SetPower(POWER_ENERGY, 0);
+    }
+
+    void Aggro(Unit* who)
+    {m_creature->CombatStop(); }
+
+    void EnterCombat(Unit *pEnemy)
+    {
+        m_creature->CombatStop();
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (m_creature->isInCombat())
+            m_creature->CombatStop();
+    }
+};
+
+CreatureAI* GetAI_mob_mutated_amobination(Creature* pCreature)
+{
+    return new mob_mutated_amobinationAI(pCreature);
 }
 
 void AddSC_boss_professor_putricide()
@@ -1105,5 +1140,10 @@ void AddSC_boss_professor_putricide()
     pNewScript = new Script;
     pNewScript->Name = "mob_ooze_puddle";
     pNewScript->GetAI = &GetAI_mob_ooze_puddle;
+    pNewScript->RegisterSelf();
+
+    pNewScript = new Script;
+    pNewScript->Name = "mob_mutated_amobination";
+    pNewScript->GetAI = &GetAI_mob_mutated_amobination;
     pNewScript->RegisterSelf();
 }
