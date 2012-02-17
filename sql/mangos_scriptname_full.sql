@@ -81,7 +81,6 @@ UPDATE gameobject_template SET ScriptName='go_resonite_cask' WHERE entry=178145;
 UPDATE gameobject_template SET ScriptName='go_sacred_fire_of_life' WHERE entry=175944;
 UPDATE gameobject_template SET ScriptName='go_shrine_of_the_birds' WHERE entry IN (185547,185553,185551);
 UPDATE gameobject_template SET ScriptName='go_tablet_of_madness' WHERE entry=180368;
-UPDATE gameobject_template SET ScriptName='go_tablet_of_the_seven' WHERE entry=169294;
 UPDATE gameobject_template SET ScriptName='go_tele_to_dalaran_crystal' WHERE entry=191230;
 UPDATE gameobject_template SET ScriptName='go_tele_to_violet_stand' WHERE entry=191229;
 UPDATE gameobject_template SET ScriptName='go_blood_filled_orb' WHERE entry=182024;
@@ -489,6 +488,7 @@ UPDATE creature_template SET ScriptName='npc_dalaran_guardian_mage' WHERE entry 
 UPDATE creature_template SET ScriptName='npc_kerlonian' WHERE entry=11218;
 UPDATE creature_template SET ScriptName='npc_prospector_remtravel' WHERE entry=2917;
 UPDATE creature_template SET ScriptName='npc_threshwackonator' WHERE entry=6669;
+UPDATE creature_template SET ScriptName='npc_volcor' WHERE entry=3692;
 
 /* DARNASSUS */
 
@@ -1035,6 +1035,7 @@ UPDATE creature_template SET ScriptName='mob_restless_soul' WHERE entry=11122;
 UPDATE creature_template SET ScriptName='mob_freed_soul' WHERE entry=11136;
 UPDATE gameobject_template SET ScriptName='go_gauntlet_gate' WHERE entry=175357;
 UPDATE gameobject_template SET ScriptName='go_service_gate' WHERE entry=175368;
+UPDATE gameobject_template SET ScriptName='go_stratholme_postbox' WHERE entry IN (176346,176349,176350,176351,176352,176353);
 
 /* SUNKEN TEMPLE */
 UPDATE instance_template SET ScriptName='instance_sunken_temple' WHERE map=109;
