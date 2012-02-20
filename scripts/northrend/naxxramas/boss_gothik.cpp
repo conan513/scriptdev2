@@ -192,14 +192,6 @@ struct MANGOS_DLL_DECL boss_gothikAI : public BSWScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_GOTHIK, DONE);
-
-		if (m_pInstance->GetData(TYPE_FOUR_HORSEMEN) == DONE && m_pInstance->GetData(TYPE_RAZUVIOUS) == DONE)
-		{
-			if (currentDifficulty == RAID_DIFFICULTY_10MAN_NORMAL)
-				m_pInstance->DoCompleteAchievement(568);
-			if (currentDifficulty == RAID_DIFFICULTY_25MAN_NORMAL)
-				m_pInstance->DoCompleteAchievement(569);
-		}
     }
 
     void JustReachedHome()
