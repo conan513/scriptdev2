@@ -425,7 +425,14 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
                     if (Unit *pVictim = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1, SPELL_FROST_BEACON, SELECT_FLAG_PLAYER))
                     {
                         if (DoCastSpellIfCan(pVictim, SPELL_FROST_BEACON) == CAST_OK)
-                            m_uiFrostBeaconTimer = 10000;
+                        {
+                            if (m_uiIcyGripTimer > 10000 && m_uiIcyGripTimer < 15000)
+                                m_uiFrostBeaconTimer = 15000;
+                            else
+                                m_uiFrostBeaconTimer = 10000;
+
+                            m_uiIceTombTimer = 5000;
+                        }
                     }
                 }
                 else
@@ -435,7 +442,7 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
                 if (m_uiIceTombTimer <= uiDiff)
                 {
                     if (DoCastSpellIfCan(m_creature, SPELL_ICE_TOMB) == CAST_OK)
-                        m_uiIceTombTimer = 10000;
+                        m_uiIceTombTimer = m_uiFrostBeaconTimer + 5000;
                 }
                 else
                     m_uiIceTombTimer -= uiDiff;
