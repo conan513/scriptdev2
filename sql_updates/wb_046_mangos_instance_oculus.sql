@@ -21,3 +21,16 @@ UPDATE `locales_npc_text` SET `Text0_1_loc6` = 'Los dracos esmeralda destacan en
 UPDATE `locales_npc_text` SET `Text0_0_loc6` = 'Los dracos ambar destacan en causar dano gracias a que pueden manipular el tiempo a su favor.$B$BAl utilizar la Lanza de choque pueden interrumpir el flujo de tiempo alrededor de un enemigo, haciendole dano instantaneamente. El poder de este efecto aumenta enormemente dependiendo de las Cargas de choque en el objetivo.$B$BCuando se ve amenazado, un draco de ambar puede detener brevemente el flujo del tiempo de sus enemigos. Esta interrupcion del tiempo almacena una gran cantidad de Energia de choque en los objetivos afectados en la forma de Cargas de choque.' WHERE `entry` = 13256;
 
 UPDATE `locales_npc_text` SET `Text0_0_loc7` = `Text0_0_loc6`, `Text0_1_loc7` = `Text0_1_loc6`;
+
+-- Achievements
+-- Oculus
+delete from achievement_criteria_requirement where criteria_id in(203,204,205,206);
+insert into achievement_criteria_requirement values(203,12,0,0),(204,12,0,0),(205,12,0,0),(206,12,0,0);
+
+-- Oculus (heroic)
+delete from achievement_criteria_requirement where criteria_id in(6859,6860,6861,6862);
+insert into achievement_criteria_requirement values(6859,12,1,0),(6860,12,1,0),(6861,12,1,0),(6862,12,1,0);
+
+-- Make It Count + Expirienced Drake Rider
+delete from achievement_criteria_requirement where criteria_id in(7145,7178,7179,7177);
+insert into achievement_criteria_requirement values(7145,12,1,0),(7178,12,1,0),(7179,12,1,0),(7177,12,1,0);

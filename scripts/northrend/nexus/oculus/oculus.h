@@ -27,8 +27,6 @@ enum
     TYPE_EREGOS,
     TYPE_ROBOTS,
     TYPE_UROM_PHASE,
-    TYPE_ACHIEV_EREGOS_KILL,
-    TYPE_ACHIEV_EREGOS_KILL_H,
     MAX_ENCOUNTERS,
 
     DATA_DRAKOS,
@@ -49,6 +47,10 @@ enum
     NPC_UROM               = 27655,
     NPC_EREGOS             = 27656,
 
+    NPC_GREEN_DRAGON       = 27692,
+    NPC_YELLOW_DRAGON      = 27755,
+    NPC_RED_DRAGON         = 27756,
+
     GO_DRAGON_CAGE_DOOR_1  = 193992,
     GO_DRAGON_CAGE_DOOR_2  = 193993,
     GO_DRAGON_CAGE_DOOR_3  = 193995,
@@ -61,9 +63,6 @@ enum
     BELGAR_TEXT_1          = 13268,
     BELGAR_TEXT_2          = 13269,
 
-    ACHIEV_EREGOS_KILL     = 206,
-    ACHIEV_EREGOS_KILL_H   = 6862,
-
     // Yells after Drakos dies
     SAY_VAROS_INTRO                 = -1578020,
     SAY_BELGARISTRASZ_GREET         = -1578021,
@@ -72,7 +71,43 @@ enum
     WORLD_STATE_CONSTRUCTS          = 3524,
     WORLD_STATE_CONSTRUCTS_COUNT    = 3486,
 
+    // Achievements
     ACHIEV_START_EREGOS_ID          = 18153,            // eregos timed kill achiev
+
+    ACHIEV_CRITERIA_RUBY_VOID       = 7323,
+    ACHIEV_CRITERIA_EMERALD_VOID    = 7324,
+    ACHIEV_CRITERIA_AMBER_VOID      = 7325,
+
+    ACHIEV_RUBY_VOID                = 0,
+    ACHIEV_EMERALD_VOID             = 1,
+    ACHIEV_AMBER_VOID               = 2,
+    ACHIEV_COUNT           = 3,
+};
+
+struct MANGOS_DLL_DECL instance_oculus : public ScriptedInstance
+{
+    public:
+        instance_oculus(Map* pMap);
+        void Initialize();
+
+        void OnObjectCreate(GameObject* pGo);
+        void OnCreatureCreate(Creature* pCreature);
+
+        bool CheckAchievementCriteriaMeet(uint32 uiCriteriaId, Player const* pSource, Unit const* pTarget, uint32 uiMiscValue1 /* = 0*/);
+        void SetSpecialAchievementCriteria(uint32 uiType, bool bIsMet);
+
+        void SetData(uint32 type, uint32 data);
+        uint32 GetData(uint32 type);
+
+        const char* Save();
+        void Load(const char* chrIn);
+
+    private:
+        uint32 m_auiEncounter[MAX_ENCOUNTERS+1];
+
+        std::string strSaveData;
+        bool m_bIsRegularMode;
+        bool m_bAchievCriteria[ACHIEV_COUNT];
 };
 
 #endif
