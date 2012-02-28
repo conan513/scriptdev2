@@ -47,7 +47,6 @@ enum
     SPELL_SLEEP_N                          = 52721,
     SPELL_SLEEP_H                          = 58849,
     SPELL_VAMPIRE                          = 52723,
-    SPELL_ACHIEV_CHECK                     = 58630
 };
 
 struct MANGOS_DLL_DECL boss_malganisAI : public ScriptedAI
@@ -179,10 +178,6 @@ struct MANGOS_DLL_DECL boss_malganisAI : public ScriptedAI
         {
             m_pInstance->SetData(TYPE_PHASE, 10);
             m_pInstance->SetData(TYPE_MALGANIS, DONE);
-            DoCastSpellIfCan(m_creature, SPELL_ACHIEV_CHECK, CAST_TRIGGERED);
-			if (m_bIsHeroic)
-				m_pInstance->DoCompleteAchievement(500);
-			else m_pInstance->DoCompleteAchievement(479);
             EnterEvadeMode();
         }
         DoMeleeAttackIfReady();

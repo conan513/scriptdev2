@@ -230,6 +230,7 @@ struct MANGOS_DLL_DECL instance_culling_of_stratholme : public ScriptedInstance
                 m_auiEncounter[6] = uiData;
                 if (uiData == DONE)
                 {
+                    DoUpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_BE_SPELL_TARGET, MALGANIS_ACHIEVEMENT_SPELL);
                     KillMalginasCredit();
                     DoUseDoorOrButton(GO_EXIT);
                     DoRespawnGameObject(instance->IsRegularDifficulty() ? GO_MALGANIS_CHEST : GO_MALGANIS_CHEST_H, 30*MINUTE);
