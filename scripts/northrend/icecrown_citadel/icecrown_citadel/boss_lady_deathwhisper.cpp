@@ -505,6 +505,15 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public boss_lady_deathwhisper_
                 }
                 else
                     m_uiSummonWaveTimer -= uiDiff;
+
+                // Frostbolt Volley
+                if (m_uiFrostboltVolleyTimer <= uiDiff)
+                {
+                    if (DoCastSpellIfCan(m_creature, SPELL_FROSTBOLT_VOLLEY) == CAST_OK)
+                        m_uiFrostboltVolleyTimer = urand(15000, 20000);
+                }
+                else
+                    m_uiFrostboltVolleyTimer -= uiDiff;
             }
 
             // Touch of Insignificance
@@ -519,7 +528,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public boss_lady_deathwhisper_
             // Frostbolt
             if (m_uiFrostboltTimer <= uiDiff)
             {
-                if (Unit *pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
+                if (Unit *pTarget = m_creature->getVictim())
                 {
                     if (DoCastSpellIfCan(pTarget, SPELL_FROSTBOLT) == CAST_OK)
                         m_uiFrostboltTimer = urand(5000, 10000);
@@ -527,15 +536,6 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public boss_lady_deathwhisper_
             }
             else
                 m_uiFrostboltTimer -= uiDiff;
-
-            // Frostbolt Volley
-            if (m_uiFrostboltVolleyTimer <= uiDiff)
-            {
-                if (DoCastSpellIfCan(m_creature, SPELL_FROSTBOLT_VOLLEY) == CAST_OK)
-                    m_uiFrostboltVolleyTimer = urand(15000, 20000);
-            }
-            else
-                m_uiFrostboltVolleyTimer -= uiDiff;
 
             // Vengeful Shade
             if (m_uiVengefulShadeTimer <= uiDiff)
