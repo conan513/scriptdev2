@@ -12,6 +12,7 @@ extern void AddSC_battlegroundIC();
 // custom
 extern void AddSC_mob_teleguy();
 extern void AddSC_npc_arena_honor();
+extern void AddSC_battle_area();
 
 // examples
 extern void AddSC_example_creature();
