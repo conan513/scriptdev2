@@ -830,22 +830,19 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public ScriptedAI
             else
                 m_uiWaitTimer -= uiDiff;
 
-            if (pTarget)
+            if (m_uiMoveTimer <= uiDiff)
             {
-                if (m_uiMoveTimer <= uiDiff)
-                {
-                    SetCombatMovement(true);
-                    m_bIsWaiting = false;
-                    m_creature->GetMotionMaster()->Clear();
-                    m_creature->GetMotionMaster()->MoveChase(pTarget);
-                }
-                else
-                    m_uiMoveTimer -= uiDiff;
+                SetCombatMovement(true);
+                m_bIsWaiting = false;
+                m_creature->GetMotionMaster()->Clear();
+                m_creature->GetMotionMaster()->MoveChase(pTarget);
             }
+            else
+                m_uiMoveTimer -= uiDiff;
 
             return;
         }
-        else if (pTarget)
+        else
         {
             // follow the victim - problems with updating the moving while channeling the spell
             m_creature->GetMotionMaster()->Clear();
