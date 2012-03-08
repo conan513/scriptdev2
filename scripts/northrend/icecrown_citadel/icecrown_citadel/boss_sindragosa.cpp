@@ -223,6 +223,7 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
         z = SindragosaLoc[0].z;
 
         m_creature->CastSpell(x, y, z, SPELL_FROST_BOMB, false);
+        m_creature->SummonCreature(NPC_FROST_BOMB, x, y, z, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 20000);
     }
 
     void DoMark(uint32 count)
