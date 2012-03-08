@@ -93,7 +93,7 @@ void SendDefaultMenu_npc_teleport(Player* pPlayer, Creature* pCreature, uint32 a
                                     uint8 randomPostion = urand(0, 4);
                                     Group::MemberSlotList const& groupSlot = pGroup->GetMemberSlots();
                                     for (Group::member_citerator itr = groupSlot.begin(); itr != groupSlot.end(); itr++)
-                                        pGroup->TeleportInBattleArea(itr->guid, pTeleportPositions[randomPostion][0], mapId,pTeleportPositions[randomPostion][1], pTeleportPositions[randomPostion][2], pTeleportPositions[randomPostion][3]);
+                                        pGroup->TeleportInBattleArea(itr->guid, mapId, pTeleportPositions[randomPostion][0], pTeleportPositions[randomPostion][1], pTeleportPositions[randomPostion][2], pTeleportPositions[randomPostion][3]);
                                     CharacterDatabase.PExecute("UPDATE character_battle_registration SET flag = 1 WHERE group_id = %u", pGroup->GetId());
                                 }
                             }
