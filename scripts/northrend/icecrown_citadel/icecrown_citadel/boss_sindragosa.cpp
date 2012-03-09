@@ -61,7 +61,7 @@ enum BossSpells
     //SPELL_FROST_BOMB_OTHER      = 70521, // no idea where it is used, wowhead says it is used by Sindragosa
 
     // Phase 3
-    SPELL_MYSTIC_BUFFET         = 70128,
+    SPELL_MYSTIC_BUFFET         = 70127,
 
     // NPCs
     NPC_ICE_TOMB                = 36980,
@@ -153,6 +153,8 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
         if (m_pInstance)
             m_pInstance->SetData(TYPE_SINDRAGOSA, FAIL);
 
+        DoRemoveBossEffects();
+
         SetCombatMovement(true);
         m_creature->SetLevitate(false);
         m_creature->RemoveByteFlag(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_UNK_2);
@@ -181,6 +183,26 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
             m_pInstance->SetData(TYPE_SINDRAGOSA, DONE);
 
         DoScriptText(SAY_DEATH, m_creature);
+
+        DoRemoveBossEffects();
+    }
+
+    void DoRemoveBossEffects()
+    {
+        Map* pMap = m_creature->GetMap();
+        Map::PlayerList const& players = pMap->GetPlayers();
+        if (!players.isEmpty())
+            for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+                if (Player* pPlayer = itr->getSource())
+                    if(pPlayer)
+                    {
+                        pPlayer->RemoveAurasDueToSpell(SPELL_FROST_BEACON);
+                        pPlayer->RemoveAurasDueToSpell(SPELL_UNCHAINED_MAGIC);
+                        pPlayer->RemoveAurasDueToSpell(SPELL_INSTABILITY);
+                        pPlayer->RemoveAurasDueToSpell(SPELL_FROST_BREATH);
+                        pPlayer->RemoveAurasDueToSpell(SPELL_MYSTIC_BUFFET);
+                    }
+
     }
 
     void MovementInform(uint32 uiMovementType, uint32 uiData)
