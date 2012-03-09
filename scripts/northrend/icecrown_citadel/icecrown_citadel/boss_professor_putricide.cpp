@@ -34,7 +34,7 @@ enum BossSpells
     SPELL_BERSERK                   = 47008,
 
     // controlled abomination
-    SPELL_MUTATED_TRANSFORMATION    = 70311,
+    SPELL_MUTATED_TRANSFORMATION    = 70308,
     SPELL_EAT_OOZE                  = 72527,
     SPELL_REGURGITATED_OOZE         = 70539,
     SPELL_MUTATED_SLASH             = 70542,
@@ -183,6 +183,8 @@ struct MANGOS_DLL_DECL boss_professor_putricideAI : public base_icc_bossAI
 
     bool m_bIsGreenOoze; // green or orange ooze to summon
 
+    std::list<Creature*> SummonEntryList;
+
     void Reset()
     {
         m_uiPhase                   = PHASE_ONE;
@@ -227,6 +229,8 @@ struct MANGOS_DLL_DECL boss_professor_putricideAI : public base_icc_bossAI
 
         m_pInstance->SetData(TYPE_PUTRICIDE, IN_PROGRESS);
         DoScriptText(SAY_AGGRO, m_creature);
+        if (GameObject* pGOTable = m_pInstance->GetSingleGameObjectFromStorage(GO_DRINK_ME_TABLE))
+            pGOTable->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NO_INTERACT);
     }
 
     void JustDied(Unit *pKiller)
@@ -236,10 +240,7 @@ struct MANGOS_DLL_DECL boss_professor_putricideAI : public base_icc_bossAI
 
         DoScriptText(SAY_DEATH, m_creature);
 
-//        doRemoveFromAll(SPELL_GAS_VARIABLE);
-//        doRemoveFromAll(SPELL_GAS_VARIABLE_GAS);
-//        doRemoveFromAll(SPELL_MUTATED_PLAGUE);
-        DoRemoveMutatedAmobination();
+        DoRemoveBossEffects();
     }
 
     void DoRemoveMutatedAmobination()
@@ -251,6 +252,30 @@ struct MANGOS_DLL_DECL boss_professor_putricideAI : public base_icc_bossAI
                 if (Player* pPlayer = itr->getSource())
                     if (pPlayer->GetVehicle())
                         pPlayer->ExitVehicle();
+    }
+
+    void DoRemoveBossEffects()
+    {
+        DoRemoveMutatedAmobination();
+
+        SummonEntryList.clear();
+        GetCreatureListWithEntryInGrid(SummonEntryList, m_creature, NPC_GROWING_OOZE_PUDDLE, 100.0f);
+
+        for(std::list<Creature*>::iterator itr = SummonEntryList.begin(); itr != SummonEntryList.end(); ++itr)
+           if ((*itr)->isAlive())
+                (*itr)->ForcedDespawn();
+
+        Map* pMap = m_creature->GetMap();
+        Map::PlayerList const& players = pMap->GetPlayers();
+        if (!players.isEmpty())
+            for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+                if (Player* pPlayer = itr->getSource())
+                    if(pPlayer)
+                    {
+                        pPlayer->RemoveAurasDueToSpell(SPELL_GAS_VARIABLE);
+                        pPlayer->RemoveAurasDueToSpell(SPELL_GAS_VARIABLE_GAS);
+                        pPlayer->RemoveAurasDueToSpell(SPELL_MUTATED_PLAGUE);
+                    }
     }
 
     void JustReachedHome()
@@ -268,6 +293,7 @@ struct MANGOS_DLL_DECL boss_professor_putricideAI : public base_icc_bossAI
 
         // some weird bug with not regenerating health after wipe ;/
         m_creature->SetHealth(m_creature->GetMaxHealth());
+        DoRemoveBossEffects();
     }
 
     void MovementInform(uint32 uiMovementType, uint32 uiData)
@@ -529,6 +555,10 @@ struct MANGOS_DLL_DECL boss_professor_putricideAI : public base_icc_bossAI
 
                         m_creature->GetMotionMaster()->MovePoint(POINT_PUTRICIDE_SPAWN, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z);
                         m_uiPhase = PHASE_RUNNING_TWO;
+                        DoRemoveMutatedAmobination();
+                        if (m_pInstance)
+                            if (GameObject* pGOTable = m_pInstance->GetSingleGameObjectFromStorage(GO_DRINK_ME_TABLE))
+                                pGOTable->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NO_INTERACT);
                         return;
                     }
                     m_uiHealthCheckTimer = 1000;
@@ -1086,16 +1116,27 @@ struct MANGOS_DLL_DECL mob_mutated_amobinationAI : public ScriptedAI
         SetCombatMovement(false);
         //DoCastSpellIfCan(m_creature, SPELL_MUTATED_AURA, CAST_TRIGGERED);
         DoCastSpellIfCan(m_creature, SPELL_ABOMINATION_POWER_DRAIN, CAST_TRIGGERED);
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         Reset();
     }
+
+    ScriptedInstance *m_pInstance;
 
     void Reset()
     {
         m_creature->SetPower(POWER_ENERGY, 0);
     }
 
+    void JustDied(Unit* pKiller)
+    {
+        if (m_pInstance)
+            if (GameObject* pGOTable = m_pInstance->GetSingleGameObjectFromStorage(GO_DRINK_ME_TABLE))
+                pGOTable->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NO_INTERACT);
+    }
     void Aggro(Unit* who)
-    {m_creature->CombatStop(); }
+    {
+        m_creature->CombatStop();
+    }
 
     void EnterCombat(Unit *pEnemy)
     {
@@ -1106,12 +1147,24 @@ struct MANGOS_DLL_DECL mob_mutated_amobinationAI : public ScriptedAI
     {
         if (m_creature->isInCombat())
             m_creature->CombatStop();
+
+        if (VehicleKit *vehicle = m_creature->GetVehicleKit())
+            if (m_creature->GetCharmerGuid().IsEmpty())
+                m_creature->ForcedDespawn();
     }
 };
 
 CreatureAI* GetAI_mob_mutated_amobination(Creature* pCreature)
 {
     return new mob_mutated_amobinationAI(pCreature);
+}
+
+// GO Drink Me!
+bool GOUse_go_drink_me(Player* pPlayer, GameObject* pGameObject)
+{
+    pGameObject->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NO_INTERACT);
+    pPlayer->CastSpell(pPlayer, SPELL_MUTATED_TRANSFORMATION, true);
+    return true;
 }
 
 void AddSC_boss_professor_putricide()
@@ -1146,4 +1199,10 @@ void AddSC_boss_professor_putricide()
     pNewScript->Name = "mob_mutated_amobination";
     pNewScript->GetAI = &GetAI_mob_mutated_amobination;
     pNewScript->RegisterSelf();
+
+    pNewScript = new Script;
+    pNewScript->Name = "go_drink_me";
+    pNewScript->pGOUse = &GOUse_go_drink_me;
+    pNewScript->RegisterSelf();
+
 }

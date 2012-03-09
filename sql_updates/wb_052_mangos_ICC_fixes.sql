@@ -19,3 +19,5 @@ INSERT INTO `spell_script_target` VALUES (72527,1,37690), (70360,1,37690);
 
 update creature_template set ScriptName="mob_mutated_amobination" where entry=38285;
 update creature_template set ScriptName="mob_mutated_amobination" where entry=37672;
+
+update gameobject_template set ScriptName="go_drink_me", data3=0 where entry=201584;
