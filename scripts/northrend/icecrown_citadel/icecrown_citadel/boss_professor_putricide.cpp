@@ -239,17 +239,17 @@ struct MANGOS_DLL_DECL boss_professor_putricideAI : public base_icc_bossAI
 //        doRemoveFromAll(SPELL_GAS_VARIABLE);
 //        doRemoveFromAll(SPELL_GAS_VARIABLE_GAS);
 //        doRemoveFromAll(SPELL_MUTATED_PLAGUE);
-        RemoveMutated();
+        DoRemoveMutatedAmobination();
     }
 
-    void RemoveMutated()
+    void DoRemoveMutatedAmobination()
     {
         Map* pMap = m_creature->GetMap();
         Map::PlayerList const& players = pMap->GetPlayers();
         if (!players.isEmpty())
             for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
                 if (Player* pPlayer = itr->getSource())
-                    if (pPlayer && pPlayer->GetVehicle())
+                    if (pPlayer->GetVehicle())
                         pPlayer->ExitVehicle();
     }
 
