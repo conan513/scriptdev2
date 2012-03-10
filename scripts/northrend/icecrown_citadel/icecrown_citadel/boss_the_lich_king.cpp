@@ -760,10 +760,13 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public base_icc_bossAI
         m_uiHarvestSoulTimer    = 5000;
         m_uiVileSpiritsTimer    = 20000;
         m_uiDestroyPillarsTimer = 3000;
-        m_uiRespawnPlatformTimer= 3000;
+        m_uiRespawnPlatformTimer= 3000;       
 
         DoRespawnPlatform();
+        DoRespawnPillars();
         SetCombatMovement(true);
+
+        m_bPlatformDestroyed = false;
     }
 
     void Aggro(Unit *pWho)
@@ -926,6 +929,9 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public base_icc_bossAI
         if (!m_pInstance)
             return;
 
+        if (!m_bPlatformDestroyed)
+            return;
+
         if (GameObject* pGoFloor = m_pInstance->GetSingleGameObjectFromStorage(GO_ARTHAS_PLATFORM))
         {
             pGoFloor->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_DAMAGED | GO_FLAG_NODESPAWN);
@@ -936,6 +942,23 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public base_icc_bossAI
             pGo->SetGoState(GO_STATE_ACTIVE);
 
         m_bPlatformDestroyed = false;
+    }
+
+    void DoRespawnPillars()
+    {
+        if (m_pInstance)
+        {
+            if (GameObject *pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_ICESHARD_1))
+                pGo->SetGoState(GO_STATE_READY);
+            if (GameObject *pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_ICESHARD_2))
+                pGo->SetGoState(GO_STATE_READY);
+            if (GameObject *pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_ICESHARD_3))
+                pGo->SetGoState(GO_STATE_READY);
+            if (GameObject *pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_ICESHARD_4))
+                pGo->SetGoState(GO_STATE_READY);
+
+            m_bPillarsDestroyed = false;
+        }
     }
 
     void DoDespawnShadowTraps()
