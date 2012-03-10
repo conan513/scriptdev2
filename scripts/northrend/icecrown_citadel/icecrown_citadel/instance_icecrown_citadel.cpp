@@ -560,11 +560,6 @@ bool instance_icecrown_spire::CheckAchievementCriteriaMeet(uint32 uiCriteriaId, 
         case CRITERIA_ORB_WHISPERER_10H:
         case CRITERIA_ORB_WHISPERER_25H:
              return m_bAchievCriteria[ACHIEVE_ORB_WHISPERER];
-        case CRITERIA_ONCE_BITTEN_TWICE_SHY_10N:
-        case CRITERIA_ONCE_BITTEN_TWICE_SHY_25N:
-        case CRITERIA_ONCE_BITTEN_TWICE_SHY_10V:
-        case CRITERIA_ONCE_BITTEN_TWICE_SHY_25V:
-             return m_bAchievCriteria[ACHIEVE_ONCE_BITTEN_TWICE_SHY];
         case CRITERIA_PORTAL_JOCKEY_10N:
         case CRITERIA_PORTAL_JOCKEY_25N:
         case CRITERIA_PORTAL_JOCKEY_10H:

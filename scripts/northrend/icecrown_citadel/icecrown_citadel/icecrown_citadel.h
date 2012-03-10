@@ -212,10 +212,6 @@ enum AchievementCriteriaIds
     // Blood-Queen Lana'thel
     CRITERIA_KILL_LANA_THEL_10M             = 13340,
     CRITERIA_KILL_LANA_THEL_25M             = 13360,
-    CRITERIA_ONCE_BITTEN_TWICE_SHY_10N      = 12780,
-    CRITERIA_ONCE_BITTEN_TWICE_SHY_25N      = 13012,
-    CRITERIA_ONCE_BITTEN_TWICE_SHY_10V      = 13011,
-    CRITERIA_ONCE_BITTEN_TWICE_SHY_25V      = 13013,
 
     // Valithria Dreamwalker
     CRITERIA_PORTAL_JOCKEY_10N              = 12978,
@@ -246,11 +242,10 @@ enum Achievements
     ACHIEVE_DANCES_WITH_OOZES               = 5,
     ACHIEVE_NAUSEA                          = 6,
     ACHIEVE_ORB_WHISPERER                   = 7,
-    ACHIEVE_ONCE_BITTEN_TWICE_SHY           = 8,
-    ACHIEVE_PORTAL_JOCKEY                   = 9,
-    ACHIEVE_ALL_YOU_CAN_EAT                 = 10,
-    ACHIEVE_BEEN_WAITING_A_LONG_TIME        = 11,
-    ACHIEVE_MAX_COUNT                       = 12,
+    ACHIEVE_PORTAL_JOCKEY                   = 8,
+    ACHIEVE_ALL_YOU_CAN_EAT                 = 9,
+    ACHIEVE_BEEN_WAITING_A_LONG_TIME        = 10,
+    ACHIEVE_MAX_COUNT                       = 11,
 };
 
 class MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance

@@ -344,6 +344,9 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public base_icc_bossAI
             if (Player* pPlayer = i->getSource())
                 if (pPlayer->isAlive())
                 {
+                    // Additional checking for achiev
+                    pPlayer->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_KILL_CREATURE, NPC_LANATHEL, 0);
+
                     // Uncontrollable Frenzy
                     pPlayer->RemoveAurasDueToSpell(70923);
                     pPlayer->RemoveAurasDueToSpell(70924);
@@ -354,9 +357,8 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public base_icc_bossAI
 
                     // Essence of The Blood Queen
                     pPlayer->RemoveAurasDueToSpell(70867);
-                    pPlayer->RemoveAurasDueToSpell(71473);
-                    pPlayer->RemoveAurasDueToSpell(71532);
-                    pPlayer->RemoveAurasDueToSpell(71533);
+                    pPlayer->RemoveAurasDueToSpell(70871);
+
                 }
     }
 
