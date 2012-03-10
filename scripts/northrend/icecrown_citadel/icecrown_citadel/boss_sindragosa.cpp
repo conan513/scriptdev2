@@ -449,8 +449,8 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
                     {
                         if (DoCastSpellIfCan(pVictim, SPELL_FROST_BEACON) == CAST_OK)
                         {
-                            if (m_uiIcyGripTimer > 10000 && m_uiIcyGripTimer < 15000)
-                                m_uiFrostBeaconTimer = 15000;
+                            if (m_uiIcyGripTimer > 9000 && m_uiIcyGripTimer < 17000)
+                                m_uiFrostBeaconTimer = 20000;
                             else
                                 m_uiFrostBeaconTimer = 10000;
 
