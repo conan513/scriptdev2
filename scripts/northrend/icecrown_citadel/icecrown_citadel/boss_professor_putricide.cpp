@@ -1022,7 +1022,7 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public base_icc_bossAI
             m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
         }
 
-        if (m_creature->GetDistance(pTarget) <= 4.0f)
+        if (pTarget && m_creature->GetDistance(pTarget) <= 4.0f)
         {
             m_creature->InterruptSpell(CURRENT_CHANNELED_SPELL);
             DoCastSpellIfCan(pTarget, SPELL_OOZE_ERUPTION);

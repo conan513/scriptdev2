@@ -760,7 +760,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public base_icc_bossAI
         m_uiHarvestSoulTimer    = 5000;
         m_uiVileSpiritsTimer    = 20000;
         m_uiDestroyPillarsTimer = 3000;
-        m_uiRespawnPlatformTimer= 3000;       
+        m_uiRespawnPlatformTimer= 3000;
 
         DoRespawnPlatform();
         DoRespawnPillars();
