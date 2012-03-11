@@ -234,6 +234,8 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
 
             if (m_creature->getVictim())
                 m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+
+            m_uiPhaseTimer = 110000;
         }
     }
 
@@ -430,7 +432,7 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
                 if (m_uiPhaseTimer <= uiDiff)
                 {
                     m_uiPhase = PHASE_FLYING;
-                    m_uiPhaseTimer = 42000;
+                    m_uiPhaseTimer = 110000;
 
                     // fly to the ground point
                     m_creature->GetMotionMaster()->MovePoint(POINT_LAND, SindragosaLoc[0].x, SindragosaLoc[0].y, SindragosaLoc[0].z);
