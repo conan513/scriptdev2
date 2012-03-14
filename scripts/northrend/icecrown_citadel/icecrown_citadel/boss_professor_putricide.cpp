@@ -835,25 +835,27 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public ScriptedAI
         {
             if (m_uiWaitTimer <= uiDiff)
             {
-                m_uiWaitTimer = 5000;
-
                 // pick target
                 if (m_pInstance)
                 {
                     if (Creature *pProf = m_pInstance->GetSingleCreatureFromStorage(NPC_PROFESSOR_PUTRICIDE))
                     {
-                        pTarget = pProf->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1, SPELL_GASEOUS_BLOAT, SELECT_FLAG_PLAYER);
-                        if (!pTarget)
-                            pTarget = pProf->getVictim();
+                        Unit* pSelectedTarget = pProf->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1, SPELL_GASEOUS_BLOAT, SELECT_FLAG_PLAYER);
+                        if (!pSelectedTarget)
+                            pSelectedTarget = pProf->getVictim();
 
-                        if (pTarget)
+                        if (pSelectedTarget)
                         {
+                            pTarget = pSelectedTarget;
                             if (DoCastSpellIfCan(pTarget, SPELL_GASEOUS_BLOAT) == CAST_OK)
                             {
                                 DoResetThreat();
                                 m_creature->AddThreat(pTarget, 1000000.0f);
+                                m_uiWaitTimer = 5000;
                             }
                         }
+                        else
+                            return;
                     }
                 }
             }
@@ -879,7 +881,14 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public ScriptedAI
             m_creature->GetMotionMaster()->MoveChase(pTarget);
         }
 
-        if (pTarget && m_creature->GetDistance(pTarget) <= 4.0f)
+        if(!pTarget || !pTarget->isAlive())
+        {
+            m_bIsWaiting = true;
+            m_uiWaitTimer = 0;
+            return;
+        }
+
+        if (m_creature->GetDistance(pTarget) <= 4.0f)
         {
             m_creature->getVictim()->CastSpell(pTarget, SPELL_EXPUNGED_GAS, true);
             m_creature->InterruptSpell(CURRENT_CHANNELED_SPELL);
@@ -978,25 +987,27 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public base_icc_bossAI
         {
             if (m_uiWaitTimer <= uiDiff)
             {
-                m_uiWaitTimer = 5000;
-
                 // pick target
                 if (m_pInstance)
                 {
                     if (Creature *pProf = m_pInstance->GetSingleCreatureFromStorage(NPC_PROFESSOR_PUTRICIDE))
                     {
-                        pTarget = pProf->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1, SPELL_OOZE_ADHESIVE, SELECT_FLAG_PLAYER);
-                        if (!pTarget)
-                            pTarget = pProf->getVictim();
+                        Unit* pSelectedTarget = pProf->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1, SPELL_OOZE_ADHESIVE, SELECT_FLAG_PLAYER);
+                        if (!pSelectedTarget)
+                            pSelectedTarget = pProf->getVictim();
 
-                        if (pTarget)
+                        if (pSelectedTarget)
                         {
+                            pTarget = pSelectedTarget;
                             if (DoCastSpellIfCan(pTarget, SPELL_OOZE_ADHESIVE) == CAST_OK)
                             {
                                 DoResetThreat();
                                 m_creature->AddThreat(pTarget, 1000000.0f);
+                                m_uiWaitTimer = 5000;
                             }
                         }
+                        else
+                            return;
                     }
                 }
             }
@@ -1022,7 +1033,14 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public base_icc_bossAI
             m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
         }
 
-        if (pTarget && m_creature->GetDistance(pTarget) <= 4.0f)
+        if(!pTarget || !pTarget->isAlive())
+        {
+            m_bIsWaiting = true;
+            m_uiWaitTimer = 0;
+            return;
+        }
+
+        if (m_creature->GetDistance(pTarget) <= 4.0f)
         {
             m_creature->InterruptSpell(CURRENT_CHANNELED_SPELL);
             DoCastSpellIfCan(pTarget, SPELL_OOZE_ERUPTION);
