@@ -87,6 +87,8 @@ void instance_azjol_nerub::OnCreatureDeath(Creature* pCreature)
 
 void instance_azjol_nerub::OnCreatureEnterCombat(Creature* pCreature)
 {
+    if (!pCreature)
+        return;
     uint32 uiEntry = pCreature->GetEntry();
 
     if (uiEntry == NPC_GASHRA || uiEntry == NPC_NARJIL || uiEntry == NPC_SILTHIK)
