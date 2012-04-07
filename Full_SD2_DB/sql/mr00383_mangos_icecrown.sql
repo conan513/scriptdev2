@@ -151,7 +151,7 @@ UPDATE `gameobject_template` SET `flags` = 0 WHERE `gameobject_template`.`entry`
 UPDATE `creature_template` SET `ScriptName`='boss_rotface', `AIName`=''  WHERE `entry`= 36627;
 UPDATE `gameobject_template` SET `faction` = '114' WHERE `gameobject_template`.`entry` IN (201370);
 UPDATE `gameobject` SET `state` = '0' WHERE `id` IN (201370);
-UPDATE `creature_template` SET `ScriptName`='mob_little_ooze', `AIName`='' WHERE `entry`= 36897;
+UPDATE `creature_template` SET `ScriptName`='mob_little_ooze', `AIName`='', `flags_extra` = `flags_extra`|0x100 WHERE `entry`= 36897;
 UPDATE `creature_template` SET `ScriptName`='mob_big_ooze', `AIName`='' WHERE `entry`= 36899;
 UPDATE `creature_template` SET `minlevel` = 80, `maxlevel` = 80, `AIName` ='', `faction_A`= 14, `faction_H` = 14, `ScriptName`='mob_rotface_ooze_dummy', `AIName`='', unit_flags = 524288, flags_extra = flags_extra | 2 WHERE `entry` IN (37013, 37986, 38548);
 UPDATE `creature_template` SET `minlevel` = 80, `maxlevel` = 80, `AIName` ='', `faction_A`= 2212, `faction_H` = 2212, `ScriptName`='mob_sticky_ooze', `AIName`='' WHERE `entry`= 37006;
@@ -357,6 +357,8 @@ INSERT INTO `creature_model_info` (`modelid`, `bounding_radius`, `combat_reach`,
 DELETE FROM `creature_model_info` WHERE (`modelid`=31093);
 INSERT INTO `creature_model_info` (`modelid`, `bounding_radius`, `combat_reach`, `gender`, `modelid_other_gender`, `modelid_alternative`) VALUES (31093, 1.24, 2, 1, 0, 0);
 
+UPDATE `gameobject_template` SET `type`='0' WHERE `entry`=201755;
+
 -- ---------------------
 -- Valithria dreamwalker
 -- ---------------------
@@ -466,11 +468,6 @@ INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES
 (74318, 1, 36597),
 (74319, 1, 36597),
 (74320, 1, 36597);
-
--- Tirion gossip
-DELETE FROM `npc_gossip` WHERE npc_guid = 115781;
-INSERT INTO `npc_gossip` (`npc_guid`, `textid`) VALUES
-(115781, 15290);
 
 -- proc for Dark Hunger
 DELETE FROM `spell_proc_event` WHERE `entry` = 69383;
