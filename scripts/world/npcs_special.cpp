@@ -1926,6 +1926,132 @@ CreatureAI* GetAI_npc_death_knight_gargoyle(Creature* pCreature)
     return new npc_death_knight_gargoyle(pCreature);
 }
 
+/*#####
+# npc_spring_rabbit
+#####*/
+#define NPC_SPRING_RABBIT 32791
+
+enum SpringRabbitSpells
+{
+    SPELL_SPRING_RABBIT_PERIODIC= 61723,
+    SPELL_SPRING_RABBIT_JUMP    = 61724,
+    SPELL_SPRING_RABBIT_WANDER  = 61726,
+    SPELL_SUMMON_BABY_BUNNY     = 61727,
+    SPELL_SPRING_RABBIT_IN_LOVE = 61728,
+    SPELL_SPRING_FLING          = 61875,
+};
+
+struct MANGOS_DLL_DECL npc_spring_rabbitAI : public ScriptedAI
+{
+    npc_spring_rabbitAI(Creature *pCreature) : ScriptedAI(pCreature)
+    {
+        Reset();
+    }
+
+    Unit *pOwner;
+    Creature *pLover;
+
+    uint32 m_uiRabbitSearchTimer;
+    bool m_bInSearch;
+    bool m_bInLove;
+    uint32 m_uiStep;
+    uint32 m_uiStepTimer;
+
+    void Reset()
+    {
+        pOwner = m_creature->GetOwner();
+        if (!pOwner)
+            m_creature->ForcedDespawn();
+
+        DoCastSpellIfCan(m_creature, SPELL_SPRING_RABBIT_PERIODIC, CAST_TRIGGERED);
+        m_uiRabbitSearchTimer = urand(8000, 12000);
+        m_bInSearch = true;
+        m_bInLove = false;
+        GoToStep(0);
+    }
+
+    void GoToStep(uint32 Step, uint32 StepTimer = 0)
+    {
+        m_uiStep = Step;
+        m_uiStepTimer = StepTimer;
+
+        if (Step == 0)
+        {
+            m_creature->GetMotionMaster()->Clear(false);
+            m_creature->GetMotionMaster()->MoveFollow(pOwner, PET_FOLLOW_DIST + 3.0f, m_creature->GetAngle(pOwner));
+        }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (m_bInLove)
+            return;
+
+        if (m_uiStepTimer > uiDiff)
+        {
+            m_uiStepTimer -= uiDiff;
+            return;
+        }
+
+        switch (m_uiStep)
+        {
+            case 0:
+                if (m_uiRabbitSearchTimer <= uiDiff)
+                {
+                    if (!m_creature->HasAura(SPELL_SPRING_RABBIT_PERIODIC))
+                    {
+                        m_bInLove = true;
+                        return;
+                    }
+                    pLover = NULL;
+
+                    pLover = GetClosestCreatureWithEntry(m_creature, NPC_SPRING_RABBIT, 10.0f, true, false);
+
+                    if (pLover && pLover != m_creature)
+                         GoToStep(1);
+
+                    m_uiRabbitSearchTimer = urand(8000, 12000);
+                }
+                else
+                    m_uiRabbitSearchTimer -= uiDiff;
+                break;
+            case 1:
+                if (!pLover)
+                    GoToStep(0);
+                m_creature->GetMotionMaster()->Clear(false);
+                m_creature->GetMotionMaster()->MoveChase(pLover, 0.5f);
+                pLover->RemoveAurasDueToSpell(SPELL_SPRING_RABBIT_PERIODIC);
+                m_creature->RemoveAurasDueToSpell(SPELL_SPRING_RABBIT_PERIODIC);
+                GoToStep(2, 5000);
+                break;
+            case 2:
+                if (!pLover)
+                    GoToStep(0);
+                m_creature->CastSpell(m_creature, SPELL_SPRING_RABBIT_IN_LOVE, true);
+                pLover->CastSpell(pLover, SPELL_SPRING_RABBIT_IN_LOVE, true);
+                GoToStep(3, 5000);
+                break;
+            case 3:
+                if (!pLover)
+                    GoToStep(0);
+                m_creature->CastSpell(m_creature, SPELL_SUMMON_BABY_BUNNY, true);
+                pOwner->CastSpell(pOwner, SPELL_SPRING_FLING, true);
+                Unit *pLoverOwner = pLover->GetOwner();
+                if (pLoverOwner && pLoverOwner->GetTypeId() == TYPEID_PLAYER)
+                    pLoverOwner->CastSpell(pLoverOwner, SPELL_SPRING_FLING, true);
+                m_bInLove = true;
+                GoToStep(0, 10000);
+                break;
+        }
+    }
+
+};
+
+CreatureAI* GetAI_npc_spring_rabbit(Creature* pCreature)
+{
+    return new npc_spring_rabbitAI(pCreature);
+}
+
 /*########
 # npc_risen_ally AI
 #########*/
@@ -3282,6 +3408,11 @@ void AddSC_npcs_special()
     pNewScript = new Script;
     pNewScript->Name = "npc_death_knight_gargoyle";
     pNewScript->GetAI = &GetAI_npc_death_knight_gargoyle;
+    pNewScript->RegisterSelf();
+
+    pNewScript = new Script;
+    pNewScript->Name = "npc_spring_rabbit";
+    pNewScript->GetAI = &GetAI_npc_spring_rabbit;
     pNewScript->RegisterSelf();
 
     pNewScript = new Script;
