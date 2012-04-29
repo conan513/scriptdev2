@@ -83,6 +83,7 @@ struct MANGOS_DLL_DECL mobs_bladespire_ogreAI : public ScriptedAI
                             std::list<Creature*>::iterator iter = StoutTriggerEntryList.begin();
                             pScoutTrigger = (*iter);
                             m_uiQuestStep = 2;
+                            m_uiStep2Timer = 1000;
                         }
                     }else
                         m_uiStep2Timer -= uiDiff;

@@ -151,7 +151,10 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
     void JustReachedHome()
     {
         if (m_pInstance)
+        {
             m_pInstance->SetData(TYPE_SINDRAGOSA, FAIL);
+            RemoveAurasFromAllPlayers();
+        }
 
         DoRemoveBossEffects();
 
@@ -180,7 +183,10 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
     void JustDied(Unit *pKiller)
     {
         if (m_pInstance)
+        {
             m_pInstance->SetData(TYPE_SINDRAGOSA, DONE);
+            RemoveAurasFromAllPlayers();
+        }
 
         DoScriptText(SAY_DEATH, m_creature);
 
@@ -203,6 +209,23 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
                         pPlayer->RemoveAurasDueToSpell(SPELL_MYSTIC_BUFFET);
                     }
 
+    }
+
+    void RemoveAurasFromAllPlayers()
+    {
+        Map* pMap = m_creature->GetMap();
+        Map::PlayerList const& players = pMap->GetPlayers();
+            if (!players.isEmpty())
+                for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+                    if (Player* pPlayer = itr->getSource())
+                        if(pPlayer)
+                        {
+                            pPlayer->RemoveAurasDueToSpell(SPELL_FROST_BEACON);
+                            pPlayer->RemoveAurasDueToSpell(SPELL_UNCHAINED_MAGIC);
+                            pPlayer->RemoveAurasDueToSpell(SPELL_INSTABILITY);
+                            pPlayer->RemoveAurasDueToSpell(SPELL_FROST_BREATH);
+                            pPlayer->RemoveAurasDueToSpell(SPELL_MYSTIC_BUFFET);
+                        }
     }
 
     void MovementInform(uint32 uiMovementType, uint32 uiData)

@@ -96,8 +96,7 @@ struct MANGOS_DLL_DECL boss_midnightAI : public ScriptedAI
         fNewX = m_creature->GetPositionX() + cos(fAngle)*(fDistance/2);
         fNewY = m_creature->GetPositionY() + sin(fAngle)*(fDistance/2);
 
-        pAttumen->GetMotionMaster()->Clear();
-        pAttumen->GetMotionMaster()->MovePoint(0, fNewX, fNewY, fNewZ);
+        pAttumen->NearTeleportTo(fNewX, fNewY, fNewZ + 1.0f, 0.0f);
 
         m_uiMount_Timer = 1000;
     }

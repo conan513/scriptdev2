@@ -34,7 +34,7 @@ enum
         SPELL_DEATH_PLAGUE                      = 72865,
 //        SPELL_DEATH_PLAGUE                      = 72879,
 
-        SPELL_ACHIEVEMENT                       = 72959,
+        SPELL_ACHIEVEMENT_CREDIT                = 72959,
 
 };
 
@@ -114,7 +114,9 @@ struct MANGOS_DLL_DECL mob_frost_giantAI : public BSWScriptedAI
         if (killer->GetTypeId() == TYPEID_PLAYER || killer->GetCharmerOrOwnerOrSelf()->GetTypeId() == TYPEID_PLAYER )
               pInstance->SetData(TYPE_FLIGHT_WAR, DONE);
 
-        m_creature->CastSpell(m_creature, SPELL_ACHIEVEMENT, false);
+        // Temporary
+        // Untill Gunship Battle will be implemented
+        m_creature->CastSpell(m_creature, SPELL_ACHIEVEMENT_CREDIT, false);
     }
 
     void JustReachedHome()

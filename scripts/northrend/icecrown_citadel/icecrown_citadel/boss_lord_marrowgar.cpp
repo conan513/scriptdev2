@@ -103,8 +103,8 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public base_icc_bossAI
         Reset();
     }
 
-    bool m_bSaidIntro;
     instance_icecrown_spire* m_pInstance;
+    bool m_bSaidIntro;
 
     uint8 m_uiPhase;
     uint8 m_uiChargesCount;
@@ -135,7 +135,8 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public base_icc_bossAI
         m_uiChargesCount            = 0;
 
         m_creature->SetSpeedRate(MOVE_RUN, 1.0f);
-        m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_BONED, true);
+        if (m_pInstance)
+            m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_BONED, true);
     }
 
     void MoveInLineOfSight(Unit* pWho)
@@ -152,8 +153,10 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public base_icc_bossAI
     void JustReachedHome()
     {
         if (m_pInstance)
+        {
             m_pInstance->SetData(TYPE_MARROWGAR, FAIL);
-        m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_BONED, false);
+            m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_BONED, false);
+        }
     }
 
     void Aggro(Unit* pWho)
@@ -393,6 +396,9 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
             if (m_uiEmpaledTime > 8000)
                m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_BONED, false);
         }
+
+        if (m_pInstance && m_uiEmpaledTime > 8000)
+            m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_BONED, false);
     }
 
     void UpdateAI(const uint32 uiDiff)

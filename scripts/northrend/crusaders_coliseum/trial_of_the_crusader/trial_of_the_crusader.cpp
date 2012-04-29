@@ -789,12 +789,17 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
         if (m_pInstance->GetData(TYPE_EVENT_NPC) != NPC_TIRION)
             return;
 
+        if (m_pInstance->GetData(TYPE_STAGE) == 6)  // Crusaders
+            if (m_pInstance->GetData(TYPE_CRUSADERS) == IN_PROGRESS)
+                if (m_pInstance->GetData(TYPE_CRUSADERS_DEAD))
+                    m_pInstance->SetData(TYPE_CRUSADERS_ACHIEV_TIMER, diff);
+
         UpdateTimer = m_pInstance->GetData(TYPE_EVENT_TIMER);
 
         if (m_pInstance->GetData(TYPE_STAGE) == 6)  // Crusaders
             if (m_pInstance->GetData(TYPE_CRUSADERS) == IN_PROGRESS)
                 if (m_pInstance->GetData(TYPE_CRUSADERS_DEAD))
-                    m_pInstance->SetData(TYPE_CRUSADERS_ACHIE_TIMER, diff);
+                    m_pInstance->SetData(TYPE_CRUSADERS_ACHIEV_TIMER, diff);
 
         if (UpdateTimer <= diff)
         {
@@ -1129,8 +1134,8 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                 }
                 m_pInstance->SetData(TYPE_CRUSADERS_COUNT,crusaderscount);
                 m_pInstance->SetData(TYPE_CRUSADERS_DEAD, 0);
-                m_pInstance->SetData(TYPE_CRUSADERS_ACHIE_TIMER, 60000);
-                m_pInstance->SetData(TYPE_CRUSADERS_ACHIE_FAIL, 0);
+                m_pInstance->SetData(TYPE_CRUSADERS_ACHIEV_TIMER, 60000);
+                m_pInstance->SetData(TYPE_CRUSADERS_ACHIEV_FAIL, 0);
                 UpdateTimer = 3000;
                 m_pInstance->SetData(TYPE_EVENT,0);
                 m_pInstance->DoUseDoorOrButton(GO_MAIN_GATE_DOOR);
@@ -1316,8 +1321,8 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                 }
                 m_pInstance->SetData(TYPE_CRUSADERS_COUNT,crusaderscount);
                 m_pInstance->SetData(TYPE_CRUSADERS_DEAD, 0);
-                m_pInstance->SetData(TYPE_CRUSADERS_ACHIE_TIMER, 60000);
-                m_pInstance->SetData(TYPE_CRUSADERS_ACHIE_FAIL, 0);
+                m_pInstance->SetData(TYPE_CRUSADERS_ACHIEV_TIMER, 60000);
+                m_pInstance->SetData(TYPE_CRUSADERS_ACHIEV_FAIL, 0);
                 UpdateTimer = 3000;
                 m_pInstance->SetData(TYPE_EVENT,0);
                 m_pInstance->DoUseDoorOrButton(GO_MAIN_GATE_DOOR);
@@ -1369,16 +1374,7 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                     pTemp->SetWalk(true);
                     pTemp->SetInCombatWithZone();
                 }
-
-                Map* pMap = m_creature->GetMap();
-                Map::PlayerList const& pPlayers = pMap->GetPlayers();
-                if (!pPlayers.isEmpty())
-                for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
-                {
-                    Player* pPlayer = itr->getSource();
-                        if (pPlayer)
-                         pPlayer->StartTimedAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_KILL_CREATURE, ACHIEVE_TIMER_SALT_AND_PEPPER);
-                }
+                m_pInstance->DoStartTimedAchievement(ACHIEVEMENT_CRITERIA_TYPE_KILL_CREATURE, TIMER_ACHIEV_SALT_AND_PEPPER);
                 UpdateTimer = 10000;
                 m_pInstance->SetData(TYPE_EVENT,4016);
                 m_pInstance->DoUseDoorOrButton(GO_MAIN_GATE_DOOR);

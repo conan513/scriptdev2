@@ -229,6 +229,7 @@ struct MANGOS_DLL_DECL boss_professor_putricideAI : public base_icc_bossAI
 
         m_pInstance->SetData(TYPE_PUTRICIDE, IN_PROGRESS);
         DoScriptText(SAY_AGGRO, m_creature);
+        // Make table interactable
         if (GameObject* pGOTable = m_pInstance->GetSingleGameObjectFromStorage(GO_DRINK_ME_TABLE))
             pGOTable->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NO_INTERACT);
     }
@@ -397,7 +398,6 @@ struct MANGOS_DLL_DECL boss_professor_putricideAI : public base_icc_bossAI
 
         switch (pSummoned->GetEntry())
         {
-
             case NPC_CHOKING_GAS_BOMB:
             {
                 pSummoned->CastSpell(pSummoned, SPELL_CHOKING_GAS_BOMB_AURA, true);
@@ -1148,6 +1148,7 @@ struct MANGOS_DLL_DECL mob_mutated_amobinationAI : public ScriptedAI
     void JustDied(Unit* pKiller)
     {
         if (m_pInstance)
+            // Possibly remove GO_FLAG_NO_INTERACT when amob dies is not blizz-like
             if (GameObject* pGOTable = m_pInstance->GetSingleGameObjectFromStorage(GO_DRINK_ME_TABLE))
                 pGOTable->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NO_INTERACT);
     }
@@ -1222,5 +1223,4 @@ void AddSC_boss_professor_putricide()
     pNewScript->Name = "go_drink_me";
     pNewScript->pGOUse = &GOUse_go_drink_me;
     pNewScript->RegisterSelf();
-
 }

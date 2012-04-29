@@ -118,7 +118,7 @@ enum BossSpells
     NPC_DREAM_CLOUD                 = 37985,
 
     // Achievements
-    SPELL_ACHIEVEMENT_CHECK         = 72706,
+    SPELL_ACHIEVEMENT_CREDIT        = 72706,
 };
 
 enum
@@ -288,6 +288,37 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
         }
     }
 
+    Unit* SelectRandomPlayer(float range)
+    {
+        Map* pMap = m_creature->GetMap();
+        Map::PlayerList const &playerlist = pMap->GetPlayers();
+        if (playerlist.isEmpty())
+            return NULL;
+
+        std::vector<Unit*> list;
+        list.clear();
+
+        for (Map::PlayerList::const_iterator i = playerlist.begin(); i != playerlist.end(); ++i)
+        {
+            if (Player* player = i->getSource())
+            {
+                if (player->isGameMaster())
+                    continue;
+
+                if (!player->IsInMap(m_creature))
+                    continue;
+
+                if (player->isAlive() && player->IsWithinDistInMap(m_creature, range))
+                    list.push_back((Unit*)player);
+            }
+        }
+
+        if (list.empty())
+            return NULL;
+        else
+            return list[urand(0, list.size() - 1)];
+    }
+
     void JustSummoned(Creature *pCreature)
     {
         pCreature->SetInCombatWithZone();
@@ -296,6 +327,11 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
         {
             pCreature->AddThreat(m_creature, 100000);
             pCreature->GetMotionMaster()->MoveChase(m_creature);
+        }
+        else
+        {
+            if (Unit *pTarget = SelectRandomPlayer(500))
+                pCreature->AI()->AttackStart(pTarget);
         }
     }
 
@@ -315,7 +351,8 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
 
                     if (Creature *pDummy = m_pInstance->GetSingleCreatureFromStorage(NPC_GREEN_DRAGON_COMBAT_TRIGGER))
                     {
-                        pDummy->CastSpell(pDummy, SPELL_ACHIEVEMENT_CHECK, true);
+                        // Set Valithria credit
+                        pDummy->CastSpell(pDummy, SPELL_ACHIEVEMENT_CREDIT, true);
                         pDummy->ForcedDespawn(1000);
                     }
                 }

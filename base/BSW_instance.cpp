@@ -49,7 +49,7 @@ void BSWScriptedInstance::DoUpdateAchievementCriteria(AchievementCriteriaTypes t
         }
     }
     else
-        debug_log("BSW: DoUpdateAchievementCriteria attempt set data, but no players in map.");
+        debug_log("SD2: DoUpdateAchievementCriteria attempt set data but no players in map.");
 }
 
 void BSWScriptedInstance::DoOpenDoor(ObjectGuid guid)

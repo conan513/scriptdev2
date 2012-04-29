@@ -256,23 +256,15 @@ struct MANGOS_DLL_DECL boss_faction_championsAI : public BSWScriptedAI
     void JustDied(Unit *killer)
     {
         if (m_pInstance)
+        {
             m_pInstance->SetData(TYPE_CRUSADERS_COUNT, 0);
 
-        if (m_pInstance->GetData(TYPE_CRUSADERS_COUNT) == 0)
-            if(!m_pInstance->GetData(TYPE_CRUSADERS_ACHIE_FAIL))
-            {
-                Map* pMap = m_creature->GetMap();
-                Map::PlayerList const& pPlayers = pMap->GetPlayers();
-                if (!pPlayers.isEmpty())
-                    for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
-                    {
-                        Player* pPlayer = itr->getSource();
-                        if (pPlayer)
-                            pPlayer->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_BE_SPELL_TARGET, ACHIEVE_SPELL_RESILIENCE_WILL_FIX_IT);
-                    }
-            }
+            if (m_pInstance->GetData(TYPE_CRUSADERS_COUNT) == 0)
+                if(!m_pInstance->GetData(TYPE_CRUSADERS_ACHIEV_FAIL))
+                    m_pInstance->DoUpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_BE_SPELL_TARGET, SPELL_ACHIEV_RESILIENCE_WILL_FIX_IT);
 
-        m_pInstance->SetData(TYPE_CRUSADERS_DEAD, m_pInstance->GetData(TYPE_CRUSADERS_DEAD) + 1);
+            m_pInstance->SetData(TYPE_CRUSADERS_DEAD, m_pInstance->GetData(TYPE_CRUSADERS_DEAD) + 1);
+        }
     }
 
     void Aggro(Unit *who)

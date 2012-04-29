@@ -59,13 +59,14 @@ void instance_zulgurub::OnCreatureCreate(Creature* pCreature)
         case NPC_THEKAL:
         case NPC_JINDO:
         case NPC_HAKKAR:
+        case NPC_BLOODLORD_MANDOKIR:
             m_mNpcEntryGuidStore[pCreature->GetEntry()] = pCreature->GetObjectGuid();
             break;
         case NPC_PANTHER_TRIGGER:
             if (pCreature->GetPositionY() < -1626)
                 m_lLeftPantherTriggerGUIDList.push_back(pCreature->GetObjectGuid());
             else
-                m_lRightPantherTirggerGUIDList.push_back(pCreature->GetObjectGuid());
+                m_lRightPantherTriggerGUIDList.push_back(pCreature->GetObjectGuid());
             break;
     }
 }
@@ -102,6 +103,17 @@ void instance_zulgurub::SetData(uint32 uiType, uint32 uiData)
             // ToDo: Reset the Gong on FAIL
             break;
         case TYPE_OHGAN:
+            // Note: SPECIAL instance data is set via ACID!
+            if (uiData == SPECIAL)
+            {
+                if (Creature* pMandokir = GetSingleCreatureFromStorage(NPC_BLOODLORD_MANDOKIR))
+                {
+                    pMandokir->SetWalk(false);
+                    pMandokir->GetMotionMaster()->MovePoint(1, aMandokirDownstairsPos[0], aMandokirDownstairsPos[1], aMandokirDownstairsPos[2]);
+                }
+            }
+            m_auiEncounter[uiType] = uiData;
+            break;
         case TYPE_LORKHAN:
         case TYPE_ZATH:
             m_auiEncounter[uiType] = uiData;
@@ -170,7 +182,7 @@ uint32 instance_zulgurub::GetData(uint32 uiType)
 
 Creature* instance_zulgurub::SelectRandomPantherTrigger(bool bIsLeft)
 {
-    GUIDList* plTempList = bIsLeft ? &m_lLeftPantherTriggerGUIDList : &m_lRightPantherTirggerGUIDList;
+    GUIDList* plTempList = bIsLeft ? &m_lLeftPantherTriggerGUIDList : &m_lRightPantherTriggerGUIDList;
     std::vector<Creature*> vTriggers;
     vTriggers.reserve(plTempList->size());
 

@@ -99,19 +99,20 @@ enum
     NPC_SPIRIT_OF_KORTHAZZ    = 16778,
     NPC_SPIRIT_OF_ZELIREK     = 16777,
 
-    // achieve
-    ACHIEV_TIME               = 15000,                      // Achie "And They Would All Go Down Together"
+    // Achievement
+    ACHIEVEMENT_TIME          = 15000,                      // Achie "And They Would All Go Down Together"
 };
 
 struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
 {
-    boss_lady_blaumeuxAI(Creature* pCreature) : ScriptedAI(pCreature) 
-	{
-		m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
-		Reset();
-	}
+    boss_lady_blaumeuxAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
+        Reset();
+    }
 
-	instance_naxxramas* m_pInstance;
+    instance_naxxramas* m_pInstance;
+
     uint32 Mark_Timer;
     uint32 uiAchievTimer;
     uint32 VoidZone_Timer;
@@ -129,8 +130,9 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
 
     void Aggro(Unit *who)
     {
-        if (m_pInstance->GetData(TYPE_FOUR_HORSEMEN) != IN_PROGRESS)
+        if (m_pInstance && m_pInstance->GetData(TYPE_FOUR_HORSEMEN) != IN_PROGRESS)
             m_pInstance->SetData(TYPE_FOUR_HORSEMEN, IN_PROGRESS);
+
         DoScriptText(SAY_BLAU_AGGRO, m_creature);
     }
 
@@ -143,8 +145,12 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     {
-        if (uiAchievTimer > ACHIEV_TIME)
-            m_pInstance->SetSpecialAchievementCriteria(TYPE_ACHIEV_AND_THEY, false);
+        if (m_pInstance)
+        {
+            if (uiAchievTimer > ACHIEVEMENT_TIME)
+                m_pInstance->SetSpecialAchievementCriteria(TYPE_ACHIEV_AND_THEY, false);
+            m_pInstance->SetData(TYPE_FOUR_HORSEMEN, SPECIAL);
+        }
 
         DoScriptText(SAY_BLAU_DEATH, m_creature);
         m_pInstance->SetData(TYPE_FOUR_HORSEMEN, SPECIAL);
@@ -156,7 +162,7 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
             return;
 
         // Achieve Timer
-        if (m_pInstance->GetData(TYPE_FOUR_HORSEMEN) == SPECIAL)
+        if (m_pInstance && m_pInstance->GetData(TYPE_FOUR_HORSEMEN) == SPECIAL)
             uiAchievTimer += uiDiff;
 
         // Mark of Blaumeux
@@ -202,13 +208,13 @@ CreatureAI* GetAI_boss_lady_blaumeux(Creature* pCreature)
 
 struct MANGOS_DLL_DECL boss_rivendare_naxxAI : public ScriptedAI
 {
-    boss_rivendare_naxxAI(Creature* pCreature) : ScriptedAI(pCreature) 
-	{
-		m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
-		Reset();
-	}
+    boss_rivendare_naxxAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
+        Reset();
+    }
 
-	instance_naxxramas* m_pInstance;
+    instance_naxxramas* m_pInstance;
     uint32 uiAchievTimer;
 
     void Reset()
@@ -218,7 +224,7 @@ struct MANGOS_DLL_DECL boss_rivendare_naxxAI : public ScriptedAI
 
     void Aggro(Unit *who)
     {
-        if (m_pInstance->GetData(TYPE_FOUR_HORSEMEN) != IN_PROGRESS)
+        if (m_pInstance && m_pInstance->GetData(TYPE_FOUR_HORSEMEN) != IN_PROGRESS)
             m_pInstance->SetData(TYPE_FOUR_HORSEMEN, IN_PROGRESS);
 
         switch(urand(0, 2))
@@ -238,8 +244,12 @@ struct MANGOS_DLL_DECL boss_rivendare_naxxAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     {
-        if (uiAchievTimer > ACHIEV_TIME)
-            m_pInstance->SetSpecialAchievementCriteria(TYPE_ACHIEV_AND_THEY, false);
+        if (m_pInstance)
+        {
+            if (uiAchievTimer > ACHIEVEMENT_TIME)
+                m_pInstance->SetSpecialAchievementCriteria(TYPE_ACHIEV_AND_THEY, false);
+            m_pInstance->SetData(TYPE_FOUR_HORSEMEN, SPECIAL);
+        }
 
         DoScriptText(SAY_RIVE_DEATH, m_creature);
         m_pInstance->SetData(TYPE_FOUR_HORSEMEN, SPECIAL);
@@ -251,7 +261,7 @@ struct MANGOS_DLL_DECL boss_rivendare_naxxAI : public ScriptedAI
             return;
 
         // Achieve Timer
-        if (m_pInstance->GetData(TYPE_FOUR_HORSEMEN) == SPECIAL)
+        if (m_pInstance && m_pInstance->GetData(TYPE_FOUR_HORSEMEN) == SPECIAL)
             uiAchievTimer += uiDiff;
 
         DoMeleeAttackIfReady();
@@ -265,13 +275,13 @@ CreatureAI* GetAI_boss_rivendare_naxx(Creature* pCreature)
 
 struct MANGOS_DLL_DECL boss_thane_korthazzAI : public ScriptedAI
 {
-    boss_thane_korthazzAI(Creature* pCreature) : ScriptedAI(pCreature) 
-	{
-		m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
-		Reset();
-	}
+    boss_thane_korthazzAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
+        Reset();
+    }
 
-	instance_naxxramas* m_pInstance;
+    instance_naxxramas* m_pInstance;
 
     uint32 Mark_Timer;
     uint32 Meteor_Timer;
@@ -290,8 +300,9 @@ struct MANGOS_DLL_DECL boss_thane_korthazzAI : public ScriptedAI
 
     void Aggro(Unit *who)
     {
-        if (m_pInstance->GetData(TYPE_FOUR_HORSEMEN) != IN_PROGRESS)
+        if (m_pInstance && m_pInstance->GetData(TYPE_FOUR_HORSEMEN) != IN_PROGRESS)
             m_pInstance->SetData(TYPE_FOUR_HORSEMEN, IN_PROGRESS);
+
         DoScriptText(SAY_KORT_AGGRO, m_creature);
     }
 
@@ -304,8 +315,12 @@ struct MANGOS_DLL_DECL boss_thane_korthazzAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     {
-        if (uiAchievTimer > ACHIEV_TIME)
-            m_pInstance->SetSpecialAchievementCriteria(TYPE_ACHIEV_AND_THEY, false);
+        if (m_pInstance)
+        {
+            if (uiAchievTimer > ACHIEVEMENT_TIME)
+                m_pInstance->SetSpecialAchievementCriteria(TYPE_ACHIEV_AND_THEY, false);
+            m_pInstance->SetData(TYPE_FOUR_HORSEMEN, SPECIAL);
+        }
 
         DoScriptText(SAY_KORT_DEATH, m_creature);
         m_pInstance->SetData(TYPE_FOUR_HORSEMEN, SPECIAL);
@@ -317,7 +332,7 @@ struct MANGOS_DLL_DECL boss_thane_korthazzAI : public ScriptedAI
             return;
 
         // Achieve Timer
-        if (m_pInstance->GetData(TYPE_FOUR_HORSEMEN) == SPECIAL)
+        if (m_pInstance && m_pInstance->GetData(TYPE_FOUR_HORSEMEN) == SPECIAL)
             uiAchievTimer += uiDiff;
 
         // Mark of Korthazz
@@ -363,13 +378,13 @@ CreatureAI* GetAI_boss_thane_korthazz(Creature* pCreature)
 
 struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
 {
-    boss_sir_zeliekAI(Creature* pCreature) : ScriptedAI(pCreature) 
-	{
-		m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
-		Reset();
-	}
+    boss_sir_zeliekAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
+        Reset();
+    }
 
-	instance_naxxramas* m_pInstance;
+    instance_naxxramas* m_pInstance;
 
     uint32 Mark_Timer;
     uint32 HolyWrath_Timer;
@@ -388,8 +403,9 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
 
     void Aggro(Unit *who)
     {
-        if (m_pInstance->GetData(TYPE_FOUR_HORSEMEN) != IN_PROGRESS)
+        if (m_pInstance && m_pInstance->GetData(TYPE_FOUR_HORSEMEN) != IN_PROGRESS)
             m_pInstance->SetData(TYPE_FOUR_HORSEMEN, IN_PROGRESS);
+
         DoScriptText(SAY_ZELI_AGGRO, m_creature);
     }
 
@@ -402,8 +418,12 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     {
-        if (uiAchievTimer > ACHIEV_TIME)
-            m_pInstance->SetSpecialAchievementCriteria(TYPE_ACHIEV_AND_THEY, false);
+        if (m_pInstance)
+        {
+            if (uiAchievTimer > ACHIEVEMENT_TIME)
+                m_pInstance->SetSpecialAchievementCriteria(TYPE_ACHIEV_AND_THEY, false);
+            m_pInstance->SetData(TYPE_FOUR_HORSEMEN, SPECIAL);
+        }
 
         DoScriptText(SAY_ZELI_DEATH, m_creature);
         m_pInstance->SetData(TYPE_FOUR_HORSEMEN, SPECIAL);
@@ -416,7 +436,7 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
             return;
 
         // Achieve Timer
-        if (m_pInstance->GetData(TYPE_FOUR_HORSEMEN) == SPECIAL)
+        if (m_pInstance && m_pInstance->GetData(TYPE_FOUR_HORSEMEN) == SPECIAL)
             uiAchievTimer += uiDiff;
 
         // Mark of Zeliek

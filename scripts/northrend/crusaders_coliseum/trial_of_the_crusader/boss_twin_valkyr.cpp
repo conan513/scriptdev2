@@ -127,7 +127,6 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
     Difficulty m_uiMapDifficulty;
     bool m_bIsHeroic;
     bool m_bIs25Man;
-    bool m_bAchievFailed;
     float x, y, z;
 
     uint32 m_uiPhase;

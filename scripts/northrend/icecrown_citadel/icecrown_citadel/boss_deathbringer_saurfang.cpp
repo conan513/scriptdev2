@@ -118,8 +118,8 @@ enum
     //summons
     NPC_BLOOD_BEAST                         = 38508,
 
-    //achieve
-    SPELL_ACHIEVEMENT                       = 72928,
+    // Achievements
+    SPELL_ACHIEVEMENT_CREDIT                = 72928,
 };
 
 enum Equipment
@@ -589,13 +589,11 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public base_icc_bossAI
     void Aggro(Unit *pWho)
     {
         if (m_pInstance)
-            if (m_pInstance->GetData(TYPE_SAURFANG) != IN_PROGRESS)
-            {
-                m_pInstance->SetData(TYPE_SAURFANG, IN_PROGRESS);
-                m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_IVE_GONE_AND_MADE_A_MESS, true);
-                m_uiMarkOfFallenCount = 0;
-                m_uiBerserkTimer = (m_bIsHeroic ? 6 : 8) * MINUTE * IN_MILLISECONDS;
-            }
+        {
+            m_pInstance->SetData(TYPE_SAURFANG, IN_PROGRESS);
+            m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_IVE_GONE_AND_MADE_A_MESS, true);
+            m_uiMarkOfFallenCount = 0;
+        }
 
         DoScriptText(SAY_AGGRO, m_creature);
 
@@ -630,8 +628,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public base_icc_bossAI
                 m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_IVE_GONE_AND_MADE_A_MESS, false);
         }
 
-        m_creature->CastSpell(m_creature, SPELL_ACHIEVEMENT, false);
-
+        m_creature->CastSpell(m_creature, SPELL_ACHIEVEMENT_CREDIT, false);
 
         DoScriptText(SAY_DEATH, m_creature);
         DoCastSpellIfCan(m_creature, SPELL_REMOVE_MARKS, CAST_TRIGGERED);
@@ -722,7 +719,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public base_icc_bossAI
                     int32 power = m_creature->GetPower(m_powerBloodPower);
                     m_creature->CastCustomSpell(m_creature, SPELL_BLOOD_POWER, &power, &power, NULL, true);
                     DoScriptText(SAY_FALLENCHAMPION, m_creature);
-                    // count mark for achieve
+                    // count mark for achievement
                     ++m_uiMarkOfFallenCount;
                 }
             }

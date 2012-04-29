@@ -81,7 +81,7 @@ enum
     ACHIEV_RUBY_VOID                = 0,
     ACHIEV_EMERALD_VOID             = 1,
     ACHIEV_AMBER_VOID               = 2,
-    ACHIEV_COUNT           = 3,
+    ACHIEV_COUNT                    = 3,
 };
 
 struct MANGOS_DLL_DECL instance_oculus : public ScriptedInstance

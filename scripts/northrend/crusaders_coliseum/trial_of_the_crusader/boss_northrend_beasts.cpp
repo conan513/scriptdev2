@@ -453,7 +453,7 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
             return;
 
         if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_SPECIAL && !m_bAchievFailed)
-            CheckAchiev();
+            m_pInstance->DoUpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_BE_SPELL_TARGET, SPELL_ACHIEV_NOT_ONE_BUT_TWO_JORMUNGARS);
 
         if (Creature* pDreadscale = m_pInstance->GetSingleCreatureFromStorage(NPC_DREADSCALE))
         {
@@ -461,21 +461,6 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
                 m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_DONE);
             else
                 m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_SPECIAL);
-        }
-    }
-
-    void CheckAchiev()
-    {
-        Map* pMap = m_creature->GetMap();
-        Map::PlayerList const& pPlayers = pMap->GetPlayers();
-        if (!pPlayers.isEmpty())
-        {
-            for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
-            {
-                Player* pPlayer = itr->getSource();
-                if (pPlayer)
-                    pPlayer->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_BE_SPELL_TARGET, ACHIEVE_SPELL_NOT_ONE_BUT_TWO_JORMUNGARS);
-            }
         }
     }
 
@@ -667,31 +652,16 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
     {
         if (!m_pInstance)
             return;
-        
-        if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_SPECIAL && !m_bAchievFailed)
-            CheckAchiev();
 
+        if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_SPECIAL && !m_bAchievFailed)
+            m_pInstance->DoUpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_BE_SPELL_TARGET, SPELL_ACHIEV_NOT_ONE_BUT_TWO_JORMUNGARS);
+            
         if (Creature *pSister = m_pInstance->GetSingleCreatureFromStorage(NPC_ACIDMAW))
         {
             if (!pSister->isAlive())
                 m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_DONE);
             else
                 m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_SPECIAL);
-        }
-    }
-
-    void CheckAchiev()
-    {
-        Map* pMap = m_creature->GetMap();
-        Map::PlayerList const& pPlayers = pMap->GetPlayers();
-        if (!pPlayers.isEmpty())
-        {
-            for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
-            {
-                Player* pPlayer = itr->getSource();
-                if (pPlayer)
-                    pPlayer->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_BE_SPELL_TARGET, ACHIEVE_SPELL_NOT_ONE_BUT_TWO_JORMUNGARS);
-            }
         }
     }
 
@@ -987,8 +957,12 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
         }
     }
 
-    void CheckAchiev()
+    void JustDied(Unit* pKiller)
     {
+        if (!m_pInstance)
+            return;
+
+        // Find required NPC as achievement criteria
         vassalsEntryList.clear();
         GetCreatureListWithEntryInGrid(vassalsEntryList, m_creature, NPC_SNOBOLD_VASSAL, 250.0f);
 
@@ -1001,13 +975,6 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
             else
                 m_pInstance->SetSpecialAchievementCriteria(TYPE_UPPER_BACK_PAIN, vassalsEntryList.size() >= 4);
         }
-    }
-
-    void JustDied(Unit* pKiller)
-    {
-        if (!m_pInstance)
-            return;
-        CheckAchiev();
 
         m_pInstance->SetData(TYPE_NORTHREND_BEASTS, ICEHOWL_DONE);
     }

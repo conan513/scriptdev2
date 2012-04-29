@@ -42,6 +42,7 @@ enum BossSpells
         // Cult Adherents
         NPC_CULT_ADHERENT                       = 37949,
         NPC_REANIMATED_ADHERENT                 = 38010,
+        NPC_DEFORMED_FANATIC                    = 38135,
 
         SPELL_FROST_FEVER                       = 71129,
         SPELL_SHROUD_OF_THE_OCCULT              = 70768,
@@ -55,7 +56,6 @@ enum BossSpells
         // Cult Fanatic
         NPC_CULT_FANATIC                        = 37890,
         NPC_REANIMATED_FANATIC                  = 38009,
-        NPC_DEFORMED_FANATIC                    = 38135,
 
         SPELL_SHADOW_CLEAVE                     = 70670,
         SPELL_NECROTIC_STRIKE                   = 70659,
@@ -312,16 +312,6 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public boss_lady_deathwhisper_
         if (m_pInstance)
         {
             m_pInstance->SetData(TYPE_DEATHWHISPER, DONE);
-
-            SummonsEntryList.clear();
-            GetCreatureListWithEntryInGrid(SummonsEntryList, m_creature, NPC_CULT_ADHERENT, 250.0f);
-            if (SummonsEntryList.empty())
-                m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_FULL_HOUSE, false);
-
-            SummonsEntryList.clear();
-            GetCreatureListWithEntryInGrid(SummonsEntryList, m_creature, NPC_CULT_FANATIC, 250.0f);
-            if (SummonsEntryList.empty())
-                m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_FULL_HOUSE, false);
 
             SummonsEntryList.clear();
             GetCreatureListWithEntryInGrid(SummonsEntryList, m_creature, NPC_REANIMATED_FANATIC, 250.0f);

@@ -529,8 +529,7 @@ uint32 instance_icecrown_spire::GetData(uint32 uiType)
              return 0;
     }
 }
-
-bool instance_icecrown_spire::CheckAchievementCriteriaMeet(uint32 uiCriteriaId, Player const* pSource, Unit const* pTarget, uint32 uiMiscValue1 /* = 0*/)
+bool instance_icecrown_spire::CheckAchievementCriteriaMeet(uint32 uiCriteriaId, const Player *pSource, const Unit *pTarget, uint32 uiMiscValue1)
 {
     switch(uiCriteriaId)
     {
@@ -586,13 +585,14 @@ bool instance_icecrown_spire::CheckAchievementCriteriaMeet(uint32 uiCriteriaId, 
              return m_bAchievCriteria[ACHIEVE_ALL_YOU_CAN_EAT];
         case CRITERIA_BEEN_WAITING_A_LONG_TIME_10N:
         case CRITERIA_BEEN_WAITING_A_LONG_TIME_25N:
-        case CRITERIA_BEEN_WAITING_A_LONG_TIME_10V:
-        case CRITERIA_BEEN_WAITING_A_LONG_TIME_25V:
+        case CRITERIA_BEEN_WAITING_A_LONG_TIME_10H:
+        case CRITERIA_BEEN_WAITING_A_LONG_TIME_25H:
              return m_bAchievCriteria[ACHIEVE_BEEN_WAITING_A_LONG_TIME];
         default:
             return false;
     }
 }
+
 void instance_icecrown_spire::SetSpecialAchievementCriteria(uint32 uiType, bool bIsMet)
 {
     if (uiType < ACHIEVE_MAX_COUNT)

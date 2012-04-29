@@ -52,8 +52,8 @@ void instance_trial_of_the_crusader::Initialize()
     m_auiEventTimer = 1000;
     m_auiCrusadersCount = 6;
     m_auiCrusadersDead = 0;
-    m_auiCrusadersAchieFail = 0;
-    m_auiCrusadersAchieTimer = 60000;
+    m_auiCrusadersAchievFail = 0;
+    m_auiCrusadersAchievTimer = 60000;
     needsave = false;
 }
 
@@ -137,15 +137,15 @@ bool instance_trial_of_the_crusader::CheckAchievementCriteriaMeet(uint32 uiCrite
 {
     switch (uiCriteriaId)
     {
-        case CRITERIA_ACHIEVE_UPPER_BACK_PAIN_10N:
-        case CRITERIA_ACHIEVE_UPPER_BACK_PAIN_10H:
-        case CRITERIA_ACHIEVE_UPPER_BACK_PAIN_25N:
-        case CRITERIA_ACHIEVE_UPPER_BACK_PAIN_25H:
+        case CRITERIA_ACHIEV_UPPER_BACK_PAIN_10N:
+        case CRITERIA_ACHIEV_UPPER_BACK_PAIN_10H:
+        case CRITERIA_ACHIEV_UPPER_BACK_PAIN_25N:
+        case CRITERIA_ACHIEV_UPPER_BACK_PAIN_25H:
             return m_bAchievCriteria[TYPE_UPPER_BACK_PAIN];
-        case CRITERIA_ACHIEVE_THREE_SIXTY_PAIN_SPIKE_10N:
-        case CRITERIA_ACHIEVE_THREE_SIXTY_PAIN_SPIKE_10H:
-        case CRITERIA_ACHIEVE_THREE_SIXTY_PAIN_SPIKE_25N:
-        case CRITERIA_ACHIEVE_THREE_SIXTY_PAIN_SPIKE_25H:
+        case CRITERIA_ACHIEV_THREE_SIXTY_PAIN_SPIKE_10N:
+        case CRITERIA_ACHIEV_THREE_SIXTY_PAIN_SPIKE_10H:
+        case CRITERIA_ACHIEV_THREE_SIXTY_PAIN_SPIKE_25N:
+        case CRITERIA_ACHIEV_THREE_SIXTY_PAIN_SPIKE_25H:
             return m_bAchievCriteria[TYPE_THREE_SIXTY_PAIN_SPIKE];
         case CRITERIA_ACHIEV_TRIBUTE_TO_SKILL_10_1:
         case CRITERIA_ACHIEV_TRIBUTE_TO_SKILL_10_2:
@@ -204,18 +204,7 @@ void instance_trial_of_the_crusader::SetData(uint32 uiType, uint32 uiData)
         if (uiData == DONE)
         {
             if (Creature* pTirion = GetSingleCreatureFromStorage(NPC_TIRION))
-            {
-                Map* pMap = pTirion->GetMap();
-                Map::PlayerList const& pPlayers = pMap->GetPlayers();
-                if (!pPlayers.isEmpty())
-                {
-                    for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
-                    {
-                        if (Player* pPlayer = itr->getSource())
-                            pPlayer->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_BE_SPELL_TARGET, ACHIEVE_SPELL_FACTION_CHAMPIONS_DEFEAT);
-                    }
-                }
-            }
+                DoUpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_BE_SPELL_TARGET, SPELL_ACHIEV_FACTION_CHAMPIONS_DEFEAT);
 
             uint32 uiCacheEntry = GO_CRUSADERS_CACHE_10;
 
@@ -245,16 +234,16 @@ void instance_trial_of_the_crusader::SetData(uint32 uiType, uint32 uiData)
     case TYPE_CRUSADERS_DEAD:
         m_auiCrusadersDead = uiData;
         break;
-    case TYPE_CRUSADERS_ACHIE_TIMER:
-        if(m_auiCrusadersAchieFail)
+    case TYPE_CRUSADERS_ACHIEV_TIMER:
+        if(m_auiCrusadersAchievFail)
             break;
-        if (m_auiCrusadersAchieTimer <= uiData)
-            m_auiCrusadersAchieFail = 1;
+        if (m_auiCrusadersAchievTimer <= uiData)
+            m_auiCrusadersAchievFail = 1;
         else
-            m_auiCrusadersAchieTimer -= uiData;
+            m_auiCrusadersAchievTimer -= uiData;
         break;
-    case TYPE_CRUSADERS_ACHIE_FAIL:
-        m_auiCrusadersAchieFail = uiData;
+    case TYPE_CRUSADERS_ACHIEV_FAIL:
+        m_auiCrusadersAchievFail = uiData;
         break;
     case TYPE_VALKIRIES:
         /*if (m_auiEncounter[4] == SPECIAL && uiData == SPECIAL)
@@ -426,8 +415,8 @@ uint32 instance_trial_of_the_crusader::GetData(uint32 uiType)
         case TYPE_EVENT_TIMER:          return m_auiEventTimer;
         case TYPE_CRUSADERS_COUNT:      return m_auiCrusadersCount;
         case TYPE_CRUSADERS_DEAD:       return m_auiCrusadersDead;
-        case TYPE_CRUSADERS_ACHIE_TIMER:return m_auiCrusadersAchieTimer;
-        case TYPE_CRUSADERS_ACHIE_FAIL :return m_auiCrusadersAchieFail;
+        case TYPE_CRUSADERS_ACHIEV_TIMER:return m_auiCrusadersAchievTimer;
+        case TYPE_CRUSADERS_ACHIEV_FAIL :return m_auiCrusadersAchievFail;
         case TYPE_EVENT_NPC:
             switch (m_auiEncounter[TYPE_EVENT])
             {
@@ -542,7 +531,7 @@ void instance_trial_of_the_crusader::Load(const char* strIn)
     }
     m_auiEncounter[TYPE_EVENT] = 0;
     m_auiEncounter[TYPE_STAGE] = 0;
-    SetData(TYPE_DEATHS, m_auiEncounter[TYPE_DEATHS]);  // Refresh achieve criteria
+    SetData(TYPE_DEATHS, m_auiEncounter[TYPE_DEATHS]);  // Refresh achievement criteria
 
     OUT_LOAD_INST_DATA_COMPLETE;
 
