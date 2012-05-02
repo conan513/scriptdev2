@@ -1,0 +1,1 @@
+UPDATE `gameobject_template` SET `ScriptName` = 'go_unlearn_spec_eng' WHERE `entry` = 177226;

@@ -75,7 +75,7 @@ static const float aGarfrostMoveLocs[2][3] =
     {657.539f, -203.564f, 526.691f},
 };
 
-//Positional defines 
+//Positional defines
 struct LocationsXY
 {
     float x, y, z, o;

@@ -248,7 +248,7 @@ struct MANGOS_DLL_DECL boss_festergutAI : public base_icc_bossAI
             {
                 DoScriptText(SAY_SPORE, m_creature);
                 m_uiGasSporeTimer = 40000;
-                
+
                 // make sure Vile Gas is not cast when players are gathered near Gas Spore
                 if (m_uiVileGasTimer < 12000)
                     m_uiVileGasTimer = 12000;

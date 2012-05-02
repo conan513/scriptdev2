@@ -313,16 +313,6 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public boss_lady_deathwhisper_
         {
             m_pInstance->SetData(TYPE_DEATHWHISPER, DONE);
 
-            // Find required NPC as achievement criteria
-            SummonsEntryList.clear();
-            GetCreatureListWithEntryInGrid(SummonsEntryList, m_creature, NPC_CULT_ADHERENT, 250.0f);
-            if (SummonsEntryList.empty())
-                m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_FULL_HOUSE, false);
-
-            SummonsEntryList.clear();
-            GetCreatureListWithEntryInGrid(SummonsEntryList, m_creature, NPC_CULT_FANATIC, 250.0f);
-            if (SummonsEntryList.empty())
-                m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_FULL_HOUSE, false);
             SummonsEntryList.clear();
             GetCreatureListWithEntryInGrid(SummonsEntryList, m_creature, NPC_REANIMATED_FANATIC, 250.0f);
             if (SummonsEntryList.empty())
@@ -339,6 +329,37 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public boss_lady_deathwhisper_
                 m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_FULL_HOUSE, false);
 
             m_pInstance->DoUpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_BE_SPELL_TARGET, SPELL_ACHIEVEMENT_CREDIT);
+        }
+
+        if (Creature *pAdveen = GetClosestCreatureWithEntry(m_creature, 38485, 100.0f))
+        {
+            if (pAdveen->isAlive())
+            {
+                pAdveen->CombatStop();
+                pAdveen->DeleteThreatList();
+                pAdveen->setFaction(35);
+                Map* pMap = m_creature->GetMap();
+                Map::PlayerList const& pPlayers = pMap->GetPlayers();
+                for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
+                    if (Player* pPlayer = itr->getSource())
+                        if (pPlayer->GetQuestStatus(24875) == QUEST_STATUS_INCOMPLETE)
+                            pPlayer->KilledMonsterCredit(39092);
+            }
+        }
+        else if (Creature *pAdveen = GetClosestCreatureWithEntry(m_creature, 38472, 100.0f))
+        {
+            if (pAdveen->isAlive())
+            {
+                pAdveen->CombatStop();
+                pAdveen->DeleteThreatList();
+                pAdveen->setFaction(35);
+                Map* pMap = m_creature->GetMap();
+                Map::PlayerList const& pPlayers = pMap->GetPlayers();
+                for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
+                    if (Player* pPlayer = itr->getSource())
+                        if (pPlayer->GetQuestStatus(24869) == QUEST_STATUS_INCOMPLETE)
+                            pPlayer->KilledMonsterCredit(39091);
+            }
         }
 
         DoScriptText(SAY_DEATH, m_creature);
@@ -517,6 +538,15 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public boss_lady_deathwhisper_
                 }
                 else
                     m_uiSummonWaveTimer -= uiDiff;
+
+                // Frostbolt Volley
+                if (m_uiFrostboltVolleyTimer <= uiDiff)
+                {
+                    if (DoCastSpellIfCan(m_creature, SPELL_FROSTBOLT_VOLLEY) == CAST_OK)
+                        m_uiFrostboltVolleyTimer = urand(15000, 20000);
+                }
+                else
+                    m_uiFrostboltVolleyTimer -= uiDiff;
             }
 
             // Touch of Insignificance
@@ -531,7 +561,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public boss_lady_deathwhisper_
             // Frostbolt
             if (m_uiFrostboltTimer <= uiDiff)
             {
-                if (Unit *pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
+                if (Unit *pTarget = m_creature->getVictim())
                 {
                     if (DoCastSpellIfCan(pTarget, SPELL_FROSTBOLT) == CAST_OK)
                         m_uiFrostboltTimer = urand(5000, 10000);
@@ -539,15 +569,6 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public boss_lady_deathwhisper_
             }
             else
                 m_uiFrostboltTimer -= uiDiff;
-
-            // Frostbolt Volley
-            if (m_uiFrostboltVolleyTimer <= uiDiff)
-            {
-                if (DoCastSpellIfCan(m_creature, SPELL_FROSTBOLT_VOLLEY) == CAST_OK)
-                    m_uiFrostboltVolleyTimer = urand(15000, 20000);
-            }
-            else
-                m_uiFrostboltVolleyTimer -= uiDiff;
 
             // Vengeful Shade
             if (m_uiVengefulShadeTimer <= uiDiff)

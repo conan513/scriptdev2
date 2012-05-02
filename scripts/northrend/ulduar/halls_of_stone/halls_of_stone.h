@@ -8,13 +8,14 @@
 enum
 {
     MAX_ENCOUNTER           = 4,
-
     TYPE_TRIBUNAL           = 0,
     TYPE_MAIDEN             = 1,
     TYPE_KRYSTALLUS         = 2,
     TYPE_SJONNIR            = 3,
 
-    // NPC_BRANN            = 28070,
+    NPC_BRANN               = 28070,
+    NPC_BRANN_EVENT         = 24575,
+    NPC_BRANN_OUTRO         = 24577,
 
     NPC_KADDRAK             = 30898,
     NPC_ABEDNEUM            = 30899,
@@ -31,14 +32,16 @@ enum
     GO_TRIBUNAL_CHEST       = 190586,
     GO_TRIBUNAL_CHEST_H     = 193996,
 
+    GO_SJONNIR_CONSOLE      = 193906,
+	
+	ACHIEV_SJONNIR_OOZE     = 7593,
+
     GO_TRIBUNAL_HEAD_RIGHT  = 191670,                       // marnak
     GO_TRIBUNAL_HEAD_CENTER = 191669,                       // abedneum
     GO_TRIBUNAL_HEAD_LEFT   = 191671,                       // kaddrak
 
     GO_TRIBUNAL_CONSOLE     = 193907,
     GO_TRIBUNAL_FLOOR       = 191527,
-
-    GO_SJONNIR_CONSOLE      = 193906,
 
     MAX_FACES               = 3,
     FACE_MARNAK             = 0,

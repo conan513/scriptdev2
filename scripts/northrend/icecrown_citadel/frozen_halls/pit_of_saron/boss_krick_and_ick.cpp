@@ -169,13 +169,13 @@ struct MANGOS_DLL_DECL boss_IckAI : public ScriptedAI
             {
                 switch (urand(0, 2))
                 {
-                case 0: 
+                case 0:
                     DoScriptText(SAY_KRICK_CHASE_1, pKrick);
                     break;
-                case 1: 
+                case 1:
                     DoScriptText(SAY_KRICK_CHASE_2, pKrick);
                     break;
-                case 2: 
+                case 2:
                     DoScriptText(SAY_KRICK_CHASE_3, pKrick);
                     break;
                 }
@@ -183,7 +183,7 @@ struct MANGOS_DLL_DECL boss_IckAI : public ScriptedAI
 
             if (Unit *pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_PURSUED);
-            
+
             m_uiPursueTimer = 13000;
             m_uiPursueDelayTimer = 1000;
         }

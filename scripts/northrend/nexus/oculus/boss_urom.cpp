@@ -300,6 +300,8 @@ struct MANGOS_DLL_DECL boss_uromAI : public BSWScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
+        m_creature->SetInCombatWithZone();
+
         if(!m_bIsTeleported)
         {
            if(m_uiFrostBombTimer < uiDiff)

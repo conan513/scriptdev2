@@ -20,6 +20,7 @@ enum
     TYPE_COLOSSUS          = 2,
     TYPE_GALDARAH          = 3,
     TYPE_ECK               = 4,
+    TYPE_ACHIEV_SLADRAN    = 5,
 
     NPC_SLADRAN            = 29304,
     NPC_MOORABI            = 29305,
@@ -55,7 +56,9 @@ enum
 
     TIMER_VISUAL_ALTAR     = 3000,
     TIMER_VISUAL_BEAM      = 2500,
-    TIMER_VISUAL_KEY       = 2000
+    TIMER_VISUAL_KEY       = 2000,
+
+    ACHIEV_SNAKES          = 7363,
 };
 
 typedef std::map<uint8, uint32> TypeTimerMap;
@@ -75,6 +78,7 @@ class MANGOS_DLL_DECL instance_gundrak : public ScriptedInstance
         void OnCreatureEnterCombat(Creature* pCreature);
         void OnPlayerEnter(Player* pPlayer);
 
+        bool CheckAchievementCriteriaMeet(uint32 uiCriteriaId, Player const* pSource, Unit const* pTarget, uint32 uiMiscValue1 /* = 0*/);
         void SetData(uint32 uiType, uint32 uiData);
         uint32 GetData(uint32 uiType);
 
@@ -92,6 +96,8 @@ class MANGOS_DLL_DECL instance_gundrak : public ScriptedInstance
         TypeTimerMap m_mAltarInProgress;
         TypeTimerMap m_mBeamInProgress;
         TypeTimerMap m_mKeyInProgress;
+
+        bool m_bCriteriaSnakesWhySnakesFailed;
 
         GUIDList m_luiStalkerGUIDs;
         GUIDVector m_vStalkerCasterGuids;

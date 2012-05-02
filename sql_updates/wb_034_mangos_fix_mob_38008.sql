@@ -1,0 +1,1 @@
+UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35, `unit_flags` = 33555200, `type_flags` = 198 WHERE `entry` = 38008;

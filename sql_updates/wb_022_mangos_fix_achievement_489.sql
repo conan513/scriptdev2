@@ -1,0 +1,1 @@
+UPDATE `creature_template` SET `KillCredit1` = 23980 WHERE `entry` IN (31673, 23954);

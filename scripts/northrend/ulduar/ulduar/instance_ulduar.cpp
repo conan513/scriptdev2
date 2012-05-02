@@ -314,10 +314,10 @@ void instance_ulduar::OnCreatureDeath(Creature * pCreature)
     }
     if (GetData(TYPE_THORIM) == IN_PROGRESS // Thorim
         || pCreature->GetEntry() == NPC_JORMUNGAR_BEHEMOTH // Preadds
-        || pCreature->GetEntry() == NPC_CAPTAIN_ALY               
+        || pCreature->GetEntry() == NPC_CAPTAIN_ALY
         || pCreature->GetEntry() == NPC_CAPTAIN_HORDE
         || pCreature->GetEntry() == NPC_MERCENARY_ALY
-        || pCreature->GetEntry() == NPC_MERCENARY_HORDE) 
+        || pCreature->GetEntry() == NPC_MERCENARY_HORDE)
     {
         m_lThorimMobsGuids.push_back(pCreature->GetObjectGuid());
     }
@@ -705,7 +705,7 @@ void instance_ulduar::SetData(uint32 uiType, uint32 uiData)
             else
             {
                 DoRespawnGameObject(GO_CACHE_OF_RARE_STORMS_H, 30*MINUTE);
-            }            
+            }
         }
         break;
     case TYPE_FREYA_HARD:
@@ -778,7 +778,7 @@ void instance_ulduar::SetData(uint32 uiType, uint32 uiData)
         {
             for(uint8 i = 0; i < 9; i++)
                 DoUseDoorOrButton(m_uiMimironTelGUID[i]);
-        }*/ 
+        }*/
         break;
     case TYPE_AERIAL_UNIT:
         m_auiMiniBoss[4] = uiData;

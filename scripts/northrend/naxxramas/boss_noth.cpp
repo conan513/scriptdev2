@@ -136,6 +136,9 @@ struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
     void KilledUnit(Unit* pVictim)
     {
         DoScriptText(urand(0, 1) ? SAY_SLAY1 : SAY_SLAY2, m_creature);
+
+		if (pVictim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+			m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
     }
 
     void JustDied(Unit* pKiller)

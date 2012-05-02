@@ -125,11 +125,18 @@ struct MANGOS_DLL_DECL boss_tharonjaAI : public ScriptedAI
     {
         DoScriptText(SAY_DEATH, m_creature);
 
-        DoCastSpellIfCan(m_creature, SPELL_ACHIEVEMENT_CHECK, CAST_TRIGGERED | CAST_FORCE_CAST);
-
+        Map* pMap = m_creature->GetMap();
+        Map::PlayerList const &PlayerList = pMap->GetPlayers();
+        if (PlayerList.isEmpty())
+            return;
+        for (Map::PlayerList::const_iterator i = PlayerList.begin();i != PlayerList.end(); ++i)
+        {
+            if (i->getSource()->isAlive())
+                m_creature->CastSpell(i->getSource(), SPELL_ACHIEVEMENT_CHECK, false);
+        }
         // TODO check if this spell casting is infact also needed on phase-switch or only here (possible that there is also some sort of hp% dependency
         if (m_uiPhase == PHASE_FLESH)
-            DoCastSpellIfCan(m_creature, SPELL_CLEAR_GIFT_OF_THARONJA, CAST_TRIGGERED | CAST_FORCE_CAST);
+            DoCastSpellIfCan(m_creature, SPELL_CLEAR_GIFT_OF_THARONJA, CAST_TRIGGERED | CAST_FORCE_CAST);                
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_THARONJA, DONE);

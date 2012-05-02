@@ -41,9 +41,9 @@ enum
     SPELL_SLIMEBOLT       = 32309
 };
 
-struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_patchwerkAI : public BSWScriptedAI
 {
-    boss_patchwerkAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_patchwerkAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
@@ -74,6 +74,9 @@ struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
             return;
 
         DoScriptText(SAY_SLAY, m_creature);
+
+		if (pVictim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+			m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
     }
 
     void JustDied(Unit* pKiller)

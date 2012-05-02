@@ -306,21 +306,21 @@ bool GossipSelect_npc_toc_announcer(Player* pPlayer, Creature* pCreature, uint32
 pPlayer->CLOSE_GOSSIP_MENU();
 
 switch(uiAction) {
-    case GOSSIP_ACTION_INFO_DEF+1: 
-        if (pInstance->GetData(TYPE_BEASTS) != DONE) 
+    case GOSSIP_ACTION_INFO_DEF+1:
+        if (pInstance->GetData(TYPE_BEASTS) != DONE)
         {
             pInstance->SetData(TYPE_EVENT,110);
             pInstance->SetData(TYPE_NORTHREND_BEASTS,NOT_STARTED);
             pInstance->SetData(TYPE_BEASTS,IN_PROGRESS);
         };
         break;
-    case GOSSIP_ACTION_INFO_DEF+2: 
+    case GOSSIP_ACTION_INFO_DEF+2:
         if (pInstance->GetData(TYPE_JARAXXUS) != DONE)
             pInstance->SetData(TYPE_EVENT,1010);
 
         break;
-    case GOSSIP_ACTION_INFO_DEF+3: 
-        if (pInstance->GetData(TYPE_CRUSADERS) != DONE) 
+    case GOSSIP_ACTION_INFO_DEF+3:
+        if (pInstance->GetData(TYPE_CRUSADERS) != DONE)
         {
             if (pPlayer->GetTeam() == ALLIANCE)
                 pInstance->SetData(TYPE_EVENT,3000);
@@ -328,18 +328,18 @@ switch(uiAction) {
                 pInstance->SetData(TYPE_EVENT,3001);
         };
         break;
-    case GOSSIP_ACTION_INFO_DEF+4: 
+    case GOSSIP_ACTION_INFO_DEF+4:
         if (pInstance->GetData(TYPE_VALKIRIES) != DONE)
             pInstance->SetData(TYPE_EVENT,4000);
 
         break;
-    case GOSSIP_ACTION_INFO_DEF+5: 
+    case GOSSIP_ACTION_INFO_DEF+5:
         Map* pMap = pCreature->GetMap();
         Map::PlayerList const &lPlayers = pMap->GetPlayers();
         for (Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
         {
              Unit* pPlayer = itr->getSource();
-             if (!pPlayer) 
+             if (!pPlayer)
                  continue;
              float x, y, z;
              pPlayer->GetPosition(x, y, z);
@@ -357,7 +357,7 @@ switch(uiAction) {
 
         if (!pTemp || !pTemp->isAlive())
             pCreature->SummonCreature(NPC_ANUBARAK, SpawnLoc[19].x, SpawnLoc[19].y, SpawnLoc[19].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-     
+
         if (pCreature->GetVisibility() == VISIBILITY_ON)
             pCreature->SetVisibility(VISIBILITY_OFF);
 
@@ -515,7 +515,7 @@ struct MANGOS_DLL_DECL boss_lich_king_tocAI : public ScriptedAI
                 for (Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
                 {
                      Unit* pPlayer = itr->getSource();
-                     if (!pPlayer) 
+                     if (!pPlayer)
                          continue;
 
                      float x, y, z;
@@ -795,6 +795,11 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                     m_pInstance->SetData(TYPE_CRUSADERS_ACHIEV_TIMER, diff);
 
         UpdateTimer = m_pInstance->GetData(TYPE_EVENT_TIMER);
+
+        if (m_pInstance->GetData(TYPE_STAGE) == 6)  // Crusaders
+            if (m_pInstance->GetData(TYPE_CRUSADERS) == IN_PROGRESS)
+                if (m_pInstance->GetData(TYPE_CRUSADERS_DEAD))
+                    m_pInstance->SetData(TYPE_CRUSADERS_ACHIEV_TIMER, diff);
 
         if (UpdateTimer <= diff)
         {
@@ -1352,6 +1357,7 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                 m_pInstance->DoUseDoorOrButton(GO_MAIN_GATE_DOOR);
                 break;
             case 4015:
+            {
                 m_pInstance->SetData(TYPE_STAGE,7);
                 m_pInstance->SetData(TYPE_VALKIRIES,IN_PROGRESS);
                 m_creature->SummonCreature(NPC_LIGHTBANE, SpawnLoc[3].x, SpawnLoc[3].y, SpawnLoc[3].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
@@ -1373,6 +1379,7 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                 m_pInstance->SetData(TYPE_EVENT,4016);
                 m_pInstance->DoUseDoorOrButton(GO_MAIN_GATE_DOOR);
                 break;
+            }
             case 4040:
                 UpdateTimer = 60000;
                 m_pInstance->SetData(TYPE_EVENT,5000);

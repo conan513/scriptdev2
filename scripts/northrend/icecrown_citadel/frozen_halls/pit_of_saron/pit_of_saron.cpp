@@ -28,7 +28,7 @@ EndContentData */
 #include "pit_of_saron.h"
 
 /******** JAINA & SYLVANAS *******/
-//Positional defines 
+//Positional defines
 struct LocationsXY
 {
     float x, y, z, o;
@@ -43,9 +43,9 @@ static LocationsXY SummonLoc[]=
 
 static LocationsXY MoveLoc[]=
 {
-    {504.65f, 241.08f, 528.709f}, 
-    {509.11f, 229.02f, 528.709f}, 
-    {508.07f, 214.18f, 528.709f}, 
+    {504.65f, 241.08f, 528.709f},
+    {509.11f, 229.02f, 528.709f},
+    {508.07f, 214.18f, 528.709f},
 };
 
 enum
@@ -65,7 +65,7 @@ enum
     SAY_TYRANNUS2           = -1658004,
     SAY_TYRANNUS3           = -1658005,
     SAY_TYRANNUS4           = -1658072,
-    SAY_TYRANNUS5           = -1658008, 
+    SAY_TYRANNUS5           = -1658008,
     SPELL_NECROTIC_POWER    = 69347,
 };
 
@@ -296,7 +296,7 @@ struct MANGOS_DLL_DECL npc_sylvanas_jaina_pos_startAI: public ScriptedAI
                                 pTemp->GetPosition(x, y, z);
                                 pTemp->GetMotionMaster()->MovePoint(0, x, y, z - 5.0f);
                             }
-                        }  
+                        }
                         ++m_uiIntro_Phase;
                         m_uiSpeech_Timer = 1000;
                         break;
@@ -318,7 +318,7 @@ struct MANGOS_DLL_DECL npc_sylvanas_jaina_pos_startAI: public ScriptedAI
                                     pTemp->RemoveAurasDueToSpell(69413);
                                 }
                             }
-                        }  
+                        }
                         ++m_uiIntro_Phase;
                         m_uiSpeech_Timer = 5000;
                         break;
@@ -332,7 +332,7 @@ struct MANGOS_DLL_DECL npc_sylvanas_jaina_pos_startAI: public ScriptedAI
                                     if (Creature *pTemp = m_creature->GetMap()->GetCreature(*i))
                                     {
                                         m_creature->CastSpell(pTemp, 72906, false);
-                                    } 
+                                    }
                                 }
                                 break;
                             case NPC_SYLVANAS_PART1:
@@ -341,7 +341,7 @@ struct MANGOS_DLL_DECL npc_sylvanas_jaina_pos_startAI: public ScriptedAI
                                     if (Creature *pTemp = m_creature->GetMap()->GetCreature(*i))
                                     {
                                         m_creature->CastSpell(pTemp, 59514, true);
-                                    } 
+                                    }
                                 }
                                 break;
                         }

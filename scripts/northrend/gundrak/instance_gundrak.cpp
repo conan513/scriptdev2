@@ -177,6 +177,17 @@ void instance_gundrak::Load(const char* chrIn)
     OUT_LOAD_INST_DATA_COMPLETE;
 }
 
+bool instance_gundrak::CheckAchievementCriteriaMeet(uint32 uiCriteriaId, Player const* pSource, Unit const* pTarget, uint32 uiMiscValue1 /* = 0*/)
+{
+    switch (uiCriteriaId)
+    {
+        case ACHIEV_SNAKES:
+            return !m_bCriteriaSnakesWhySnakesFailed;
+        default:
+            return 0;
+    }
+}
+
 void instance_gundrak::SetData(uint32 uiType, uint32 uiData)
 {
     debug_log("SD2: Instance Gundrak: SetData received for type %u with data %u", uiType, uiData);
@@ -225,6 +236,9 @@ void instance_gundrak::SetData(uint32 uiType, uint32 uiData)
             if (uiData == DONE)
                 DoUseDoorOrButton(GO_ECK_UNDERWATER_DOOR);
             break;
+        case TYPE_ACHIEV_SLADRAN:
+            m_bCriteriaSnakesWhySnakesFailed = (uiData == FAIL);
+            return;
         default:
             error_log("SD2: Instance Gundrak: ERROR SetData = %u for type %u does not exist/not implemented.", uiType, uiData);
             return;

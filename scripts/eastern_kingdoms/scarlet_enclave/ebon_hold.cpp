@@ -884,7 +884,7 @@ bool QuestAccept_npc_koltira_deathweaver(Player* pPlayer, Creature* pCreature, c
         pCreature->SetStandState(UNIT_STAND_STATE_STAND);
 
         if (npc_koltira_deathweaverAI* pEscortAI = dynamic_cast<npc_koltira_deathweaverAI*>(pCreature->AI()))
-            pEscortAI->Start(false, pPlayer, pQuest);
+            pEscortAI->Start(false, pPlayer, pQuest, false, true);
     }
     return true;
 }
@@ -1798,6 +1798,7 @@ struct MANGOS_DLL_DECL npc_highlord_darion_mograineAI : public npc_escortAI
     {
         if (!HasEscortState(STATE_ESCORT_ESCORTING))
         {
+            m_creature->SetVisibility(VISIBILITY_ON);
             bIsBattle = false;
             uiStep = 0;
             uiPhase_timer = 3000;

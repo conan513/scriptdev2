@@ -137,7 +137,10 @@ enum Data
     NPC_OLIVIA_ZENITH               = 31020,
 
     RIGHT               = 1,
-    LEFT                = 2
+    LEFT                = 2,
+
+    // Achievements
+    MALGANIS_ACHIEVEMENT_SPELL      = 58630,
 };
 
 #endif

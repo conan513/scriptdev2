@@ -362,7 +362,7 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public base_icc_bossAI
                         {
                             pLichKing->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_STAND);
                             pLichKing->SetStandState(UNIT_STAND_STATE_STAND);
-                            pLichKing->GetMotionMaster()->MovePoint(0, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, false);
+                            pLichKing->GetMotionMaster()->MovePoint(0, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z);
                         }
                     }
                     DoLichKingText(SAY_INTRO_1);
@@ -469,7 +469,7 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public base_icc_bossAI
                         if (Creature *pLichKing = m_pInstance->GetSingleCreatureFromStorage(NPC_LICH_KING))
                         {
                             DoScriptText(SAY_OUTRO_4, pLichKing);
-                            pLichKing->GetMotionMaster()->MovePoint(POINT_CENTER_LAND, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, false);
+                            pLichKing->GetMotionMaster()->MovePoint(POINT_CENTER_LAND, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                         }
                     }
                     NextStep(27000);
@@ -503,7 +503,7 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public base_icc_bossAI
                         if (Creature *pLichKing = m_pInstance->GetSingleCreatureFromStorage(NPC_LICH_KING))
                         {
                             m_creature->SetWalk(false);
-                            m_creature->GetMotionMaster()->MovePoint(POINT_CENTER_LAND_TIRION, SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, false);
+                            m_creature->GetMotionMaster()->MovePoint(POINT_CENTER_LAND_TIRION, SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z);
                         }
                     }
 
@@ -545,8 +545,8 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public base_icc_bossAI
                 case 20:
                 {
                     DoScriptText(SAY_OUTRO_8, m_creature);
-                    m_creature->GetMotionMaster()->MovePoint(POINT_TELEPORTER_TIRION, SpawnLoc[6].x, SpawnLoc[6].y, SpawnLoc[6].z, false);
-                    
+                    m_creature->GetMotionMaster()->MovePoint(POINT_TELEPORTER_TIRION, SpawnLoc[6].x, SpawnLoc[6].y, SpawnLoc[6].z);
+
                     if (m_pInstance)
                     {
                         if (Creature *pLichKing = m_pInstance->GetSingleCreatureFromStorage(NPC_LICH_KING))
@@ -558,7 +558,7 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public base_icc_bossAI
                                 pFrostmourne->CastSpell(pFrostmourne, SPELL_FROSTMOURNE_SPIRITS, true);
                                 pLichKing->CastSpell(pLichKing, SPELL_SOUL_BARRAGE, true);
                                 pLichKing->SetWalk(true);
-                                pLichKing->GetMotionMaster()->MovePoint(0, x, y, z + 1.0f, false);
+                                pLichKing->GetMotionMaster()->MovePoint(0, x, y, z + 1.0f);
                             }
                         }
                     }
@@ -763,9 +763,10 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public base_icc_bossAI
         m_uiRespawnPlatformTimer= 3000;
 
         DoRespawnPlatform();
+        DoRespawnPillars();
         SetCombatMovement(true);
 
-	m_bPlatformDestroyed = false;
+        m_bPlatformDestroyed = false;
     }
 
     void Aggro(Unit *pWho)
@@ -941,6 +942,23 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public base_icc_bossAI
             pGo->SetGoState(GO_STATE_ACTIVE);
 
         m_bPlatformDestroyed = false;
+    }
+
+    void DoRespawnPillars()
+    {
+        if (m_pInstance)
+        {
+            if (GameObject *pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_ICESHARD_1))
+                pGo->SetGoState(GO_STATE_READY);
+            if (GameObject *pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_ICESHARD_2))
+                pGo->SetGoState(GO_STATE_READY);
+            if (GameObject *pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_ICESHARD_3))
+                pGo->SetGoState(GO_STATE_READY);
+            if (GameObject *pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_ICESHARD_4))
+                pGo->SetGoState(GO_STATE_READY);
+
+            m_bPillarsDestroyed = false;
+        }
     }
 
     void DoDespawnShadowTraps()
@@ -1862,9 +1880,9 @@ struct MANGOS_DLL_DECL mob_valkyr_shadowguardAI : public base_icc_bossAI
         if (curX < 480.0f)
         {
             if (curY > -2124.0f)
-                m_creature->GetMotionMaster()->MovePoint(POINT_VALKYR_THROW, SpawnLoc[8].x, SpawnLoc[8].y, SpawnLoc[8].z + 3.0f, false);
+                m_creature->GetMotionMaster()->MovePoint(POINT_VALKYR_THROW, SpawnLoc[8].x, SpawnLoc[8].y, SpawnLoc[8].z + 3.0f);
             else
-                m_creature->GetMotionMaster()->MovePoint(POINT_VALKYR_THROW, SpawnLoc[9].x, SpawnLoc[9].y, SpawnLoc[9].z + 3.0f, false);
+                m_creature->GetMotionMaster()->MovePoint(POINT_VALKYR_THROW, SpawnLoc[9].x, SpawnLoc[9].y, SpawnLoc[9].z + 3.0f);
 
             return;
         }
@@ -1889,14 +1907,14 @@ struct MANGOS_DLL_DECL mob_valkyr_shadowguardAI : public base_icc_bossAI
         float fDist = 60.0f - fDistToCenter;
 
         m_creature->GetNearPoint(m_creature, destX, destY, destZ, 0.0f, fDist, angle);
-        m_creature->GetMotionMaster()->MovePoint(POINT_VALKYR_THROW, destX, destY, SpawnLoc[1].z + 3.0f, false);
+        m_creature->GetMotionMaster()->MovePoint(POINT_VALKYR_THROW, destX, destY, SpawnLoc[1].z + 3.0f);
     }
 
     void DoThrowAndGoBack()
     {
         DoCastSpellIfCan(m_creature, SPELL_EJECT_PASSENGERS, CAST_TRIGGERED);
         m_creature->GetMotionMaster()->Clear();
-        m_creature->GetMotionMaster()->MovePoint(POINT_VALKYR_CENTER, SpawnLoc[1].x + frand(-3.0f, 3.0f), SpawnLoc[1].y + frand(-3.0f, 3.0f), SpawnLoc[1].z + 12.0f, false);
+        m_creature->GetMotionMaster()->MovePoint(POINT_VALKYR_CENTER, SpawnLoc[1].x + frand(-3.0f, 3.0f), SpawnLoc[1].y + frand(-3.0f, 3.0f), SpawnLoc[1].z + 12.0f);
     }
 
     void MovementInform(uint32 uiMovementType, uint32 uiData)
@@ -2018,7 +2036,7 @@ struct MANGOS_DLL_DECL  mob_vile_spiritAI : public base_icc_bossAI
         m_creature->SetInCombatWithZone();
         m_creature->GetMotionMaster()->Clear();
         m_creature->NearTeleportTo(m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ() + 15.0f, 0.0f);
-        m_creature->GetMotionMaster()->MovePoint(1, m_creature->GetPositionX() + frand(-3.0f, 3.0f), m_creature->GetPositionY() + frand(-3.0f, 3.0f), m_creature->GetPositionZ(), false);
+        m_creature->GetMotionMaster()->MovePoint(1, m_creature->GetPositionX() + frand(-3.0f, 3.0f), m_creature->GetPositionY() + frand(-3.0f, 3.0f), m_creature->GetPositionZ());
         DoCastSpellIfCan(m_creature, SPELL_SPIRIT_BURST_AURA, CAST_TRIGGERED);
 
         m_bIsWickedSpirit = m_creature->GetEntry() == NPC_WICKED_SPIRIT;
@@ -2050,7 +2068,7 @@ struct MANGOS_DLL_DECL  mob_vile_spiritAI : public base_icc_bossAI
             return;
 
         if (uiData == 1)
-            m_creature->GetMotionMaster()->MovePoint(1, m_creature->GetPositionX() + frand(-3.0f, 3.0f), m_creature->GetPositionY() + frand(-3.0f, 3.0f), m_creature->GetPositionZ(), false);
+            m_creature->GetMotionMaster()->MovePoint(1, m_creature->GetPositionX() + frand(-3.0f, 3.0f), m_creature->GetPositionY() + frand(-3.0f, 3.0f), m_creature->GetPositionZ());
     }
 
     Unit* SelectTarget()
@@ -2221,7 +2239,7 @@ struct MANGOS_DLL_DECL mob_strangulate_vehicleAI : public base_icc_bossAI
                     {
                         float x, y, z;
                         pLichKing->GetNearPoint(m_creature, x, y, z, m_creature->GetObjectBoundingRadius(), 8.0f, pLichKing->GetAngle(m_creature));
-                        m_creature->GetMotionMaster()->MovePoint(POINT_TP_TO_FM, x, y, z, false);
+                        m_creature->GetMotionMaster()->MovePoint(POINT_TP_TO_FM, x, y, z);
                     }
                 }
                 m_bHasMoved = true;
@@ -2522,7 +2540,7 @@ struct MANGOS_DLL_DECL mob_spirit_bombAI : public base_icc_bossAI
         m_creature->GetPosition(x, y, z);
 
         m_creature->NearTeleportTo(x, y, z + 20.0f, 0.0f);
-        m_creature->GetMotionMaster()->MovePoint(POINT_SPIRIT_BOMB, x, y, z, false);
+        m_creature->GetMotionMaster()->MovePoint(POINT_SPIRIT_BOMB, x, y, z);
         DoCastSpellIfCan(m_creature, SPELL_SPIRIT_BOMB_VISUAL, CAST_TRIGGERED);
     }
 

@@ -112,9 +112,9 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
 
     std::list<Creature*> mistressEntryList;
 
-    void Reset() 
+    void Reset()
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         m_pInstance->SetData(TYPE_JARAXXUS, NOT_STARTED);
@@ -135,7 +135,7 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
 
     void JustReachedHome()
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         m_pInstance->SetData(TYPE_JARAXXUS, FAIL);
@@ -144,7 +144,7 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
 
     void JustDied(Unit* pKiller)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         // Find required NPC as achievement criteria
@@ -164,7 +164,7 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         DoScriptText(SAY_AGGRO, m_creature);
@@ -180,7 +180,6 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
 
         DoScriptText(SAY_SLAY_1 - urand(0, 1),m_creature,pVictim);
     }
-
 
     void UpdateAI(const uint32 uiDiff)
     {
@@ -243,7 +242,7 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
         {
             if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1))
                 m_creature->CastSpell(pTarget, SPELL_LEGION_FLAME, false);
-            
+
             m_uiLegionFlameTimer = 30000;
         }
         else
@@ -306,7 +305,7 @@ struct MANGOS_DLL_DECL mob_legion_flameAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (m_pInstance->GetData(TYPE_JARAXXUS) != IN_PROGRESS) 
+        if (m_pInstance->GetData(TYPE_JARAXXUS) != IN_PROGRESS)
         {
             m_creature->RemoveAllAuras();
             m_creature->ForcedDespawn();
@@ -362,7 +361,7 @@ struct MANGOS_DLL_DECL mob_infernal_volcanoAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (m_pInstance->GetData(TYPE_JARAXXUS) != IN_PROGRESS) 
+        if (m_pInstance->GetData(TYPE_JARAXXUS) != IN_PROGRESS)
             m_creature->ForcedDespawn();
 
         if (m_uiSummonInfernalTimer <= uiDiff)
@@ -404,7 +403,7 @@ struct MANGOS_DLL_DECL mob_fel_infernalAI : public ScriptedAI
 
     void KilledUnit(Unit* pVictim)
     {
-        if (pVictim->GetTypeId() != TYPEID_PLAYER) 
+        if (pVictim->GetTypeId() != TYPEID_PLAYER)
             return;
     }
 
@@ -415,13 +414,13 @@ struct MANGOS_DLL_DECL mob_fel_infernalAI : public ScriptedAI
 
     void Aggro(Unit *who)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (m_pInstance->GetData(TYPE_JARAXXUS) != IN_PROGRESS) 
+        if (m_pInstance->GetData(TYPE_JARAXXUS) != IN_PROGRESS)
             m_creature->ForcedDespawn();
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -495,7 +494,7 @@ struct MANGOS_DLL_DECL mob_nether_portalAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (m_pInstance->GetData(TYPE_JARAXXUS) != IN_PROGRESS) 
+        if (m_pInstance->GetData(TYPE_JARAXXUS) != IN_PROGRESS)
             m_creature->ForcedDespawn();
 
         if (m_uiSummonMistressTimer <= uiDiff)
@@ -545,7 +544,7 @@ struct MANGOS_DLL_DECL mob_mistress_of_painAI : public ScriptedAI
 
     void KilledUnit(Unit* pVictim)
     {
-        if (pVictim->GetTypeId() != TYPEID_PLAYER) 
+        if (pVictim->GetTypeId() != TYPEID_PLAYER)
             return;
     }
 
@@ -556,17 +555,17 @@ struct MANGOS_DLL_DECL mob_mistress_of_painAI : public ScriptedAI
 
     void Aggro(Unit *who)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
     }
 
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
-        if (m_pInstance->GetData(TYPE_JARAXXUS) != IN_PROGRESS) 
+        if (m_pInstance->GetData(TYPE_JARAXXUS) != IN_PROGRESS)
             m_creature->ForcedDespawn();
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())

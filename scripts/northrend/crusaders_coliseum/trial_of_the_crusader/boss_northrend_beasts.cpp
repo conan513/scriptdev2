@@ -19,7 +19,7 @@
 
 /* ScriptData
 SDName: northrend_beasts
-SD%Complete: 90% 
+SD%Complete: 90%
 SDComment: by /dev/rsa
 SDCategory:
 EndScriptData */
@@ -146,9 +146,9 @@ struct MANGOS_DLL_DECL boss_gormokAI : public ScriptedAI
 
     std::list<ObjectGuid> mobsGUIDList;
 
-    void Reset() 
+    void Reset()
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         SetEquipmentSlots(false, EQUIP_MAIN, -1, -1);
@@ -203,7 +203,7 @@ struct MANGOS_DLL_DECL boss_gormokAI : public ScriptedAI
 
     void JustDied(Unit* pKiller)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         m_pInstance->SetData(TYPE_NORTHREND_BEASTS, GORMOK_DONE);
@@ -211,7 +211,7 @@ struct MANGOS_DLL_DECL boss_gormokAI : public ScriptedAI
 
     void JustReachedHome()
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         m_pInstance->SetData(TYPE_NORTHREND_BEASTS, FAIL);
@@ -299,7 +299,7 @@ struct MANGOS_DLL_DECL mob_snobold_vassalAI : public ScriptedAI
 
     void Aggro(Unit *pWho)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         pFocus = pWho;
@@ -307,7 +307,7 @@ struct MANGOS_DLL_DECL mob_snobold_vassalAI : public ScriptedAI
 
     void JustReachedHome()
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         m_creature->ForcedDespawn();
@@ -449,7 +449,7 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
 
     void JustDied(Unit* pKiller)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_SPECIAL && !m_bAchievFailed)
@@ -466,7 +466,7 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
 
     void JustReachedHome()
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         if (m_pInstance->GetData(TYPE_BEASTS) == IN_PROGRESS && m_pInstance->GetData(TYPE_NORTHREND_BEASTS) != FAIL)
@@ -650,7 +650,7 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
 
     void JustDied(Unit* pKiller)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_SPECIAL && !m_bAchievFailed)
@@ -660,14 +660,14 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
         {
             if (!pSister->isAlive())
                 m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_DONE);
-            else 
+            else
                 m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_SPECIAL);
         }
     }
 
     void JustReachedHome()
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         if (m_pInstance->GetData(TYPE_BEASTS) == IN_PROGRESS && m_pInstance->GetData(TYPE_NORTHREND_BEASTS) != FAIL)
@@ -819,7 +819,7 @@ struct MANGOS_DLL_DECL mob_slime_poolAI : public ScriptedAI
 
     void Reset()
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         m_uiIncreaseSizeTimer = 0;
@@ -846,13 +846,13 @@ struct MANGOS_DLL_DECL mob_slime_poolAI : public ScriptedAI
         if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_DONE)
             m_creature->ForcedDespawn();
 
-        if (!m_bIsCloudCasted) 
+        if (!m_bIsCloudCasted)
         {
             m_creature->CastSpell(m_creature, SPELL_SLIME_POOL_VISUAL, false);
             m_bIsCloudCasted = true;
         }
 
-        if (m_fSize >= 6.0f) 
+        if (m_fSize >= 6.0f)
             m_creature->ForcedDespawn();
     }
 
@@ -888,9 +888,9 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
 
     std::list<Creature*> vassalsEntryList;
 
-    void Reset() 
+    void Reset()
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         m_uiFerociousButtTimer         = 15000;
@@ -981,11 +981,11 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
 
     void JustReachedHome()
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         m_pInstance->SetData(TYPE_NORTHREND_BEASTS, FAIL);
-        
+
         m_creature->ForcedDespawn();
     }
 

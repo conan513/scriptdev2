@@ -101,6 +101,7 @@ struct MANGOS_DLL_DECL boss_ichoronAI : public ScriptedAI
     {
         if (m_pInstance)
         {
+			m_pInstance->SetData(TYPE_ACHIEV_ICHORON, FAIL);
             m_pInstance->SetData(TYPE_ICHORON, FAIL);
             m_pInstance->SetData(TYPE_EVENT, FAIL);
             m_pInstance->SetData(TYPE_RIFT, FAIL);
@@ -112,6 +113,7 @@ struct MANGOS_DLL_DECL boss_ichoronAI : public ScriptedAI
     {
         if (!m_pInstance) return;
 
+		m_pInstance->SetData(TYPE_ACHIEV_ICHORON, IN_PROGRESS);
         DoScriptText(SAY_AGGRO, m_creature);
         m_pInstance->SetData(TYPE_ICHORON, IN_PROGRESS);
         SetCombatMovement(true);
@@ -345,6 +347,7 @@ struct MANGOS_DLL_DECL mob_ichor_globuleAI : public ScriptedAI
                         ((boss_ichoronAI*)pIchoron->AI())->WaterElementHit();
 
                         m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+						m_pInstance->SetData(TYPE_ACHIEV_ICHORON, FAIL);
                     }
                 }
             }

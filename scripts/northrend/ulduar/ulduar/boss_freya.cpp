@@ -79,7 +79,7 @@ enum
 
     SPELL_UNSTABLE_ENERGY_FREYA         = 62451,
     SPELL_UNSTABLE_ENERGY_FREYA_H       = 62865,
-    
+
     // ironbrach
     SPELL_IRONBRANCH_ESSENCE_CHANNEL    = 62484,
     SPELL_IRONBRANCH_ESSENCE_CHANNEL_H  = 65588,
@@ -92,7 +92,7 @@ enum
     // stonebark
     SPELL_STONEBARK_ESSEMCE_CHANNEL     = 62483,
     SPELL_STONEBARK_ESSEMCE_CHANNEL_H   = 65589,
-    
+
 
     SPELL_GROUND_TREMOR_FREYA           = 62437,
     SPELL_GROUND_TREMOR_FREYA_H         = 62859,
@@ -103,7 +103,7 @@ enum
     NPC_SUN_BEAM                        = 33170,
     NPC_UNSTABLE_SUN_BEAM               = 33050,
 
-    // sanctuary adds 
+    // sanctuary adds
     NPC_EONARS_GIFT                     = 33228,
     SPELL_LIFEBINDERS_GIFT              = 62584,    // after 12 secs, heals Freya & her allies for 30%
     SPELL_LIFEBINDERS_GIFT_H            = 64185,    // the same but for 60%
@@ -111,12 +111,12 @@ enum
     NPC_HEALTHY_SPORE                   = 33215,
 
     /* ADDS */
-    // 6 waves of adds. 1 of the 3 each min 
+    // 6 waves of adds. 1 of the 3 each min
     NPC_DETONATING_LASHER       = 32918,    // recude 2 stacks
     // spells
     SPELL_FLAME_LASH            = 62608,
     SPELL_DETONATE              = 62598,
-    SPELL_DETONATE_H            = 62937, 
+    SPELL_DETONATE_H            = 62937,
 
     NPC_ANCIENT_CONSERVATOR     = 33203,    // reduce 30 stacks
     //spells
@@ -161,14 +161,14 @@ enum
     SPELL_UNSTABLE_SUN_BEAM     = 62221,
     SPELL_UNSTABLE_SUN_BEAM_A   = 62211,
     SPELL_UNSTABLE_SUN_BEAM_BUFF= 62243,
-    SPELL_UNSTABLE_ENERGY       = 62217,    // cancels sun bean 
+    SPELL_UNSTABLE_ENERGY       = 62217,    // cancels sun bean
     SPELL_UNSTABLE_ENERGY_H     = 62922,
     SPELL_PHOTOSYNTHESIS        = 62209,
 
     // ironbrach spells
     SPELL_IMPALE                = 62310,
     SPELL_IMPALE_H              = 62928,
-    SPELL_IRON_ROOTS            = 62283, 
+    SPELL_IRON_ROOTS            = 62283,
     SPELL_IRON_ROOTS_H          = 62930,
     NPC_IRON_ROOTS              = 33088,
     SPELL_THORN_SWARM           = 62285,
@@ -214,7 +214,7 @@ enum
 // Iron roots & stranghned iron roots
 struct MANGOS_DLL_DECL mob_iron_rootsAI : public ScriptedAI
 {
-    mob_iron_rootsAI(Creature* pCreature) : ScriptedAI(pCreature) 
+    mob_iron_rootsAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (instance_ulduar*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
@@ -262,7 +262,7 @@ struct MANGOS_DLL_DECL mob_iron_rootsAI : public ScriptedAI
 // Elder Brightleaf
 struct MANGOS_DLL_DECL boss_elder_brightleafAI : public ScriptedAI
 {
-    boss_elder_brightleafAI(Creature* pCreature) : ScriptedAI(pCreature) 
+    boss_elder_brightleafAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (instance_ulduar*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
@@ -289,7 +289,7 @@ struct MANGOS_DLL_DECL boss_elder_brightleafAI : public ScriptedAI
     }
 
     void Aggro(Unit* pWho)
-    {    
+    {
         DoScriptText(SAY_BRIGHTLEAF_AGGRO, m_creature);
     }
 
@@ -347,7 +347,7 @@ CreatureAI* GetAI_boss_elder_brightleaf(Creature* pCreature)
 // Elder Ironbranch
 struct MANGOS_DLL_DECL boss_elder_ironbranchAI : public ScriptedAI
 {
-    boss_elder_ironbranchAI(Creature* pCreature) : ScriptedAI(pCreature) 
+    boss_elder_ironbranchAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (instance_ulduar*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
@@ -369,7 +369,7 @@ struct MANGOS_DLL_DECL boss_elder_ironbranchAI : public ScriptedAI
     }
 
     void Aggro(Unit* pWho)
-    {    
+    {
         DoScriptText(SAY_IRONBRANCH_AGGRO, m_creature);
     }
 
@@ -416,7 +416,7 @@ struct MANGOS_DLL_DECL boss_elder_ironbranchAI : public ScriptedAI
         else
             m_uiThornSwarmTimer -= uiDiff;
 
-        DoMeleeAttackIfReady(); 
+        DoMeleeAttackIfReady();
     }
 };
 
@@ -428,7 +428,7 @@ CreatureAI* GetAI_boss_elder_ironbranch(Creature* pCreature)
 // Stonebark
 struct MANGOS_DLL_DECL boss_elder_stonebarkAI : public ScriptedAI
 {
-    boss_elder_stonebarkAI(Creature* pCreature) : ScriptedAI(pCreature) 
+    boss_elder_stonebarkAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (instance_ulduar*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
@@ -450,7 +450,7 @@ struct MANGOS_DLL_DECL boss_elder_stonebarkAI : public ScriptedAI
     }
 
     void Aggro(Unit* pWho)
-    {    
+    {
         DoScriptText(SAY_STONEBARK_AGGRO, m_creature);
     }
 
@@ -493,7 +493,7 @@ struct MANGOS_DLL_DECL boss_elder_stonebarkAI : public ScriptedAI
         else
             m_uiPetrifiedBarkTimer -= uiDiff;
 
-        DoMeleeAttackIfReady(); 
+        DoMeleeAttackIfReady();
     }
 };
 
@@ -523,7 +523,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
     uint32 m_uiEnrageTimer;
 
     bool m_bIsHardMode;
-    
+
     uint32 m_uiNatureBombTimer;
     uint32 m_uiLifebindersGiftTimer;
 
@@ -575,7 +575,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
 
         m_uiAchievProgress              = 0;
 
-        if(m_pInstance) 
+        if(m_pInstance)
         {
             // remove elder auras
             if (Creature* pBrightleaf = m_pInstance->GetSingleCreatureFromStorage(NPC_BRIGHTLEAF))
@@ -596,11 +596,11 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
         }
     }
 
-    void Aggro(Unit *who) 
+    void Aggro(Unit *who)
     {
         DoCast(m_creature, SPELL_ATTUNED_TO_NATURE, true);
         DoCast(m_creature, m_bIsRegularMode ? SPELL_TOUCH_OF_EONAR : SPELL_TOUCH_OF_EONAR_H, true);
-        if(m_pInstance) 
+        if(m_pInstance)
         {
             m_pInstance->SetData(TYPE_FREYA, IN_PROGRESS);
 
@@ -666,7 +666,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
 
     void DoOutro()
     {
-        if(m_pInstance) 
+        if(m_pInstance)
         {
             switch(m_uiAchievProgress)
             {
@@ -688,7 +688,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
     // for debug only!
     void JustDied(Unit* pKiller)
     {
-        if(m_pInstance) 
+        if(m_pInstance)
         {
             switch(m_uiAchievProgress)
             {
@@ -922,7 +922,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
                         case 0:
                             if (DoCastSpellIfCan(m_creature, SPELL_SUMMON_LASHERS) == CAST_OK)
                             {
-                                /*SummonLashers();*/ 
+                                /*SummonLashers();*/
                                 DoScriptText(SAY_ADDS_LASHER, m_creature);
                                 initNextWave();
                             }
@@ -936,7 +936,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
                             }
                             break;
                         case 2:
-                            //DoCast(m_creature, SPELL_SUMMON_ELEMENTALS); 
+                            //DoCast(m_creature, SPELL_SUMMON_ELEMENTALS);
                             SummonElementals();
                             DoScriptText(SAY_ADDS_TRIO, m_creature);
                             m_bWaveCheck = true;
@@ -1134,14 +1134,14 @@ struct MANGOS_DLL_DECL mob_freya_groundAI : public ScriptedAI
         }
 
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->SetRespawnDelay(DAY);           
+        m_creature->SetRespawnDelay(DAY);
     }
 
     void AttackStart(Unit* pWho)
     {
         return;
     }
-    
+
     void DamageTaken(Unit *pDoneBy, uint32 &uiDamage)
     {
         if (m_creature->GetEntry() == NPC_HEALTHY_SPORE)
@@ -1150,7 +1150,7 @@ struct MANGOS_DLL_DECL mob_freya_groundAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (m_pInstance && m_pInstance->GetData(TYPE_FREYA) != IN_PROGRESS) 
+        if (m_pInstance && m_pInstance->GetData(TYPE_FREYA) != IN_PROGRESS)
         {
             m_creature->ForcedDespawn();
         }
@@ -1340,7 +1340,7 @@ struct MANGOS_DLL_DECL mob_freya_spawnedAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (m_pInstance && m_pInstance->GetData(TYPE_FREYA) != IN_PROGRESS) 
+        if (m_pInstance && m_pInstance->GetData(TYPE_FREYA) != IN_PROGRESS)
             m_creature->ForcedDespawn();
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -1357,7 +1357,7 @@ struct MANGOS_DLL_DECL mob_freya_spawnedAI : public ScriptedAI
                 }
                 else
                     m_uiFlameLash -= uiDiff;
-            
+
                 if(m_uiResetAggro < uiDiff)
                 {
                     DoResetThreat();

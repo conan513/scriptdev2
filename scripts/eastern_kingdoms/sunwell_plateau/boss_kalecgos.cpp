@@ -230,7 +230,6 @@ struct MANGOS_DLL_DECL boss_kalecgosAI : public ScriptedAI
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
-
         if (m_bIsBanished)
         {
             // When Sathrovarr is banished then start outro
@@ -415,7 +414,7 @@ struct MANGOS_DLL_DECL boss_sathrovarrAI : public ScriptedAI
 
         if (m_bIsBanished)
             return;
-
+/*
         if (!m_bIsEnraged && m_creature->GetHealthPercent() < 10.0f)
         {
             // If the boss already has the aura, then mark the enraged as true
@@ -431,7 +430,7 @@ struct MANGOS_DLL_DECL boss_sathrovarrAI : public ScriptedAI
                     pKalecgos->CastSpell(pKalecgos, SPELL_CRAZED_RAGE, true);
             }
         }
-
+*/
         if (m_uiCorruptingStrikeTimer < uiDiff)
         {
             if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CORRUPTING_STRIKE) == CAST_OK)

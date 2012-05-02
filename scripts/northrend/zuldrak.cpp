@@ -94,6 +94,38 @@ CreatureAI* GetAI_npc_gurgthock(Creature* pCreature)
     return new npc_gurgthockAI(pCreature);
 }
 
+/*####
+## npc_gymer
+####*/
+
+#define GOSSIP_ITEM_G "I'm ready, Gymer. Let's go!"
+
+enum eGymer
+{
+    QUEST_STORM_KING_VENGEANCE    = 12919,
+    SPELL_GYMER                   = 55568
+};
+
+bool GossipHello_npc_gymer_q(Player* pPlayer, Creature *pCreature)
+{
+	if (pCreature->isQuestGiver())
+		pPlayer->PrepareQuestMenu(pCreature->GetObjectGuid());
+
+	if (pPlayer->GetQuestStatus(QUEST_STORM_KING_VENGEANCE) == QUEST_STATUS_INCOMPLETE)
+		pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_G, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
+    pPlayer->SEND_GOSSIP_MENU(13640,pCreature->GetObjectGuid());
+    return true;
+}
+
+bool GossipSelect_npc_gymer_q(Player *pPlayer, Creature *pCreature, uint32 sender, uint32 action)
+{
+    if (action == GOSSIP_ACTION_INFO_DEF + 1)
+		pPlayer->CastSpell(pPlayer, SPELL_GYMER, true);
+
+	pPlayer->CLOSE_GOSSIP_MENU();
+    return true;
+}
+
 void AddSC_zuldrak()
 {
     Script* pNewScript;
@@ -102,5 +134,11 @@ void AddSC_zuldrak()
     pNewScript->Name = "npc_gurgthock";
     pNewScript->GetAI = &GetAI_npc_gurgthock;
     pNewScript->pQuestAcceptNPC = &QuestAccept_npc_gurgthock;
+    pNewScript->RegisterSelf();
+
+	pNewScript = new Script;
+    pNewScript->Name="npc_gymer_q";
+    pNewScript->pGossipHello =  &GossipHello_npc_gymer_q;
+    pNewScript->pGossipSelect = &GossipSelect_npc_gymer_q;
     pNewScript->RegisterSelf();
 }

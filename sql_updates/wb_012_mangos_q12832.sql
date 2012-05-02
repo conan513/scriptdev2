@@ -1,0 +1,2 @@
+-- gossip_menu_id = 9859 unit_flags = 537165824 type_flags = 128 movementId = 110
+UPDATE `creature_template` SET `unit_flags` = 0, `type_flags` = 8, `movementId` = 0, `gossip_menu_id` = 0, `ScriptName` = 'npc_injured_goblin' WHERE `entry` = 29434;

@@ -524,6 +524,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public base_icc_bossAI
     }
 
     instance_icecrown_spire* m_pInstance;
+
     uint32 m_uiRuneOfBloodTimer;
     uint32 m_uiBoilingBloodTimer;
     uint32 m_uiBloodNovaTimer;

@@ -4,6 +4,8 @@
 
 #ifndef DEF_ULDUAR_H
 #define DEF_ULDUAR_H
+#include "BSW_ai.h"
+#include "BSW_instance.h"
 
 enum
 {

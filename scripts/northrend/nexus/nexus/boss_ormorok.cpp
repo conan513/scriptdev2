@@ -45,11 +45,11 @@ enum
     MOB_CRYSTALLINE_TANGLER                    = 32665,
 
     // Texts
-    SAY_AGGRO                                  = -1576020,
-    SAY_DEATH                                  = -1576021,
-    SAY_REFLECT                                = -1576022,
-    SAY_CRYSTAL_SPIKES                         = -1576023,
-    SAY_KILL                                   = -1576024,
+    SAY_AGGRO                                  = -1576006,
+    SAY_DEATH                                  = -1576007,
+    SAY_REFLECT                                = -1576008,
+    SAY_CRYSTAL_SPIKES                         = -1576009,
+    SAY_KILL                                   = -1576010,
 
     // Others
     SPIKE_DISTANCE                             = 5

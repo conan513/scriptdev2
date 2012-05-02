@@ -450,7 +450,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
 
             // 5s faster each summoning
             uiReduction = m_uiSummonSuppresserCounter >= 10 ? 50000 : (m_uiSummonSuppresserCounter * 5000);
-            m_uiSummonSuppresserTimer = 60000 - uiReduction; 
+            m_uiSummonSuppresserTimer = 60000 - uiReduction;
             ++m_uiSummonSuppresserCounter;
         }
         else

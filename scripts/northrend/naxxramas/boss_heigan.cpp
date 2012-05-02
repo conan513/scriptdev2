@@ -50,9 +50,9 @@ enum
     SPELL_PLAGUE_CLOUD      = 29350
 };
 
-struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_heiganAI : public BSWScriptedAI
 {
-    boss_heiganAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_heiganAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
@@ -61,6 +61,7 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
 
     instance_naxxramas* m_pInstance;
     bool m_bIsRegularMode;
+	bool m_bAchiev;
 
     uint8 m_uiPhase;
     uint8 m_uiPhaseEruption;
@@ -85,6 +86,7 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
     void Reset()
     {
         m_uiPhase = PHASE_GROUND;
+		m_bAchiev = true;
         m_uiTauntTimer = urand(20000,60000);                // TODO, find information
         ResetPhase();
     }
@@ -105,6 +107,12 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
     void KilledUnit(Unit* pVictim)
     {
         DoScriptText(SAY_SLAY, m_creature);
+
+		if (pVictim->GetTypeId() == TYPEID_PLAYER && m_bAchiev)
+			m_bAchiev = false;
+		
+		if (pVictim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+			m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
     }
 
     void JustDied(Unit* pKiller)
@@ -113,6 +121,19 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_HEIGAN, DONE);
+
+		if (m_bAchiev)
+		{
+			switch (currentDifficulty)
+			{
+			case RAID_DIFFICULTY_10MAN_NORMAL:
+				m_pInstance->DoCompleteAchievement(1996);
+				break;
+			case RAID_DIFFICULTY_25MAN_NORMAL:
+				m_pInstance->DoCompleteAchievement(2139);
+				break;
+			}
+		}
     }
 
     void JustReachedHome()

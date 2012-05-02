@@ -51,7 +51,9 @@ enum Spells
     SPELL_PLANAR_ANOMALIES_DMG                    = 57976,
 
     NPC_PLANAR_ANOMALY                            = 30879,
-    NPC_DRAGON                                    = 28276
+    NPC_DRAGON                                    = 28276,
+
+    NPC_DAILY_DUNGEON                             = 22852,
 };
 
 struct MANGOS_DLL_DECL boss_eregosAI : public ScriptedAI
@@ -144,6 +146,8 @@ struct MANGOS_DLL_DECL boss_eregosAI : public ScriptedAI
 
     void JustDied(Unit* killer)
     {
+        m_creature->SummonCreature(NPC_DAILY_DUNGEON, 1015.38f, 1044.77f, 605.62f, 0.74f, TEMPSUMMON_MANUAL_DESPAWN, 5000);
+
         m_creature->GetMap()->CreatureRelocation(m_creature, m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ()-100.0f, 0);
         m_creature->MonsterMoveWithSpeed(m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ()-100.0f, 26);
             DoScriptText(SAY_DEATH, m_creature);

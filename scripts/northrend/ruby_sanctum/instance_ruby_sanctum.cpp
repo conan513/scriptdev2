@@ -267,20 +267,18 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public BSWScriptedInstance
                                     break;
         }
 
-        if (uiData == DONE)
-        {
-            OUT_SAVE_INST_DATA;
-
-            std::ostringstream saveStream;
-
-            for(uint8 i = 0; i < MAX_ENCOUNTERS; ++i)
-                saveStream << m_auiEncounter[i] << " ";
-
-            strSaveData = saveStream.str();
-
-            SaveToDB();
-            OUT_SAVE_INST_DATA_COMPLETE;
-        }
+		if (uiData == DONE)
+		{
+			OUT_SAVE_INST_DATA;
+	
+	        std::ostringstream saveStream;
+			saveStream << m_auiEncounter[0] << " " << m_auiEncounter[1] << " " << m_auiEncounter[2] << " "
+	            << m_auiEncounter[3] << " " << m_auiEncounter[4] << " " << m_auiEncounter[5];
+	        strSaveData = saveStream.str();
+	
+	        SaveToDB();
+		    OUT_SAVE_INST_DATA_COMPLETE;
+		}
     }
 
     const char* Save()
@@ -335,28 +333,24 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public BSWScriptedInstance
 
     void Load(const char* chrIn)
     {
-        if (!chrIn)
-        {
-            OUT_LOAD_INST_DATA_FAIL;
-            return;
-        }
+		if (!chrIn)
+		{
+			OUT_LOAD_INST_DATA_FAIL;
+			return;
+		}
 
-        OUT_LOAD_INST_DATA(chrIn);
+		OUT_LOAD_INST_DATA(chrIn);
 
-        std::istringstream loadStream(chrIn);
+	    std::istringstream loadStream(chrIn);
+		loadStream >> m_auiEncounter[0] >> m_auiEncounter[1] >> m_auiEncounter[2] >> m_auiEncounter[3]
+			>> m_auiEncounter[4] >> m_auiEncounter[5];
 
         for(uint8 i = 0; i < MAX_ENCOUNTERS; ++i)
-        {
-            loadStream >> m_auiEncounter[i];
-
             if (m_auiEncounter[i] == IN_PROGRESS
                 || m_auiEncounter[i] == FAIL)
                 m_auiEncounter[i] = NOT_STARTED;
-        }
 
         m_auiEncounter[TYPE_XERESTRASZA] = NOT_STARTED;
-
-        OUT_LOAD_INST_DATA_COMPLETE;
         OpenAllDoors();
     }
 };

@@ -348,13 +348,13 @@ void instance_trial_of_the_crusader::SetData(uint32 uiType, uint32 uiData)
         break;
     }
 
-    if (IsEncounterInProgress()) 
+    if (IsEncounterInProgress())
     {
         DoCloseDoor(GO_WEST_PORTCULLIS);
         DoCloseDoor(GO_NORTH_PORTCULLIS);
         DoCloseDoor(GO_SOUTH_PORTCULLIS);
 
-        if (Creature* pBarrent = GetSingleCreatureFromStorage(NPC_BARRENT)) 
+        if (Creature* pBarrent = GetSingleCreatureFromStorage(NPC_BARRENT))
             pBarrent->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
     }
     else
@@ -363,7 +363,7 @@ void instance_trial_of_the_crusader::SetData(uint32 uiType, uint32 uiData)
         DoCloseDoor(GO_NORTH_PORTCULLIS);
         DoCloseDoor(GO_SOUTH_PORTCULLIS);
 
-        if (Creature* pBarrent = GetSingleCreatureFromStorage(NPC_BARRENT)) 
+        if (Creature* pBarrent = GetSingleCreatureFromStorage(NPC_BARRENT))
             pBarrent->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
     };
 

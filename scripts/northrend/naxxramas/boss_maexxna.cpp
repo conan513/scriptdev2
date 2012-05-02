@@ -137,6 +137,13 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
             m_pInstance->SetData(TYPE_MAEXXNA, DONE);
     }
 
+	void KilledUnit(Unit* Victim)
+    {
+		if (m_pInstance)
+			if (Victim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+				m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
+	}
+
     void JustReachedHome()
     {
         if (m_pInstance)

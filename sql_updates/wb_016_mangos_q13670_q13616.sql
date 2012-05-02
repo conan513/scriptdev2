@@ -1,0 +1,1 @@
+UPDATE `creature_template` SET `ScriptName` = 'npc_maiden_of_winter' WHERE `entry` = 33303;

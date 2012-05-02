@@ -31,16 +31,16 @@ EndScriptData */
 // talks
 enum
 {
-    SAY_INTRO                   = -1631001,
-    SAY_AGGRO                   = -1631002,
-    SAY_BONE_STORM              = -1631003,
-    SAY_BONE_SPIKE_1            = -1631004,
-    SAY_BONE_SPIKE_2            = -1631005,
-    SAY_BONE_SPIKE_3            = -1631006,
-    SAY_SLAY_1                  = -1631007,
-    SAY_SLAY_2                  = -1631008,
+    SAY_INTRO                   = -1631000,
+    SAY_AGGRO                   = -1631001,
+    SAY_BONE_STORM              = -1631002,
+    SAY_BONE_SPIKE_1            = -1631003,
+    SAY_BONE_SPIKE_2            = -1631004,
+    SAY_BONE_SPIKE_3            = -1631005,
+    SAY_SLAY_1                  = -1631006,
+    SAY_SLAY_2                  = -1631007,
+    SAY_BERSERK                 = -1631008,
     SAY_DEATH                   = -1631009,
-    SAY_BERSERK                 = -1631010,
 };
 
 // spells
@@ -191,7 +191,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public base_icc_bossAI
             pSummoned->SetInCombatWithZone();
             pSummoned->CastSpell(pSummoned, SPELL_COLDFLAME_AURA, true);
             pSummoned->SetSpeedRate(MOVE_WALK, 2.0f); // should be via DB
-            pSummoned->GetMotionMaster()->MovePoint(0, x, y, z, false);
+            pSummoned->GetMotionMaster()->MovePoint(0, x, y, z);
         }
     }
 
@@ -372,6 +372,7 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
         m_victimGuid.Clear();
         m_bEmerged = false;
         SetCombatMovement(false);
+        Reset();
     }
 
     instance_icecrown_spire* m_pInstance;
@@ -391,6 +392,9 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
         {
             pCreator->RemoveAurasDueToSpell(SPELL_IMPALED);
             m_creature->ForcedDespawn();
+
+            if (m_uiEmpaledTime > 8000)
+               m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_BONED, false);
         }
 
         if (m_pInstance && m_uiEmpaledTime > 8000)
@@ -426,20 +430,19 @@ CreatureAI* GetAI_boss_lord_marrowgar(Creature* pCreature)
 
 void AddSC_boss_lord_marrowgar()
 {
-    Script *newscript;
-    newscript = new Script;
-    newscript->Name = "boss_lord_marrowgar";
-    newscript->GetAI = &GetAI_boss_lord_marrowgar;
-    newscript->RegisterSelf();
+    Script *pNewScript;
+    pNewScript = new Script;
+    pNewScript->Name = "boss_lord_marrowgar";
+    pNewScript->GetAI = &GetAI_boss_lord_marrowgar;
+    pNewScript->RegisterSelf();
 
-    newscript = new Script;
-    newscript->Name = "mob_coldflame";
-    newscript->GetAI = &GetAI_mob_coldflame;
-    newscript->RegisterSelf();
+    pNewScript = new Script;
+    pNewScript->Name = "mob_coldflame";
+    pNewScript->GetAI = &GetAI_mob_coldflame;
+    pNewScript->RegisterSelf();
 
-    newscript = new Script;
-    newscript->Name = "mob_bone_spike";
-    newscript->GetAI = &GetAI_mob_bone_spike;
-    newscript->RegisterSelf();
-
+    pNewScript = new Script;
+    pNewScript->Name = "mob_bone_spike";
+    pNewScript->GetAI = &GetAI_mob_bone_spike;
+    pNewScript->RegisterSelf();
 }

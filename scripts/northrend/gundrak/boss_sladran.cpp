@@ -195,18 +195,23 @@ struct MANGOS_DLL_DECL boss_sladranAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
+    bool m_bAchievFailed;
 
     uint32 m_uiSummonTimer;
     uint32 m_uiPoisonNovaTimer;
     uint32 m_uiPowerfulBiteTimer;
     uint32 m_uiVenomBoltTimer;
+    uint32 m_uiCheckTimer;
 
     void Reset()
     {
+        m_bAchievFailed = false;
+
         m_uiSummonTimer       = m_bIsRegularMode ? 5000 : 3000;
         m_uiPoisonNovaTimer   = 22000;
         m_uiPowerfulBiteTimer = 10000;
         m_uiVenomBoltTimer    = 15000;
+        m_uiCheckTimer        = 1000;
     }
 
     void Aggro(Unit* pWho)
@@ -215,11 +220,15 @@ struct MANGOS_DLL_DECL boss_sladranAI : public ScriptedAI
         m_creature->SetInCombatWithZone();
         if (m_pInstance)
             m_pInstance->SetData(TYPE_SLADRAN, IN_PROGRESS);
+
+        if (!m_bIsRegularMode)
+            m_pInstance->SetData(TYPE_ACHIEV_SLADRAN, IN_PROGRESS);
     }
     void JustReachedHome()
     {
-        if(m_pInstance)
+        if (m_pInstance)
             m_pInstance->SetData(TYPE_SLADRAN, NOT_STARTED);
+            m_pInstance->SetData(TYPE_ACHIEV_SLADRAN, NOT_STARTED);
     }
     void KilledUnit(Unit* pVictim)
     {
@@ -228,6 +237,17 @@ struct MANGOS_DLL_DECL boss_sladranAI : public ScriptedAI
             case 0: DoScriptText(SAY_SLAY_1, m_creature); break;
             case 1: DoScriptText(SAY_SLAY_2, m_creature); break;
             case 2: DoScriptText(SAY_SLAY_3, m_creature); break;
+        }
+    }
+
+    void SpellHitTarget(Unit* pTarget, SpellEntry const* pSpellEntry)
+    {
+        switch (pSpellEntry->Id)
+        {
+            case SPELL_SNAKE_WRAP_H:
+                if (m_pInstance)
+                    m_pInstance->SetData(TYPE_ACHIEV_SLADRAN, FAIL);
+                break;
         }
     }
 
@@ -253,10 +273,41 @@ struct MANGOS_DLL_DECL boss_sladranAI : public ScriptedAI
         return *iter;
     }
 
+    void CheckAchievement()
+    {
+        Map* pMap = m_creature->GetMap();
+        Map::PlayerList const& pPlayers = pMap->GetPlayers();
+        if (!pPlayers.isEmpty())
+        {
+            for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
+            {
+                Unit *pTarget = itr->getSource();
+
+            if (pTarget->HasAura(SPELL_SNAKE_WRAP_H))
+            {
+                m_pInstance->SetData(TYPE_ACHIEV_SLADRAN, FAIL);
+                m_bAchievFailed = true;
+            }
+            else
+                m_bAchievFailed = false;
+            }
+        }
+    }
+
     void UpdateAI(const uint32 uiDiff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
+
+        if (!m_bAchievFailed)
+        {
+            if (m_uiCheckTimer < uiDiff)
+            {
+                CheckAchievement();
+                m_uiCheckTimer = 1000;
+            }
+            else m_uiCheckTimer -= uiDiff;
+        }
 
         if (m_uiPoisonNovaTimer < uiDiff)
         {

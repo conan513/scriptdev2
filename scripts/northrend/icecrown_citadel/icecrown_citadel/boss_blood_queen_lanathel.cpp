@@ -21,7 +21,6 @@ SDComment:  by michalpolko with special thanks to:
             mangosR2 team and all who are supporting us with feedback, testing and fixes
             TrinityCore for some info about spells IDs
             everybody whom I forgot to mention here ;)
-
 SDCategory: Icecrown Citadel
 EndScriptData */
 
@@ -59,21 +58,23 @@ enum BossSpells
     // others
     NPC_SWARMING_SHADOWS                = 38163,
 
-    THIRST_QUENCHED_AURA                    = 72154
+    THIRST_QUENCHED_AURA                = 72154
 };
 
 // talks
 enum
 {
-    SAY_AGGRO                   = -1631121,
-    SAY_BITE_1                  = -1631122,
-    SAY_BITE_2                  = -1631123,
-    SAY_SHADOWS                 = -1631124,
-    SAY_PACT                    = -1631125,
-    SAY_MC                      = -1631126,
-    SAY_AIR_PHASE               = -1631127,
-    SAY_BERSERK                 = -1631128,
-    SAY_DEATH                   = -1631129,
+    SAY_AGGRO                   = -1631321,
+    SAY_BITE_1                  = -1631322,
+    SAY_BITE_2                  = -1631323,
+    SAY_SHADOWS                 = -1631325,
+    SAY_PACT                    = -1631326,
+    SAY_MC                      = -1631329,
+    SAY_AIR_PHASE               = -1631327,
+    SAY_SLAY_1                  = -1631330,
+    SAY_SLAY_2                  = -1631331,
+    SAY_BERSERK                 = -1631332,
+    SAY_DEATH                   = -1631333,
 };
 
 static Locations QueenLocs[]=
@@ -100,6 +101,8 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public base_icc_bossAI
         Reset();
     }
 
+    ObjectGuid HasPlayerItem;
+
     uint32 m_uiPhase;
 
     uint32 m_uiBloodMirrorTimer;
@@ -110,14 +113,22 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public base_icc_bossAI
     uint32 m_uiPactTimer;
     uint32 m_uiSwarmingShadowsTimer;
     uint32 m_uiDeliriousSlashTimer;
+    uint32 m_uiQuestTimer;
+    uint32 m_uiCountItem;
+    uint32 m_uiQuestTimer1;
 
     bool m_bHasBitten;
+    bool m_bQuestCheck;
+    bool m_uiQuest;
 
     void Reset()
     {
         m_uiPhase               = PHASE_GROUND;
+        HasPlayerItem.Clear();
 
         m_bHasBitten            = false; // for Vampiric Bite
+        m_bQuestCheck           = true;
+        m_uiQuest               = true;
 
         m_uiPhaseTimer          = 2 * MINUTE * IN_MILLISECONDS;
         m_uiEnrageTimer         = (5 * MINUTE + 30) * IN_MILLISECONDS;
@@ -127,6 +138,8 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public base_icc_bossAI
         m_uiBloodboltTimer      = urand(15000, 20000);
         m_uiPactTimer           = urand(20000, 25000);
         m_uiSwarmingShadowsTimer= urand(30000, 35000);
+        m_uiQuestTimer          = 6 * MINUTE * IN_MILLISECONDS; //6 min.
+        m_uiQuestTimer1         = 1800000;
     }
 
     void JustReachedHome()
@@ -140,14 +153,22 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public base_icc_bossAI
 
     void KilledUnit(Unit* pVictim)
     {
-        // entry missing in sd2 database
-        if (pVictim->GetTypeId() == TYPEID_PLAYER)
-            m_creature->MonsterYell("Is that all you got?", 0);
+        switch (urand(0,1))
+        {
+            case 0:
+               DoScriptText(SAY_SLAY_1, m_creature, pVictim);
+               break;
+            case 1:
+               DoScriptText(SAY_SLAY_2, m_creature, pVictim);
+               break;
+            default:
+                break;
+        }
     }
 
     void Aggro(Unit* pWho)
     {
-        if (m_pInstance) 
+        if (m_pInstance)
             m_pInstance->SetData(TYPE_LANATHEL, IN_PROGRESS);
 
         DoScriptText(SAY_AGGRO, m_creature);
@@ -158,12 +179,59 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public base_icc_bossAI
     void JustDied(Unit *pKiller)
     {
         if(m_pInstance)
-	{
+        {
             m_pInstance->SetData(TYPE_LANATHEL, DONE);
-	    RemoveAurasFromAllPlayers();
-	}
+            RemoveAurasFromAllPlayers();
+        }
 
         DoScriptText(SAY_DEATH, m_creature);
+
+        if (m_bQuestCheck && m_bIs25Man)
+        {
+            Map* pMap = m_creature->GetMap();
+            Map::PlayerList const& pPlayers = pMap->GetPlayers();
+            if (!pPlayers.isEmpty())
+            {
+                for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
+                {
+                    if (Unit *pTarget = itr->getSource())
+                    {
+                        if (((Player*)pTarget)->HasItemCount(49888, 1) && pTarget->GetTypeId() == TYPEID_PLAYER)
+                        {
+                            ++m_uiCountItem;
+                            HasPlayerItem = pTarget->GetObjectGuid();
+                        }
+                    }
+                }
+            }
+            if (m_uiCountItem == 1)
+                if (Player* pPlayer = m_creature->GetMap()->GetPlayer(HasPlayerItem))
+                    if (pPlayer->GetQuestStatus(24756) == QUEST_STATUS_INCOMPLETE)
+                        pPlayer->CompleteQuest(24756);
+        }
+
+        if (m_uiQuest)
+        {
+            if (Creature* pCreature = GetClosestCreatureWithEntry(m_creature, 38558, 60.0f))
+                if (!pCreature->isAlive())
+                    return;
+
+             Map* pMap = m_creature->GetMap();
+             Map::PlayerList const &PlayerList = pMap->GetPlayers();
+             if (PlayerList.isEmpty())
+                 return;
+
+             for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+                 if (Player* pPlayer = i->getSource())
+                     if (pPlayer->isAlive() && pPlayer->GetQuestStatus(24874) == QUEST_STATUS_INCOMPLETE && (m_uiMapDifficulty == RAID_DIFFICULTY_10MAN_NORMAL || m_uiMapDifficulty == RAID_DIFFICULTY_10MAN_HEROIC))
+                         pPlayer->KilledMonsterCredit(38558);
+                     else if (pPlayer->isAlive() && pPlayer->GetQuestStatus(24879) == QUEST_STATUS_INCOMPLETE && (m_uiMapDifficulty == RAID_DIFFICULTY_25MAN_NORMAL || m_uiMapDifficulty == RAID_DIFFICULTY_25MAN_HEROIC))
+                         pPlayer->KilledMonsterCredit(39123);
+        } else {
+            if (Creature* pCreature = GetClosestCreatureWithEntry(m_creature, 38558, 60.0f))
+                if (pCreature->isAlive())
+                    pCreature->DealDamage(pCreature, pCreature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
+        }
     }
 
     void MovementInform(uint32 uiMovementType, uint32 uiData)
@@ -185,7 +253,7 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public base_icc_bossAI
                     m_creature->SetLevitate(true);
                     m_creature->SetByteFlag(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_UNK_2);
 
-                    m_creature->GetMotionMaster()->MovePoint(POINT_CENTER_AIR, QueenLocs[1].x, QueenLocs[1].y, QueenLocs[1].z, false);
+                    m_creature->GetMotionMaster()->MovePoint(POINT_CENTER_AIR, QueenLocs[1].x, QueenLocs[1].y, QueenLocs[1].z);
                 }
             }
             else
@@ -311,6 +379,14 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public base_icc_bossAI
         }
         else
             m_uiEnrageTimer -= uiDiff;
+
+        if (m_uiQuestTimer >= uiDiff)
+            m_uiQuestTimer -= uiDiff;
+        else m_bQuestCheck = false;
+
+        if (m_uiQuestTimer1 >= uiDiff)
+            m_uiQuestTimer1 -= uiDiff;
+        else m_uiQuest = false;
 
         switch (m_uiPhase)
         {
@@ -485,15 +561,15 @@ CreatureAI* GetAI_mob_swarming_shadows(Creature* pCreature)
 
 void AddSC_boss_blood_queen_lanathel()
 {
-    Script *newscript;
+    Script *pNewScript;
 
-    newscript = new Script;
-    newscript->Name = "boss_blood_queen_lanathel";
-    newscript->GetAI = &GetAI_boss_blood_queen_lanathel;
-    newscript->RegisterSelf();
+    pNewScript = new Script;
+    pNewScript->Name = "boss_blood_queen_lanathel";
+    pNewScript->GetAI = &GetAI_boss_blood_queen_lanathel;
+    pNewScript->RegisterSelf();
 
-    newscript = new Script;
-    newscript->Name = "mob_swarming_shadows";
-    newscript->GetAI = &GetAI_mob_swarming_shadows;
-    newscript->RegisterSelf();
+    pNewScript = new Script;
+    pNewScript->Name = "mob_swarming_shadows";
+    pNewScript->GetAI = &GetAI_mob_swarming_shadows;
+    pNewScript->RegisterSelf();
 }

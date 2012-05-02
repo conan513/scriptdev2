@@ -265,7 +265,7 @@ void instance_icecrown_spire::OnObjectCreate(GameObject* pGo)
         case GO_GREEN_DRAGON_DOOR_1:
         case GO_BLOODWING_DOOR:
         case GO_ORATORY_DOOR:
-	case GO_SINDRAGOSA_ICE_WALL:
+        case GO_SINDRAGOSA_ICE_WALL:
             m_mGoEntryGuidStore[pGo->GetEntry()] = pGo->GetObjectGuid();
             break;
     }
@@ -305,6 +305,17 @@ void instance_icecrown_spire::SetData(uint32 uiType, uint32 uiData)
             }
             break;
          case TYPE_FLIGHT_WAR:
+            if (uiData == DONE && m_auiEncounter[TYPE_FLIGHT_WAR] != DONE )
+            {
+                if (GameObject* pChest = GetSingleGameObjectFromStorage(m_uiGunshipArmoryA_ID))
+                    if (pChest && !pChest->isSpawned())
+                        pChest->SetRespawnTime(7*DAY);
+
+
+                if (GameObject* pChest = GetSingleGameObjectFromStorage(m_uiGunshipArmoryH_ID))
+                    if (pChest && !pChest->isSpawned())
+                        pChest->SetRespawnTime(7*DAY);
+            }
             m_auiEncounter[3] = uiData;
             break;
          case TYPE_SAURFANG:
@@ -455,7 +466,7 @@ void instance_icecrown_spire::SetData(uint32 uiType, uint32 uiData)
             m_auiEncounter[TYPE_SINDRAGOSA] = uiData;
 
             DoUseDoorOrButton(GO_SINDRAGOSA_ENTRANCE);
-	    DoUseDoorOrButton(GO_SINDRAGOSA_ICE_WALL);
+            DoUseDoorOrButton(GO_SINDRAGOSA_ICE_WALL);
 
             if (uiData == DONE)
             {
@@ -518,7 +529,7 @@ uint32 instance_icecrown_spire::GetData(uint32 uiType)
              return 0;
     }
 }
-bool instance_icecrown_spire::CheckAchievementCriteriaMeet(uint32 uiCriteriaId, Player const* pSource, Unit const* pTarget, uint32 uiMiscValue1 /* = 0*/)
+bool instance_icecrown_spire::CheckAchievementCriteriaMeet(uint32 uiCriteriaId, const Player *pSource, const Unit *pTarget, uint32 uiMiscValue1)
 {
     switch(uiCriteriaId)
     {

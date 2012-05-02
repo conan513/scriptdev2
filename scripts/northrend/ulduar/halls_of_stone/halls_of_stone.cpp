@@ -543,8 +543,13 @@ struct MANGOS_DLL_DECL npc_brann_hosAI : public npc_escortAI
                     if (pPlayer)
                         pPlayer->GroupEventHappens(QUEST_HALLS_OF_STONE, m_creature);
 
+					if (!m_bIsRegularMode)
+						m_pInstance->DoCompleteAchievement(496);
+					else m_pInstance->DoCompleteAchievement(485);
+
                     m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
                     m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+
 
                     m_uiPhaseTimer = 180000;
                     break;

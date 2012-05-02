@@ -90,7 +90,7 @@ enum BossSpells
 };
 
 struct MANGOS_DLL_DECL boss_anubarak_trialAI : public BSWScriptedAI
-{   
+{
     boss_anubarak_trialAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
@@ -124,14 +124,14 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public BSWScriptedAI
 
     Unit* pTarget;
 
-    void Reset() 
+    void Reset()
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
            return;
 
         intro                        = true;
         pTarget                      = NULL;
- 
+
         m_uiEventStep                = 0;
         m_uiNextEventTimer           = 0;
 
@@ -166,9 +166,9 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public BSWScriptedAI
 
         DoScriptText(SAY_SLAY_1 - urand(0, 1),m_creature,pVictim);
     }
-    void MoveInLineOfSight(Unit* pWho) 
+    void MoveInLineOfSight(Unit* pWho)
     {
-        if (!intro) 
+        if (!intro)
             return;
 
         DoScriptText(SAY_INTRO, m_creature);
@@ -195,7 +195,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public BSWScriptedAI
 
     void JustDied(Unit* pKiller)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         m_pInstance->SetData(TYPE_COUNTER, m_pInstance->GetData(TYPE_COUNTER));
@@ -206,7 +206,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public BSWScriptedAI
 
     void Aggro(Unit* pWho)
     {
-        if (!intro) 
+        if (!intro)
             DoScriptText(SAY_AGGRO, m_creature);
 
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -224,7 +224,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public BSWScriptedAI
             {
                 switch (m_uiEventStep)
                 {
-                    case 0: 
+                    case 0:
                         if (m_uiFrostSphereOneTimer <= uiDiff)
                         {
                             if (Creature *pFrostSphere = m_creature->SummonCreature(NPC_FROST_SPHERE, SpawnLoc[29].x + urand(5, 15), SpawnLoc[29].y - urand(10, 20), SpawnLoc[29].z + 10.0f, 0, TEMPSUMMON_TIMED_DESPAWN, 30000))
@@ -235,7 +235,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public BSWScriptedAI
 
                             if (Creature *pFrostSphere = m_creature->SummonCreature(NPC_FROST_SPHERE, SpawnLoc[31].x + urand(5, 15), SpawnLoc[31].y - urand(10, 20), SpawnLoc[31].z + 10.0f, 0, TEMPSUMMON_TIMED_DESPAWN, 30000))
                                 pFrostSphere->CastSpell(m_creature, SPELL_FROST_VISUAL, false);
-                            
+
                             if (Creature *pFrostSphere = m_creature->SummonCreature(NPC_FROST_SPHERE, SpawnLoc[32].x + urand(5, 15), SpawnLoc[32].y - urand(10, 20), SpawnLoc[32].z + 10.0f, 0, TEMPSUMMON_TIMED_DESPAWN, 30000))
                                 pFrostSphere->CastSpell(m_creature, SPELL_FROST_VISUAL, false);
 
@@ -247,7 +247,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public BSWScriptedAI
 
                             if (Creature *pFrostSphere = m_creature->SummonCreature(NPC_FROST_SPHERE, SpawnLoc[51].x + urand(5, 15), SpawnLoc[51].y - urand(10, 20), SpawnLoc[51].z + 10.0f, 0, TEMPSUMMON_TIMED_DESPAWN, 30000))
                                 pFrostSphere->CastSpell(m_creature, SPELL_FROST_VISUAL, false);
-                            
+
                             if (Creature *pFrostSphere = m_creature->SummonCreature(NPC_FROST_SPHERE, SpawnLoc[52].x + urand(5, 15), SpawnLoc[52].y - urand(10, 20), SpawnLoc[52].z + 10.0f, 0, TEMPSUMMON_TIMED_DESPAWN, 30000))
                                 pFrostSphere->CastSpell(m_creature, SPELL_FROST_VISUAL, false);
 
@@ -257,7 +257,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public BSWScriptedAI
                             m_uiFrostSphereOneTimer -= uiDiff;
 
                         if (m_uiPoundTimer <= uiDiff)
-                        {   
+                        {
                             if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_POUND) == CAST_OK)
                                 m_uiPoundTimer = 20000;
                         }
@@ -285,7 +285,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public BSWScriptedAI
                             {
                                 m_creature->SummonCreature(NPC_BURROWER, x + 3.0f, y + 3.0f, z, 0, TEMPSUMMON_MANUAL_DESPAWN, 60000);
                                 m_creature->SummonCreature(NPC_BURROWER, x + 3.0f, y + 3.0f, z, 0, TEMPSUMMON_MANUAL_DESPAWN, 60000);
-                            }                    
+                            }
                             m_uiSummonBurrowerTimer = 45000;
                         }
                         else
@@ -301,7 +301,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public BSWScriptedAI
                             m_uiSubmergeAnubTimer -= uiDiff;
 
                         break;
-                    case 1: 
+                    case 1:
                         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         DoScriptText(SAY_SUBMERGE, m_creature);
@@ -343,7 +343,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public BSWScriptedAI
 
                             if (Creature *pFrostSphere = m_creature->SummonCreature(NPC_FROST_SPHERE, SpawnLoc[31].x + urand(5, 15), SpawnLoc[31].y - urand(10, 20), SpawnLoc[31].z + 10.0f, 0, TEMPSUMMON_TIMED_DESPAWN, 20000))
                                 pFrostSphere->CastSpell(m_creature, SPELL_FROST_VISUAL, false);
-                            
+
                             if (Creature *pFrostSphere = m_creature->SummonCreature(NPC_FROST_SPHERE, SpawnLoc[32].x + urand(5, 15), SpawnLoc[32].y - urand(10, 20), SpawnLoc[32].z + 10.0f, 0, TEMPSUMMON_TIMED_DESPAWN, 40000))
                                 pFrostSphere->CastSpell(m_creature, SPELL_FROST_VISUAL, false);
 
@@ -355,7 +355,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public BSWScriptedAI
 
                             if (Creature *pFrostSphere = m_creature->SummonCreature(NPC_FROST_SPHERE, SpawnLoc[51].x + urand(5, 15), SpawnLoc[51].y - urand(10, 20), SpawnLoc[51].z + 10.0f, 0, TEMPSUMMON_TIMED_DESPAWN, 30000))
                                 pFrostSphere->CastSpell(m_creature, SPELL_FROST_VISUAL, false);
-                            
+
                             if (Creature *pFrostSphere = m_creature->SummonCreature(NPC_FROST_SPHERE, SpawnLoc[52].x + urand(5, 15), SpawnLoc[52].y - urand(10, 20), SpawnLoc[52].z + 10.0f, 0, TEMPSUMMON_TIMED_DESPAWN, 30000))
                                 pFrostSphere->CastSpell(m_creature, SPELL_FROST_VISUAL, false);
 
@@ -416,14 +416,14 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public BSWScriptedAI
 
                         m_uiEventStep = 0;
                         break;
-                    case 4: 
+                    case 4:
                         m_creature->CastSpell(m_creature, SPELL_LEECHING_SWARM, false);
                         DoScriptText(SAY_LOW_HEALTH, m_creature);
                         DoScriptText(EMOTE_LEECHING_SWARM, m_creature);
                         m_uiEventStep = 5;
                         NextStep(3000);
                         break;
-                    case 5: 
+                    case 5:
                         if (m_uiPoundTimer <= uiDiff)
                         {
                             if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_POUND) == CAST_OK)
@@ -431,7 +431,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public BSWScriptedAI
                         }
                         else
                             m_uiPoundTimer -= uiDiff;
-        
+
                         if (m_uiColdTimer <= uiDiff)
                         {
                             if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_COLD) == CAST_OK)
@@ -447,16 +447,16 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public BSWScriptedAI
                                 float x, y, z;
                                 m_creature->GetPosition(x, y, z);
                                 m_creature->SummonCreature(NPC_BURROWER, x + 3.0f, y + 3.0f, z, 0, TEMPSUMMON_MANUAL_DESPAWN, 60000);
-    
+
                                 if (m_bIs25Man || m_bIsHeroic)
                                     m_creature->SummonCreature(NPC_BURROWER, x + 3.0f, y + 3.0f, z, 0, TEMPSUMMON_MANUAL_DESPAWN, 60000);
-    
-                                if (m_bIs25Man && m_bIsHeroic)    
+
+                                if (m_bIs25Man && m_bIsHeroic)
                                 {
                                     m_creature->SummonCreature(NPC_BURROWER, x + 3.0f, y + 3.0f, z, 0, TEMPSUMMON_MANUAL_DESPAWN, 60000);
                                     m_creature->SummonCreature(NPC_BURROWER, x + 3.0f, y + 3.0f, z, 0, TEMPSUMMON_MANUAL_DESPAWN, 60000);
-                                }                    
-                                m_uiSummonBurrowerTimer = 45000;    
+                                }
+                                m_uiSummonBurrowerTimer = 45000;
                             }
                             else
                                 m_uiSummonBurrowerTimer -= uiDiff;
@@ -472,7 +472,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public BSWScriptedAI
                 else
                     m_uiBerserkTimer -= uiDiff;
 
-                if (m_creature->GetHealthPercent() < 30.0f && m_uiEventStep == 0) 
+                if (m_creature->GetHealthPercent() < 30.0f && m_uiEventStep == 0)
                     m_uiEventStep = 4;
 
             }
@@ -519,7 +519,7 @@ struct MANGOS_DLL_DECL mob_swarm_scarabAI : public BSWScriptedAI
 
     void KilledUnit(Unit* pVictim)
     {
-        if (pVictim->GetTypeId() != TYPEID_PLAYER) 
+        if (pVictim->GetTypeId() != TYPEID_PLAYER)
             return;
     }
 
@@ -532,13 +532,13 @@ struct MANGOS_DLL_DECL mob_swarm_scarabAI : public BSWScriptedAI
 
     void Aggro(Unit *who)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (m_pInstance && m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS) 
+        if (m_pInstance && m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS)
             m_creature->ForcedDespawn();
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -596,7 +596,7 @@ struct MANGOS_DLL_DECL mob_nerubian_borrowerAI : public BSWScriptedAI
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
         m_bIsSubmerged = false;
-  
+
         m_uiExposeWeaknessTimer    = 8000;
         m_uiSpiderFrenzyTimer      = 0;
         m_uiShadowStrikeTimer      = 5000;
@@ -605,7 +605,7 @@ struct MANGOS_DLL_DECL mob_nerubian_borrowerAI : public BSWScriptedAI
 
     void KilledUnit(Unit* pVictim)
     {
-        if (pVictim->GetTypeId() != TYPEID_PLAYER) 
+        if (pVictim->GetTypeId() != TYPEID_PLAYER)
             return;
     }
 
@@ -619,13 +619,13 @@ struct MANGOS_DLL_DECL mob_nerubian_borrowerAI : public BSWScriptedAI
 
     void Aggro(Unit *who)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (m_pInstance && m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS) 
+        if (m_pInstance && m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS)
             m_creature->ForcedDespawn();
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -653,7 +653,7 @@ struct MANGOS_DLL_DECL mob_nerubian_borrowerAI : public BSWScriptedAI
             m_uiSpiderFrenzyTimer -= uiDiff;
 
         if (m_bIsHeroic)
-        {   
+        {
             if (m_uiShadowStrikeTimer <= uiDiff)
             {
                 m_creature->CastSpell(m_creature->getVictim(), SPELL_SHADOW_STRIKE, false);
@@ -723,7 +723,7 @@ struct MANGOS_DLL_DECL mob_frost_sphereAI : public BSWScriptedAI
 
     void Aggro(Unit *who)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -744,7 +744,7 @@ struct MANGOS_DLL_DECL mob_frost_sphereAI : public BSWScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (!m_pInstance || m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS) 
+        if (!m_pInstance || m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS)
             m_creature->ForcedDespawn();
     }
 };
@@ -807,22 +807,22 @@ struct MANGOS_DLL_DECL mob_anubarak_spikeAI : public BSWScriptedAI
 
     void Aggro(Unit *who)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (m_pInstance && m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS) 
+        if (m_pInstance && m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS)
             m_creature->ForcedDespawn();
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
         if (m_uiIncreaseSpeedTimer <= uiDiff)
-        {   
+        {
             switch (m_uiEventStep)
-            {   
+            {
                  case 0:
                       m_creature->SetSpeedRate(MOVE_RUN, 0.75f);
                       m_creature->CastSpell(m_creature, SPELL_PURSUING_SPIKE_LOW, false);

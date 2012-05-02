@@ -44,9 +44,9 @@ enum
     SPELL_HOPELESS           = 29125
 };
 
-struct MANGOS_DLL_DECL boss_razuviousAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_razuviousAI : public BSWScriptedAI
 {
-    boss_razuviousAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_razuviousAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
@@ -71,6 +71,9 @@ struct MANGOS_DLL_DECL boss_razuviousAI : public ScriptedAI
 
     void KilledUnit(Unit* Victim)
     {
+		if (Victim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+			m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
+
         if (urand(0, 3))
             return;
 

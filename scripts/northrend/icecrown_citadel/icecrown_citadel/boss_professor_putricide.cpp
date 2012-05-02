@@ -115,21 +115,21 @@ enum BossSpells
 // talks
 enum
 {
-    SAY_AGGRO                   = -1631092,
-    SAY_AIRLOCK                 = -1631093,
-    SAY_PHASE_CHANGE            = -1631094,
-    SAY_TRANSFORM_1             = -1631095,
-    SAY_TRANSFORM_2             = -1631096,
-    SAY_SLAY_1                  = -1631097,
-    SAY_SLAY_2                  = -1631098,
-    SAY_BERSERK                 = -1631099,
-    SAY_DEATH                   = -1631100,
+    SAY_AGGRO                   = -1631240,
+    SAY_AIRLOCK                 = -1631249,
+    SAY_PHASE_CHANGE            = -1631248,
+    SAY_TRANSFORM_1             = -1631246,
+    SAY_TRANSFORM_2             = -1631247,
+    SAY_SLAY_1                  = -1631241,
+    SAY_SLAY_2                  = -1631242,
+    SAY_BERSERK                 = -1631244,
+    SAY_DEATH                   = -1631243,
 
     // during other fights
-    SAY_SLIME_FLOW_1            = -1631074,
-    SAY_SLIME_FLOW_2            = -1631075,
-    SAY_BLIGHT                  = -1631083,
-    SAY_FESTERGUT_DEATH         = -1631091,
+    SAY_SLIME_FLOW_1            = -1631220,
+    SAY_SLIME_FLOW_2            = -1631201,
+    SAY_BLIGHT                  = -1631245,
+    SAY_FESTERGUT_DEATH         = -1631202,
     SAY_ROTFACE_DEATH           = -1631080,
 };
 
@@ -289,6 +289,8 @@ struct MANGOS_DLL_DECL boss_professor_putricideAI : public base_icc_bossAI
             pKit->RemoveAllPassengers();
             pKit->Reset();
         }
+//        doRemoveFromAll(SPELL_GAS_VARIABLE);
+//        doRemoveFromAll(SPELL_GAS_VARIABLE_GAS);
 
         // some weird bug with not regenerating health after wipe ;/
         m_creature->SetHealth(m_creature->GetMaxHealth());
@@ -765,12 +767,13 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public ScriptedAI
                 m_bIsVariable = true;
             }
         }
-        m_creature->SetSpeedRate(MOVE_RUN, 1.0f);
+        m_creature->SetSpeedRate(MOVE_RUN, 0.7f);
         Reset();
     }
 
     ScriptedInstance *m_pInstance;
 
+    Unit *pTarget;
     uint32 m_uiWaitTimer;
     uint32 m_uiMoveTimer;
     bool m_bIsWaiting;
@@ -783,6 +786,7 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public ScriptedAI
         m_uiMoveTimer   = 4000;
         SetCombatMovement(false);
         DoCastSpellIfCan(m_creature, SPELL_GASEOUS_BLOAT_VISUAL, CAST_TRIGGERED);
+        pTarget = NULL;
     }
 
     void DamageTaken(Unit *pDealer, uint32 &uiDamage)
@@ -831,27 +835,27 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public ScriptedAI
         {
             if (m_uiWaitTimer <= uiDiff)
             {
-                m_uiWaitTimer = 5000;
-
                 // pick target
                 if (m_pInstance)
                 {
                     if (Creature *pProf = m_pInstance->GetSingleCreatureFromStorage(NPC_PROFESSOR_PUTRICIDE))
                     {
-                        Unit *pTarget = NULL;
+                        Unit* pSelectedTarget = pProf->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1, SPELL_GASEOUS_BLOAT, SELECT_FLAG_PLAYER);
+                        if (!pSelectedTarget)
+                            pSelectedTarget = pProf->getVictim();
 
-                        pTarget = pProf->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1, SPELL_GASEOUS_BLOAT, SELECT_FLAG_PLAYER);
-                        if (!pTarget)
-                            pTarget = pProf->getVictim();
-
-                        if (pTarget)
+                        if (pSelectedTarget)
                         {
+                            pTarget = pSelectedTarget;
                             if (DoCastSpellIfCan(pTarget, SPELL_GASEOUS_BLOAT) == CAST_OK)
                             {
                                 DoResetThreat();
                                 m_creature->AddThreat(pTarget, 1000000.0f);
+                                m_uiWaitTimer = 5000;
                             }
                         }
+                        else
+                            return;
                     }
                 }
             }
@@ -863,7 +867,7 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public ScriptedAI
                 SetCombatMovement(true);
                 m_bIsWaiting = false;
                 m_creature->GetMotionMaster()->Clear();
-                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                m_creature->GetMotionMaster()->MoveChase(pTarget);
             }
             else
                 m_uiMoveTimer -= uiDiff;
@@ -874,21 +878,29 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public ScriptedAI
         {
             // follow the victim - problems with updating the moving while channeling the spell
             m_creature->GetMotionMaster()->Clear();
-            m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+            m_creature->GetMotionMaster()->MoveChase(pTarget);
         }
 
-        if (m_creature->GetDistance(m_creature->getVictim()) <= 4.0f)
+        if(!pTarget || !pTarget->isAlive())
         {
-            m_creature->getVictim()->CastSpell(m_creature->getVictim(), SPELL_EXPUNGED_GAS, true);
+            m_bIsWaiting = true;
+            m_uiWaitTimer = 0;
+            return;
+        }
+
+        if (m_creature->GetDistance(pTarget) <= 4.0f)
+        {
+            m_creature->getVictim()->CastSpell(pTarget, SPELL_EXPUNGED_GAS, true);
             m_creature->InterruptSpell(CURRENT_CHANNELED_SPELL);
             SetCombatMovement(false);
             m_creature->GetMotionMaster()->Clear();
             m_bIsWaiting = true;
-            m_uiWaitTimer = 2000;
+            m_uiWaitTimer = 4000;
             m_uiMoveTimer = 5000;
         }
     }
 };
+
 CreatureAI* GetAI_mob_icc_gas_cloud(Creature* pCreature)
 {
     return new mob_icc_gas_cloudAI(pCreature);
@@ -911,10 +923,10 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public base_icc_bossAI
                 m_bIsVariable = true;
             }
         }
-        m_creature->SetSpeedRate(MOVE_RUN, 1.0f);
+        m_creature->SetSpeedRate(MOVE_RUN, 0.7f);
         Reset();
     }
-
+    Unit *pTarget;
     uint32 m_uiWaitTimer;
     uint32 m_uiMoveTimer;
     bool m_bIsWaiting;
@@ -926,6 +938,7 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public base_icc_bossAI
         m_uiWaitTimer   = 1000;
         m_uiMoveTimer   = 4000;
         SetCombatMovement(false);
+        pTarget = NULL;
     }
 
     void DamageTaken(Unit *pDealer, uint32 &uiDamage)
@@ -974,27 +987,27 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public base_icc_bossAI
         {
             if (m_uiWaitTimer <= uiDiff)
             {
-                m_uiWaitTimer = 5000;
-
                 // pick target
                 if (m_pInstance)
                 {
                     if (Creature *pProf = m_pInstance->GetSingleCreatureFromStorage(NPC_PROFESSOR_PUTRICIDE))
                     {
-                        Unit *pTarget = NULL;
+                        Unit* pSelectedTarget = pProf->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1, SPELL_OOZE_ADHESIVE, SELECT_FLAG_PLAYER);
+                        if (!pSelectedTarget)
+                            pSelectedTarget = pProf->getVictim();
 
-                        pTarget = pProf->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1, SPELL_OOZE_ADHESIVE, SELECT_FLAG_PLAYER);
-                        if (!pTarget)
-                            pTarget = pProf->getVictim();
-
-                        if (pTarget)
+                        if (pSelectedTarget)
                         {
+                            pTarget = pSelectedTarget;
                             if (DoCastSpellIfCan(pTarget, SPELL_OOZE_ADHESIVE) == CAST_OK)
                             {
                                 DoResetThreat();
                                 m_creature->AddThreat(pTarget, 1000000.0f);
+                                m_uiWaitTimer = 5000;
                             }
                         }
+                        else
+                            return;
                     }
                 }
             }
@@ -1020,10 +1033,17 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public base_icc_bossAI
             m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
         }
 
-        if (m_creature->GetDistance(m_creature->getVictim()) <= 4.0f)
+        if(!pTarget || !pTarget->isAlive())
+        {
+            m_bIsWaiting = true;
+            m_uiWaitTimer = 0;
+            return;
+        }
+
+        if (m_creature->GetDistance(pTarget) <= 4.0f)
         {
             m_creature->InterruptSpell(CURRENT_CHANNELED_SPELL);
-            DoCastSpellIfCan(m_creature->getVictim(), SPELL_OOZE_ERUPTION);
+            DoCastSpellIfCan(pTarget, SPELL_OOZE_ERUPTION);
             SetCombatMovement(false);
             m_creature->GetMotionMaster()->Clear();
             m_bIsWaiting = true;
@@ -1082,11 +1102,13 @@ struct MANGOS_DLL_DECL mob_ooze_puddleAI : public ScriptedAI
     ScriptedInstance *m_pInstance;
 
     void Reset(){}
-    void AttackStart(Unit *pWho){}
+    void Aggro(Unit* who)
+    {m_creature->CombatStop(); }
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (m_pInstance)
+        //if (m_pInstance)
+        if (false)
         {
             uint32 data = m_pInstance->GetData(TYPE_PUTRICIDE);
             if (data == SPECIAL)

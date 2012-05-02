@@ -86,6 +86,7 @@ struct MANGOS_DLL_DECL boss_zuramatAI : public ScriptedAI
             m_pInstance->SetData(TYPE_ZURAMAT, FAIL);
             m_pInstance->SetData(TYPE_EVENT, FAIL);
             m_pInstance->SetData(TYPE_RIFT, FAIL);
+			m_pInstance->SetData(TYPE_ACHIEV_ZURAMAT, IN_PROGRESS);
 
             if(m_pInstance->GetData(TYPE_PORTAL6) == IN_PROGRESS) 
                 m_pInstance->SetData(TYPE_PORTAL6, NOT_STARTED);
@@ -204,6 +205,13 @@ struct MANGOS_DLL_DECL boss_zuramatAI : public ScriptedAI
         }
         else m_uiSummonVoidSentry_Timer -= uiDiff;
 
+		if (m_bIsRegularMode)
+            m_pInstance->SetData(TYPE_ACHIEV_ZURAMAT, FAIL);
+
+        if (Creature *pVoid = m_pInstance->GetSingleCreatureFromStorage(NPC_VOID_SENTRY))
+            if (!pVoid->isAlive())
+                 m_pInstance->SetData(TYPE_ACHIEV_ZURAMAT, FAIL);
+
         DoMeleeAttackIfReady();
     }
 
@@ -212,10 +220,14 @@ struct MANGOS_DLL_DECL boss_zuramatAI : public ScriptedAI
         DoScriptText(SAY_DEATH, m_creature);
         DespawnSentry();
 
-        if (m_pInstance){
+        if (m_pInstance)
+        {
             m_pInstance->SetData(TYPE_ZURAMAT, DONE);
-        if(m_pInstance->GetData(TYPE_PORTAL6) == IN_PROGRESS) {m_pInstance->SetData(TYPE_PORTAL6, DONE);}
-            else {m_pInstance->SetData(TYPE_PORTAL12, DONE);}
+
+            if(m_pInstance->GetData(TYPE_PORTAL6) == IN_PROGRESS) 
+               m_pInstance->SetData(TYPE_PORTAL6, DONE);
+            else 
+               m_pInstance->SetData(TYPE_PORTAL12, DONE);
         }
     }
 

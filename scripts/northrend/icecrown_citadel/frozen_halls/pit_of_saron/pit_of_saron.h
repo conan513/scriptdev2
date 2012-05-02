@@ -46,7 +46,7 @@ enum
     NPC_SLAVE_ALY_1                 = 37572,
     NPC_SLAVE_ALY_2                 = 37575,
     NPC_SLAVE_ALY_3                 = 37576,
-    NPC_MARTIN_VICTUS_SLAVE         = 37591, 
+    NPC_MARTIN_VICTUS_SLAVE         = 37591,
     NPC_MARTIN_VICTUS_END           = 37580,
     NPC_GORKUN_IRONSKULL_SLAVE      = 37592,
     NPC_GORKUN_IRONSKULL_END        = 37581,
@@ -78,6 +78,6 @@ class MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
         std::string strInstData;
 
 };
- 
+
 
 #endif

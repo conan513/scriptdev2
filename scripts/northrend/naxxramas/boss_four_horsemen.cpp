@@ -139,6 +139,8 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
     void KilledUnit(Unit* Victim)
     {
         DoScriptText(SAY_BLAU_SLAY, m_creature);
+		if (Victim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+			m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
     }
 
     void JustDied(Unit* Killer)
@@ -151,6 +153,7 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
         }
 
         DoScriptText(SAY_BLAU_DEATH, m_creature);
+        m_pInstance->SetData(TYPE_FOUR_HORSEMEN, SPECIAL);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -235,6 +238,8 @@ struct MANGOS_DLL_DECL boss_rivendare_naxxAI : public ScriptedAI
     void KilledUnit(Unit* Victim)
     {
         DoScriptText(urand(0, 1) ? SAY_RIVE_SLAY1 : SAY_RIVE_SLAY2, m_creature);
+		if (Victim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+			m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
     }
 
     void JustDied(Unit* Killer)
@@ -247,6 +252,7 @@ struct MANGOS_DLL_DECL boss_rivendare_naxxAI : public ScriptedAI
         }
 
         DoScriptText(SAY_RIVE_DEATH, m_creature);
+        m_pInstance->SetData(TYPE_FOUR_HORSEMEN, SPECIAL);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -303,6 +309,8 @@ struct MANGOS_DLL_DECL boss_thane_korthazzAI : public ScriptedAI
     void KilledUnit(Unit* Victim)
     {
         DoScriptText(SAY_KORT_SLAY, m_creature);
+		if (Victim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+			m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
     }
 
     void JustDied(Unit* Killer)
@@ -315,6 +323,7 @@ struct MANGOS_DLL_DECL boss_thane_korthazzAI : public ScriptedAI
         }
 
         DoScriptText(SAY_KORT_DEATH, m_creature);
+        m_pInstance->SetData(TYPE_FOUR_HORSEMEN, SPECIAL);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -403,6 +412,8 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
     void KilledUnit(Unit* Victim)
     {
         DoScriptText(SAY_ZELI_SLAY, m_creature);
+		if (Victim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+			m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
     }
 
     void JustDied(Unit* Killer)
@@ -415,6 +426,7 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
         }
 
         DoScriptText(SAY_ZELI_DEATH, m_creature);
+        m_pInstance->SetData(TYPE_FOUR_HORSEMEN, SPECIAL);
     }
 
     void UpdateAI(const uint32 uiDiff)

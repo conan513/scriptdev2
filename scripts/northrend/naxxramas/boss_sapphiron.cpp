@@ -127,6 +127,13 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
             m_pInstance->SetData(TYPE_SAPPHIRON, IN_PROGRESS);
     }
 
+	void KilledUnit(Unit* Victim)
+    {
+		if (m_pInstance)
+			if (Victim->GetTypeId() == TYPEID_PLAYER && m_pInstance->GetData(TYPE_ACHIEVE_CHECK) != FAIL)
+				m_pInstance->SetData(TYPE_ACHIEVE_CHECK, FAIL);
+	}
+
     void JustDied(Unit* pKiller)
     {
         if (m_pInstance)
@@ -259,7 +266,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
                     if (m_uiFrostBreathTimer <= uiDiff)
                     {
                         DoCastSpellIfCan(m_creature, SPELL_FROST_BREATH_A, CAST_TRIGGERED);
-                        DoCastSpellIfCan(m_creature, SPELL_FROST_BREATH_B, CAST_TRIGGERED);
+//                        DoCastSpellIfCan(m_creature, SPELL_FROST_BREATH_B, CAST_TRIGGERED);
                         m_uiFrostBreathTimer = 0;
 
                         m_uiLandTimer = 4000;

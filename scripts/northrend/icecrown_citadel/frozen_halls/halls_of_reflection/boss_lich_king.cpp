@@ -273,7 +273,6 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
                 AttackStart(pLider);
             m_pInstance->SetNextEvent(102,GetLeader(),3000);
             break;
-
 // Active phase
         case 200:
             SetEscortPaused(true);
@@ -304,7 +303,6 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             m_pInstance->SetNextEvent(290,GetLeader(),1000);
             DoCast(m_creature, SPELL_WITCH_DOCTOR);
             break;
-
         case 300:
             SetEscortPaused(true);
             DoCast(m_creature, SPELL_SUMMON_ABOM);
@@ -355,7 +353,6 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             m_pInstance->SetNextEvent(490,GetLeader(),5000);
             SetEscortPaused(false);
             break;
-
         case 500:
             m_pInstance->SetData(DATA_SUMMONS, 3);
             DoScriptText(SAY_LICH_KING_GNOUL, m_creature);
@@ -393,16 +390,15 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             DoCast(m_creature, SPELL_RAISE_DEAD);
             m_pInstance->SetNextEvent(590,GetLeader(),1000);
             break;
-
         case 900:
             if (Creature* pLider = m_pInstance->GetSingleCreatureFromStorage(m_pInstance->GetData(DATA_ESCAPE_LIDER)))
                 m_creature->DealDamage(pLider, pLider->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             m_pInstance->SetData(TYPE_LICH_KING, FAIL);
             m_creature->SetActiveObjectState(false);
+			m_creature->ForcedDespawn(10000);
             m_pInstance->SetData(TYPE_PHASE, 3);
             m_pInstance->SetNextEvent(0,0);
             break;
-
         default:
             break;
         }
@@ -504,8 +500,9 @@ struct MANGOS_DLL_DECL boss_lich_king_intro_horAI : public ScriptedAI
                 m_pInstance->SetNextEvent(25,GetLeader(),1000);
                 break;
             case 25:
+				m_creature->SetSpeedRate(MOVE_RUN, 0.5f);
                 m_creature->GetMotionMaster()->MovePoint(0, 5314.881f, 2012.496f, 709.341f);
-                m_pInstance->SetNextEvent(26,m_creature->GetEntry(),3000);
+                m_pInstance->SetNextEvent(26,m_creature->GetEntry(),4000);
                 break;
             case 26:
                 m_pInstance->DoCloseDoor(GO_IMPENETRABLE_DOOR);

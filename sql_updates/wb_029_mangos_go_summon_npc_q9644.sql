@@ -1,0 +1,1 @@
+UPDATE `gameobject_template` SET `ScriptName` = 'go_summon_npc_q9644' WHERE `entry` = 194092;

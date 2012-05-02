@@ -281,7 +281,6 @@ private:
 
     //Creatures GUID
     uint32 m_auiEncounter[MAX_ENCOUNTERS+1];
-
     bool m_bAchievCriteria[ACHIEVE_MAX_COUNT];
 
     uint32 m_uiCouncilInvocation;

@@ -139,9 +139,9 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
 
     Unit *pSister;
 
-    void Reset() 
+    void Reset()
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         pSister = NULL;
@@ -162,7 +162,7 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
 
     void JustReachedHome()
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         m_pInstance->SetData(TYPE_VALKIRIES, FAIL);
@@ -172,12 +172,12 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
 
     void JustDied(Unit* pKiller)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         DoScriptText(SAY_DEATH, m_creature);
         m_pInstance->SetData(TYPE_VALKIRIES, DONE);
-      
+
         if (pSister)
         {
             if (pSister->isAlive())
@@ -197,7 +197,7 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         pSister = m_pInstance->GetSingleCreatureFromStorage(NPC_DARKBANE);
@@ -216,13 +216,13 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         if (!m_creature || !m_creature->isAlive())
             return;
 
-        if (pDoneBy->GetObjectGuid() == m_creature->GetObjectGuid()) 
+        if (pDoneBy->GetObjectGuid() == m_creature->GetObjectGuid())
             return;
 
         if (pDoneBy->GetTypeId() == TYPEID_PLAYER)
@@ -238,7 +238,7 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -399,9 +399,9 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
 
     Unit *pSister;
 
-    void Reset() 
+    void Reset()
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         pSister = NULL;
@@ -422,7 +422,7 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
 
     void JustReachedHome()
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         m_pInstance->SetData(TYPE_VALKIRIES, FAIL);
@@ -432,7 +432,7 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
 
     void JustDied(Unit* pKiller)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         DoScriptText(SAY_DEATH, m_creature);
@@ -457,7 +457,7 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         pSister = m_pInstance->GetSingleCreatureFromStorage(NPC_LIGHTBANE);
@@ -476,13 +476,13 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         if (!m_creature || !m_creature->isAlive())
             return;
 
-        if (pDoneBy->GetObjectGuid() == m_creature->GetObjectGuid()) 
+        if (pDoneBy->GetObjectGuid() == m_creature->GetObjectGuid())
             return;
 
         if (pDoneBy->GetTypeId() == TYPEID_PLAYER)
@@ -498,7 +498,7 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -634,7 +634,7 @@ CreatureAI* GetAI_boss_eydis(Creature* pCreature)
 
 struct MANGOS_DLL_DECL mob_light_essenceAI : public ScriptedAI
 {
-    mob_light_essenceAI(Creature* pCreature) : ScriptedAI(pCreature) 
+    mob_light_essenceAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         Reset();
@@ -642,7 +642,7 @@ struct MANGOS_DLL_DECL mob_light_essenceAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
 
-    void Reset() 
+    void Reset()
     {
         m_creature->SetRespawnDelay(DAY);
         m_creature->SetWalk(true);
@@ -651,10 +651,10 @@ struct MANGOS_DLL_DECL mob_light_essenceAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             m_creature->ForcedDespawn();
 
-        if (m_pInstance->GetData(TYPE_VALKIRIES) != IN_PROGRESS) 
+        if (m_pInstance->GetData(TYPE_VALKIRIES) != IN_PROGRESS)
         {
             Map* pMap = m_creature->GetMap();
             Map::PlayerList const &lPlayers = pMap->GetPlayers();
@@ -681,7 +681,7 @@ bool GossipHello_mob_light_essence(Player *player, Creature* pCreature)
 {
     ScriptedInstance *pInstance = (ScriptedInstance *) pCreature->GetInstanceData();
 
-    if (!pInstance) 
+    if (!pInstance)
         return true;
 
     player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, pCreature->GetObjectGuid());
@@ -694,7 +694,7 @@ bool GossipHello_mob_light_essence(Player *player, Creature* pCreature)
 
 struct MANGOS_DLL_DECL mob_dark_essenceAI : public ScriptedAI
 {
-    mob_dark_essenceAI(Creature* pCreature) : ScriptedAI(pCreature) 
+    mob_dark_essenceAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         Reset();
@@ -702,7 +702,7 @@ struct MANGOS_DLL_DECL mob_dark_essenceAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
 
-    void Reset() 
+    void Reset()
     {
         m_creature->SetRespawnDelay(DAY);
         m_creature->SetWalk(true);
@@ -711,10 +711,10 @@ struct MANGOS_DLL_DECL mob_dark_essenceAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
              m_creature->ForcedDespawn();
 
-        if (m_pInstance->GetData(TYPE_VALKIRIES) != IN_PROGRESS) 
+        if (m_pInstance->GetData(TYPE_VALKIRIES) != IN_PROGRESS)
         {
             Map* pMap = m_creature->GetMap();
             Map::PlayerList const &lPlayers = pMap->GetPlayers();
@@ -740,7 +740,7 @@ bool GossipHello_mob_dark_essence(Player *player, Creature* pCreature)
 {
     ScriptedInstance *pInstance = (ScriptedInstance *) pCreature->GetInstanceData();
 
-    if (!pInstance) 
+    if (!pInstance)
         return true;
 
     player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, pCreature->GetObjectGuid());
@@ -753,7 +753,7 @@ bool GossipHello_mob_dark_essence(Player *player, Creature* pCreature)
 
 struct MANGOS_DLL_DECL mob_unleashed_darkAI : public ScriptedAI
 {
-    mob_unleashed_darkAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    mob_unleashed_darkAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         Reset();
@@ -769,7 +769,7 @@ struct MANGOS_DLL_DECL mob_unleashed_darkAI : public ScriptedAI
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         m_creature->GetMotionMaster()->MoveRandom();
 
-        SetCombatMovement(false); 
+        SetCombatMovement(false);
 
         m_uiCheckTimer = 1000;
     }
@@ -781,9 +781,9 @@ struct MANGOS_DLL_DECL mob_unleashed_darkAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (!m_pInstance || m_pInstance->GetData(TYPE_VALKIRIES) != IN_PROGRESS) 
+        if (!m_pInstance || m_pInstance->GetData(TYPE_VALKIRIES) != IN_PROGRESS)
             m_creature->ForcedDespawn();
- 
+
         if (m_uiCheckTimer < uiDiff)
         {
             Map* pMap = m_creature->GetMap();
@@ -792,7 +792,7 @@ struct MANGOS_DLL_DECL mob_unleashed_darkAI : public ScriptedAI
             {
                  Unit* pPlayer = itr->getSource();
 
-                 if (!pPlayer) 
+                 if (!pPlayer)
                      continue;
 
                  if (pPlayer->isAlive() && pPlayer->IsWithinDistInMap(m_creature, 4.0f))
@@ -814,7 +814,7 @@ struct MANGOS_DLL_DECL mob_unleashed_darkAI : public ScriptedAI
             }
             m_uiCheckTimer = 500;
         }
-        else 
+        else
             m_uiCheckTimer -= uiDiff;
     }
 };
@@ -826,7 +826,7 @@ CreatureAI* GetAI_mob_unleashed_dark(Creature *pCreature)
 
 struct MANGOS_DLL_DECL mob_unleashed_lightAI : public ScriptedAI
 {
-    mob_unleashed_lightAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    mob_unleashed_lightAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         Reset();
@@ -842,7 +842,7 @@ struct MANGOS_DLL_DECL mob_unleashed_lightAI : public ScriptedAI
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         m_creature->GetMotionMaster()->MoveRandom();
 
-        SetCombatMovement(false); 
+        SetCombatMovement(false);
 
         m_uiCheckTimer = 1000;
     }
@@ -854,9 +854,9 @@ struct MANGOS_DLL_DECL mob_unleashed_lightAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (!m_pInstance || m_pInstance->GetData(TYPE_VALKIRIES) != IN_PROGRESS) 
+        if (!m_pInstance || m_pInstance->GetData(TYPE_VALKIRIES) != IN_PROGRESS)
             m_creature->ForcedDespawn();
- 
+
         if (m_uiCheckTimer < uiDiff)
         {
             Map* pMap = m_creature->GetMap();
@@ -865,7 +865,7 @@ struct MANGOS_DLL_DECL mob_unleashed_lightAI : public ScriptedAI
             {
                  Unit* pPlayer = itr->getSource();
 
-                 if (!pPlayer) 
+                 if (!pPlayer)
                      continue;
 
                  if (pPlayer->isAlive() && pPlayer->IsWithinDistInMap(m_creature, 4.0f))
@@ -887,7 +887,7 @@ struct MANGOS_DLL_DECL mob_unleashed_lightAI : public ScriptedAI
             }
             m_uiCheckTimer = 500;
         }
-        else 
+        else
             m_uiCheckTimer -= uiDiff;
     }
 };

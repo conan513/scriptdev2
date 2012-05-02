@@ -21,7 +21,6 @@ SDComment:  by michalpolko with special thanks to:
             mangosR2 team and all who are supporting us with feedback, testing and fixes
             TrinityCore for some info about spells IDs
             everybody whom I forgot to mention here ;)
-
 SDCategory: Icecrown Citadel
 EndScriptData */
 
@@ -49,7 +48,7 @@ enum BossSpells
 
     // Ice Tomb related
     SPELL_FROST_BEACON          = 70126,
-    SPELL_ICE_TOMB              = 69712, // used by Sindragosa, targets marked units and triggers on them 69675?    
+    SPELL_ICE_TOMB              = 69712, // used by Sindragosa, targets marked units and triggers on them 69675?
     SPELL_ICE_TOMB_DUMMY        = 69675, // orb flows to the target, dummy effect (triggering the summoning of GO?)
     SPELL_ICE_TOMB_TRIGGERED    = 70157, // this is the effect of stun etc.
     SPELL_ICE_TOMB_TRIGGERED2   = 69700, // additional effects of immunity to frost and being unattackable/unhealable
@@ -157,6 +156,8 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
             RemoveAurasFromAllPlayers();
         }
 
+        DoRemoveBossEffects();
+
         SetCombatMovement(true);
         m_creature->SetLevitate(false);
         m_creature->RemoveByteFlag(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_UNK_2);
@@ -188,6 +189,26 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
         }
 
         DoScriptText(SAY_DEATH, m_creature);
+
+        DoRemoveBossEffects();
+    }
+
+    void DoRemoveBossEffects()
+    {
+        Map* pMap = m_creature->GetMap();
+        Map::PlayerList const& players = pMap->GetPlayers();
+        if (!players.isEmpty())
+            for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+                if (Player* pPlayer = itr->getSource())
+                    if(pPlayer)
+                    {
+                        pPlayer->RemoveAurasDueToSpell(SPELL_FROST_BEACON);
+                        pPlayer->RemoveAurasDueToSpell(SPELL_UNCHAINED_MAGIC);
+                        pPlayer->RemoveAurasDueToSpell(SPELL_INSTABILITY);
+                        pPlayer->RemoveAurasDueToSpell(SPELL_FROST_BREATH);
+                        pPlayer->RemoveAurasDueToSpell(SPELL_MYSTIC_BUFFET);
+                    }
+
     }
 
     void RemoveAurasFromAllPlayers()
@@ -236,6 +257,8 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
 
             if (m_creature->getVictim())
                 m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+
+            m_uiPhaseTimer = 110000;
         }
     }
 
@@ -247,6 +270,7 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
         z = SindragosaLoc[0].z;
 
         m_creature->CastSpell(x, y, z, SPELL_FROST_BOMB, false);
+        m_creature->SummonCreature(NPC_FROST_BOMB, x, y, z, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 20000);
     }
 
     void DoMark(uint32 count)
@@ -388,7 +412,7 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
                     SetCombatMovement(false);
                     m_creature->SetLevitate(true);
                     m_creature->SetByteValue(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_ALWAYS_STAND | UNIT_BYTE1_FLAG_UNK_2);
-                    m_creature->GetMotionMaster()->MovePoint(POINT_AIR, SindragosaLoc[1].x, SindragosaLoc[1].y, SindragosaLoc[1].z, false);
+                    m_creature->GetMotionMaster()->MovePoint(POINT_AIR, SindragosaLoc[1].x, SindragosaLoc[1].y, SindragosaLoc[1].z);
                 }
                 else
                     m_uiPhaseTimer -= uiDiff;
@@ -431,10 +455,10 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
                 if (m_uiPhaseTimer <= uiDiff)
                 {
                     m_uiPhase = PHASE_FLYING;
-                    m_uiPhaseTimer = 42000;
+                    m_uiPhaseTimer = 110000;
 
                     // fly to the ground point
-                    m_creature->GetMotionMaster()->MovePoint(POINT_LAND, SindragosaLoc[0].x, SindragosaLoc[0].y, SindragosaLoc[0].z, false);
+                    m_creature->GetMotionMaster()->MovePoint(POINT_LAND, SindragosaLoc[0].x, SindragosaLoc[0].y, SindragosaLoc[0].z);
                 }
                 else
                     m_uiPhaseTimer -= uiDiff;
@@ -449,7 +473,14 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
                     if (Unit *pVictim = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1, SPELL_FROST_BEACON, SELECT_FLAG_PLAYER))
                     {
                         if (DoCastSpellIfCan(pVictim, SPELL_FROST_BEACON) == CAST_OK)
-                            m_uiFrostBeaconTimer = 10000;
+                        {
+                            if (m_uiIcyGripTimer > 9000 && m_uiIcyGripTimer < 17000)
+                                m_uiFrostBeaconTimer = 20000;
+                            else
+                                m_uiFrostBeaconTimer = 10000;
+
+                            m_uiIceTombTimer = 5000;
+                        }
                     }
                 }
                 else
@@ -459,7 +490,7 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public base_icc_bossAI
                 if (m_uiIceTombTimer <= uiDiff)
                 {
                     if (DoCastSpellIfCan(m_creature, SPELL_ICE_TOMB) == CAST_OK)
-                        m_uiIceTombTimer = 10000;
+                        m_uiIceTombTimer = m_uiFrostBeaconTimer + 5000;
                 }
                 else
                     m_uiIceTombTimer -= uiDiff;
@@ -758,6 +789,10 @@ struct MANGOS_DLL_DECL mob_spinestalkerAI : public BSWScriptedAI
 
         if (pBrother && !pBrother->isAlive() && pInstance->GetData(TYPE_SINDRAGOSA) != DONE)
         {
+            if (Creature* pSindragosa = pInstance->GetSingleCreatureFromStorage(NPC_SINDRAGOSA))
+                if (pSindragosa->isAlive())
+                    return;
+
             if (Creature* pSindr = m_creature->SummonCreature(NPC_SINDRAGOSA, SindragosaLoc[0].x, SindragosaLoc[0].y, SindragosaLoc[0].z, 3.17f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*IN_MILLISECONDS, true))
                 pSindr->SetCreatorGuid(ObjectGuid());
         }

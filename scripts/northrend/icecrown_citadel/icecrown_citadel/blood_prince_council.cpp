@@ -325,7 +325,7 @@ struct MANGOS_DLL_DECL base_blood_prince_council_bossAI : public base_icc_bossAI
         Reset();
         DoCastSpellIfCan(m_creature, SPELL_FEIGN_DEATH, CAST_TRIGGERED);
     }
-    
+
     bool m_bIsEmpowered;
     bool m_bIsSaidSpecial; // 1st spell cast after being empowered is followed by special say
     uint32 m_uiEmpowermentFadeTimer;
@@ -382,7 +382,7 @@ struct MANGOS_DLL_DECL base_blood_prince_council_bossAI : public base_icc_bossAI
                     }
                 }
             }
-            
+
             if (m_creature->GetEntry() != NPC_TALDARAM)
             {
                 if (Creature *pTmp = m_pInstance->GetSingleCreatureFromStorage(NPC_TALDARAM))
@@ -411,7 +411,7 @@ struct MANGOS_DLL_DECL base_blood_prince_council_bossAI : public base_icc_bossAI
                 m_pInstance->SetData(TYPE_BLOOD_COUNCIL, FAIL);
         }
     }
-    
+
     void SpellHit(Unit *pCaster, const SpellEntry *pSpell)
     {
         if (pSpell->Id == m_uiInvocationSpellEntry)
@@ -842,12 +842,13 @@ struct MANGOS_DLL_DECL mob_ball_of_flamesAI : public ScriptedAI
     mob_ball_of_flamesAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_creature->GetMotionMaster()->MovePoint(0, m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ() + 7.0f, false);
+        m_creature->GetMotionMaster()->MovePoint(0, m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ() + 7.0f);
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    uint32 m_uiStartTimer;
+    uint32 m_uiFlamesStackCount;
+    uint32 m_uiTimeToStartMoving;
     bool m_bIsDespawned;
     bool m_bIsStarted;
 
@@ -857,9 +858,11 @@ struct MANGOS_DLL_DECL mob_ball_of_flamesAI : public ScriptedAI
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         m_creature->SetLevitate(true);
+        SetCombatMovement(false);
         m_creature->SetDisplayId(26767);
 
-        m_uiStartTimer = 3000;
+        m_uiFlamesStackCount = 0;
+        m_uiTimeToStartMoving = 2000;
         m_bIsDespawned = false;
         m_bIsStarted = false;
 
@@ -873,6 +876,12 @@ struct MANGOS_DLL_DECL mob_ball_of_flamesAI : public ScriptedAI
 
         if (!m_creature->getVictim())
             return;
+
+        if (m_uiTimeToStartMoving > uiDiff)
+        {
+            m_uiTimeToStartMoving -= uiDiff;
+            return;
+        }
 
         if (m_bIsStarted)
         {
@@ -889,15 +898,15 @@ struct MANGOS_DLL_DECL mob_ball_of_flamesAI : public ScriptedAI
         }
         else
         {
-            if (m_uiStartTimer <= uiDiff)
+            if (m_creature->HasAura(SPELL_BALL_FLAMES_PERIODIC) && m_uiFlamesStackCount < 20)
             {
-                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-                m_bIsStarted = true;
+                m_creature->CastSpell(m_creature, SPELL_FLAMES_BUFF, true);
+                ++m_uiFlamesStackCount;
             }
             else
             {
-                m_creature->CastSpell(m_creature, SPELL_FLAMES_BUFF, true);
-                m_uiStartTimer -= uiDiff;
+                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                m_bIsStarted = true;
             }
         }
     }
@@ -943,7 +952,7 @@ struct MANGOS_DLL_DECL mob_kinetic_bombAI : public ScriptedAI
         m_creature->GetPosition(x, y, z);
         m_creature->NearTeleportTo(x, y, z + (m_bIsHeroic ? 10.0f : 15.0f), 0.0f);
 
-        m_creature->GetMotionMaster()->MovePoint(0, x, y, z, false);
+        m_creature->GetMotionMaster()->MovePoint(0, x, y, z);
     }
 
     void DamageTaken(Unit *pDealer, uint32 &uiDamage)
@@ -1059,7 +1068,7 @@ void AddSC_blood_prince_council()
     newscript->Name = "npc_blood_orb_control";
     newscript->GetAI = &GetAI_npc_blood_orb_control;
     newscript->RegisterSelf();
-    
+
     newscript = new Script;
     newscript->Name = "mob_shock_vortex";
     newscript->GetAI = &GetAI_mob_shock_vortex;
